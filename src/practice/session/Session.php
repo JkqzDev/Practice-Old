@@ -29,4 +29,8 @@ class Session {
     public function update(): void {
         $this->scoreboard->update();
     }
+    
+    public function join(): void {
+        $this->scoreboard->spawn();
+    }
 }

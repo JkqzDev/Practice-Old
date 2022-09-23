@@ -15,7 +15,7 @@ use pocketmine\utils\TextFormat;
 class ScoreboardBuilder {
     
     public function __construct(
-        private Session $session
+        private Session $session,
         private string $title = '',
         private array $lines = []
     ) {}
@@ -24,7 +24,7 @@ class ScoreboardBuilder {
         $packet = SetDisplayObjectivePacket::create(
             SetDisplayObjectivePacket::DISPLAY_SLOT_SIDEBAR,
             $this->session->getPlayer()?->getName(),
-            $this->title,
+            TextFormat::colorize($this->title),
             'dummy',
             SetDisplayObjectivePacket::SORT_ORDER_ASCENDING
         );

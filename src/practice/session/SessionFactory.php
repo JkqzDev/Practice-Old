@@ -17,15 +17,15 @@ class SessionFactory {
     }
     
     static public function get(Player|string $player): ?Session {
-        $uuid = $player instanceof Player ? $player->getUniqueId()->getBytes() : $player;
+        $xuid = $player instanceof Player ? $player->getXuid() : $player;
         
-        return self::$sessions[$uuid] ?? null;
+        return self::$sessions[$xuid] ?? null;
     }
     
     static public function create(Player $player): void {
         $uuid = $player->getUniqueId()->getBytes();
         
-        self::$sessions[$uuid] = Session::create($uuid);
+        self::$sessions[$player->getXuid()] = Session::create($uuid);
     }
     
     static public function task(): void {
