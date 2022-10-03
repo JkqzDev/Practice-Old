@@ -11,6 +11,8 @@ use practice\arena\ArenaManager;
 
 class Practice extends PluginBase {
 
+    public const IS_DEVELOPING = true;
+
     static private Practice $instance;
 
     private ArenaManager $arenaManager;
