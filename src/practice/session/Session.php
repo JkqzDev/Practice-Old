@@ -7,6 +7,7 @@ namespace practice\session;
 use practice\session\scoreboard\ScoreboardBuilder;
 use pocketmine\player\Player;
 use pocketmine\Server;
+use pocketmine\utils\TextFormat;
 use practice\item\arena\JoinArenaItem;
 use practice\item\duel\RankedQueueItem;
 use practice\item\duel\UnrankedQueueItem;
@@ -74,6 +75,7 @@ class Session {
         $this->giveLobyyItems();
 
         $player->teleport($player->getServer()->getWorldManager()->getDefaultWorld()->getSpawnLocation());
+        $player->setNameTag(TextFormat::colorize('&7' . $player->getName()));
     }
 
     public function quit(): void {
