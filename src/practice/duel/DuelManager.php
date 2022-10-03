@@ -6,13 +6,25 @@ namespace practice\duel;
 
 use practice\duel\queue\PlayerQueue;
 use pocketmine\player\Player;
+use practice\duel\type\Nodebuff;
 
 class DuelManager {
     
     public function __construct(
         private array $duels = [],
         private array $queues = []
-    ) {}
+    ) {
+    }
+
+    public function getQueues(): array {
+        return $this->queues;
+    }
+
+    public function getQueuesById(int $type, bool $ranked = false): array {
+        return array_filter($this->queues, function (PlayerQueue $queue) use ($type, $ranked): bool {
+            return $queue->getDuelType() === $type && $queue->isRanked() === $ranked;
+        });
+    }
     
     public function getQueue(Player|string $player): ?PlayerQueue {
         $xuid = $player instanceof Player ? $player->getXuid() : $player;
@@ -33,5 +45,16 @@ class DuelManager {
             return;
         }
         unset($this->queues[$xuid]);
+    }
+
+    public function getDuels(): array {
+        return $this->duels;
+    }
+
+    static public function getDuelByType(int $type): string {
+        return match($type) {
+            Duel::TYPE_NODEBUFF => Nodebuff::class,
+            default => Nodebuff::class
+        };
     }
 }

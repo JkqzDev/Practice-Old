@@ -7,13 +7,13 @@ namespace practice;
 use practice\duel\DuelManager;
 use practice\session\SessionFactory;
 use pocketmine\plugin\PluginBase;
-use pocketmine\utils\SingletonTrait;
 
 class Practice extends PluginBase {
-    use SingletonTrait;
+
+    static private Practice $instance;
     
     protected function onLoad(): void {
-        self::setInstance($this);
+        self::$instance = $this;
     }
     
     protected function onEnable(): void {
@@ -27,6 +27,10 @@ class Practice extends PluginBase {
     
     protected function onDisable(): void {
         SessionFactory::saveAll();
+    }
+
+    static public function getInstance(): Practice {
+        return self::$instance;
     }
     
     public function getDuelManager(): DuelManager {

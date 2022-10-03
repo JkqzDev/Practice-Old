@@ -70,6 +70,7 @@ class ScoreboardBuilder {
     
     public function update(): void {
         $plugin = Practice::getInstance();
+        $session = $this->session;
         $player = $this->session->getPlayer();
         
         if ($player === null || !$player->isOnline()) {
@@ -79,7 +80,8 @@ class ScoreboardBuilder {
             '&7'
         ];
         $lines[] = '&fOnline: &c' . count($plugin->getServer()->getOnlinePlayers());
-        $lines[] = '&fPlaying: &c0';
+        $lines[] = '&fPlaying: &c' . (count($plugin->getDuelManager()->getDuels()) * 2);
+        $lines[] = '&fIn queues: &c' . count($plugin->getDuelManager()->getQueues());
         $lines[] = '&r&r';
         $lines[] = '&cmistery.club';
         $lines[] = '&7&r';
