@@ -7,6 +7,7 @@ namespace practice\session;
 use practice\session\scoreboard\ScoreboardBuilder;
 use pocketmine\player\Player;
 use pocketmine\Server;
+use practice\form\arena\ArenaForm;
 use practice\item\duel\RankedQueueItem;
 use practice\item\duel\UnrankedQueueItem;
 use practice\Practice;
@@ -76,7 +77,8 @@ class Session {
 
         $player->getInventory()->setContents([
             0 => new RankedQueueItem,
-            1 => new UnrankedQueueItem
+            1 => new UnrankedQueueItem,
+            2 => new ArenaForm
         ]);
     }
 }

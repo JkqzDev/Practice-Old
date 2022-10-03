@@ -4,15 +4,39 @@ declare(strict_types=1);
 
 namespace practice;
 
+use pocketmine\event\entity\EntityDamageEvent;
 use pocketmine\event\inventory\InventoryTransactionEvent;
 use practice\session\SessionFactory;
 use pocketmine\event\Listener;
 use pocketmine\event\player\PlayerJoinEvent;
 use pocketmine\event\player\PlayerLoginEvent;
 use pocketmine\event\player\PlayerQuitEvent;
+use pocketmine\player\Player;
 use pocketmine\utils\TextFormat;
 
 class EventHandler implements Listener {
+
+    public function handleDamage(EntityDamageEvent $event): void {
+        $cause = $event->getCause();
+        $player = $event->getEntity();
+
+        if (!$player instanceof Player) {
+            return;
+        }
+        $session = SessionFactory::get($player);
+
+        if ($session === null) {
+            return;
+        }
+
+        if ($session->inLobby()) {
+            $event->cancel();
+
+            if ($cause === EntityDamageEvent::CAUSE_VOID) {
+                $player->teleport($player->getServer()->getWorldManager()->getDefaultWorld()->getSpawnLocation());
+            }
+        }
+    }
 
     public function handleTransaction(InventoryTransactionEvent $event): void {
         $transaction = $event->getTransaction();

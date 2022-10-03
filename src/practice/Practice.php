@@ -7,10 +7,14 @@ namespace practice;
 use practice\duel\DuelManager;
 use practice\session\SessionFactory;
 use pocketmine\plugin\PluginBase;
+use practice\arena\ArenaManager;
 
 class Practice extends PluginBase {
 
     static private Practice $instance;
+
+    private ArenaManager $arenaManager;
+    private DuelManager $duelManager;
     
     protected function onLoad(): void {
         self::$instance = $this;
@@ -20,6 +24,7 @@ class Practice extends PluginBase {
         SessionFactory::loadAll();
         SessionFactory::task();
         
+        $this->arenaManager = new ArenaManager;
         $this->duelManager = new DuelManager;
         
         $this->getServer()->getPluginManager()->registerEvents(new EventHandler(), $this);
@@ -31,6 +36,10 @@ class Practice extends PluginBase {
 
     static public function getInstance(): Practice {
         return self::$instance;
+    }
+
+    public function getArenaManager(): ArenaManager {
+        return $this->arenaManager;
     }
     
     public function getDuelManager(): DuelManager {
