@@ -38,9 +38,18 @@ class Session {
         }
         return Practice::getInstance()->getDuelManager()->getQueue($player) !== null;
     }
+    
+    public function inArena(): bool {
+        $player = $this->getPlayer();
+
+        if ($player === null || !$player->isOnline()) {
+            return false;
+        }
+        return Practice::getInstance()->getArenaManager()->playerInGame($player) !== null;
+    }
 
     public function inLobby(): bool {
-        return true;
+        return !$this->inArena();
     }
     
     public function update(): void {

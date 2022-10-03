@@ -45,4 +45,11 @@ class Arena {
     public function join(Player $player): void {
         $this->addPlayer($player);
     }
+
+    public function scoreboard(): array {
+        return [
+            ' &fKills: &c0 &7(0)',
+            ' &dDeaths: &c0'
+        ];
+    }
 }

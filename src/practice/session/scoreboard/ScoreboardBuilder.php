@@ -83,6 +83,12 @@ class ScoreboardBuilder {
         if ($session->inLobby()) {
             $lines[] = ' &fOnline: &c' . count($plugin->getServer()->getOnlinePlayers());
             $lines[] = ' &fPlaying: &c' . (count($plugin->getDuelManager()->getDuels()) * 2);
+        } elseif ($session->inArena()) {
+            $arena = $plugin->getArenaManager()->playerInGame($player);
+
+            foreach ($arena->scoreboard() as $text) {
+                $lines[] = $text;
+            }
         }
         $lines[] = '&r&r';
         $lines[] = ' &cmistery.club';
