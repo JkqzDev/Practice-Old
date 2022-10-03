@@ -7,6 +7,7 @@ namespace practice\duel;
 use practice\duel\queue\PlayerQueue;
 use pocketmine\player\Player;
 use practice\duel\type\Nodebuff;
+use practice\item\duel\LeaveQueueItem;
 
 class DuelManager {
     
@@ -36,6 +37,12 @@ class DuelManager {
         $xuid = $player instanceof Player ? $player->getXuid() : $player;
         
         $this->queues[$xuid] = new PlayerQueue($xuid, $duelType, $ranked);
+
+        if ($player instanceof Player) {
+            $player->getInventory()->setContents([
+                new LeaveQueueItem
+            ]);
+        }
     }
     
     public function removeQueue(Player|string $player): void {

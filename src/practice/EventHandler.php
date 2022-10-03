@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace practice;
 
+use pocketmine\event\inventory\InventoryTransactionEvent;
 use practice\session\SessionFactory;
 use pocketmine\event\Listener;
 use pocketmine\event\player\PlayerJoinEvent;
@@ -12,6 +13,16 @@ use pocketmine\event\player\PlayerQuitEvent;
 use pocketmine\utils\TextFormat;
 
 class EventHandler implements Listener {
+
+    public function handleTransaction(InventoryTransactionEvent $event): void {
+        $transaction = $event->getTransaction();
+
+        foreach ($transaction->getActions() as $action) {
+            if ($action->getSourceItem()->getNamedTag()->getTag('practice_item') !== null) {
+                $event->cancel();
+            }
+        }
+    }
     
     public function handleJoin(PlayerJoinEvent $event): void {
         $player = $event->getPlayer();

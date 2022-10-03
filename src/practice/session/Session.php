@@ -61,15 +61,22 @@ class Session {
         $player->setHealth($player->getMaxHealth());
         $player->getHungerManager()->setFood($player->getHungerManager()->getMaxFood());
 
-        $player->getInventory()->setContents([
-            0 => new RankedQueueItem,
-            1 => new UnrankedQueueItem
-        ]);
+        $this->giveLobyyItems();
 
         $player->teleport($player->getServer()->getWorldManager()->getDefaultWorld()->getSpawnLocation());
     }
 
     public function quit(): void {
 
+    }
+
+
+    public function giveLobyyItems(): void {
+        $player = $this->getPlayer();
+        
+        $player->getInventory()->setContents([
+            0 => new RankedQueueItem,
+            1 => new UnrankedQueueItem
+        ]);
     }
 }
