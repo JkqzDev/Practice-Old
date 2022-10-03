@@ -39,7 +39,7 @@ class Session {
     }
 
     public function inLobby(): bool {
-        return !$this->inQueue();
+        return true;
     }
     
     public function update(): void {
@@ -73,7 +73,7 @@ class Session {
 
     public function giveLobyyItems(): void {
         $player = $this->getPlayer();
-        
+
         $player->getInventory()->setContents([
             0 => new RankedQueueItem,
             1 => new UnrankedQueueItem
