@@ -16,7 +16,7 @@ abstract class Duel {
         private int $typeId,
         private Session $firstPlayer,
         private Session $secondPlayer,
-        private World $world,
+        private World $world
     ) {
 
     }

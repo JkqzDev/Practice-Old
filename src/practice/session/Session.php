@@ -37,6 +37,10 @@ class Session {
         }
         return Practice::getInstance()->getDuelManager()->getQueue($player) !== null;
     }
+
+    public function inLobby(): bool {
+        return !$this->inQueue();
+    }
     
     public function update(): void {
         $this->scoreboard->update();

@@ -79,9 +79,12 @@ class ScoreboardBuilder {
         $lines = [
             '&7'
         ];
-        $lines[] = '&fOnline: &c' . count($plugin->getServer()->getOnlinePlayers());
-        $lines[] = '&fPlaying: &c' . (count($plugin->getDuelManager()->getDuels()) * 2);
-        $lines[] = '&fIn queues: &c' . count($plugin->getDuelManager()->getQueues());
+
+        if ($session->inLobby()) {
+            $lines[] = '&fOnline: &c' . count($plugin->getServer()->getOnlinePlayers());
+            $lines[] = '&fPlaying: &c' . (count($plugin->getDuelManager()->getDuels()) * 2);
+            $lines[] = '&fIn queues: &c' . count($plugin->getDuelManager()->getQueues());
+        }
         $lines[] = '&r&r';
         $lines[] = '&cmistery.club';
         $lines[] = '&7&r';
