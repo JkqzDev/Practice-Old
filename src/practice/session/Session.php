@@ -95,7 +95,8 @@ class Session {
 
     public function giveLobyyItems(): void {
         $player = $this->getPlayer();
-
+        $this->state = self::LOBBY;
+        
         $player->getInventory()->setContents([
             0 => new RankedQueueItem,
             1 => new UnrankedQueueItem,

@@ -44,6 +44,20 @@ class Arena {
 
     public function join(Player $player): void {
         $this->addPlayer($player);
+
+        $player->getArmorInventory()->clearAll();
+        $player->getInventory()->clearAll();
+        $player->getCursorInventory()->clearAll();
+        $player->getOffHandInventory()->clearAll();
+
+        $player->setHealth($player->getMaxHealth());
+        $player->getHungerManager()->setFood($player->getHungerManager()->getMaxFood());
+
+        $player->getXpManager()->setXpAndProgress(0, 0.0);
+
+        $player->teleport($this->world->getSpawnLocation());
+
+        // KIT
     }
 
     public function scoreboard(Player $player): array {

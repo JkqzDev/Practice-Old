@@ -8,6 +8,8 @@ use practice\duel\queue\PlayerQueue;
 use pocketmine\player\Player;
 use practice\duel\type\Nodebuff;
 use practice\item\duel\LeaveQueueItem;
+use practice\session\Session;
+use practice\session\SessionFactory;
 
 class DuelManager {
     
@@ -35,13 +37,18 @@ class DuelManager {
     
     public function createQueue(Player|string $player, int $duelType = 0, bool $ranked = false): void {
         $xuid = $player instanceof Player ? $player->getXuid() : $player;
-        
+        $session = SessionFactory::get($xuid);
+
+        if ($session === null) {
+            return;
+        }
         $this->queues[$xuid] = new PlayerQueue($xuid, $duelType, $ranked);
 
         if ($player instanceof Player) {
             $player->getInventory()->setContents([
                 new LeaveQueueItem
             ]);
+            $session->setState(Session::QUEUE);
         }
     }
     
