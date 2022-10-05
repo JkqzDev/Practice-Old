@@ -46,10 +46,10 @@ class Arena {
         $this->addPlayer($player);
     }
 
-    public function scoreboard(): array {
+    public function scoreboard(Player $player): array {
         return [
             ' &fKills: &c0 &7(0)',
-            ' &dDeaths: &c0'
+            ' &fDeaths: &c0'
         ];
     }
 }

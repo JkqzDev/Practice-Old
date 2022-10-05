@@ -15,6 +15,12 @@ use practice\Practice;
 
 class Session {
     
+    public const LOBBY = 0;
+    public const QUEUE = 1;
+    public const CREATOR = 2;
+    public const DUEL = 3;
+    public const ARENA = 4;
+    
     static public function create(string $uuid): self {
         return new self($uuid);
     }
@@ -22,7 +28,8 @@ class Session {
     private ScoreboardBuilder $scoreboard;
     
     public function __construct(
-        private string $uuid
+        private string $uuid,
+        private int $state = self::LOBBY
     ) {
         $this->scoreboard = new ScoreboardBuilder($this, '&l&cMisty Practice');
     }
@@ -41,16 +48,19 @@ class Session {
     }
     
     public function inArena(): bool {
-        $player = $this->getPlayer();
-
-        if ($player === null || !$player->isOnline()) {
-            return false;
-        }
-        return Practice::getInstance()->getArenaManager()->playerInGame($player) !== null;
+        return $this->state === self::ARENA;
+    }
+    
+    public function inDuel(): bool {
+        return $this->state === self::DUEL;
     }
 
     public function inLobby(): bool {
-        return !$this->inArena();
+        return !$this->inArena() && !$this->inDuel();
+    }
+    
+    public function setState(int $state): void {
+        $this->state = $state;
     }
     
     public function update(): void {
@@ -79,7 +89,7 @@ class Session {
     }
 
     public function quit(): void {
-
+        $this->state = self::LOBBY;
     }
 
 

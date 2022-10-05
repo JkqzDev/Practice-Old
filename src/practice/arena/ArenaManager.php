@@ -26,7 +26,7 @@ class ArenaManager {
         $this->arenas[$name] = new Arena($name, $kit, $world);
     }
 
-    public function playerInGame(Player $player): ?Arena {
+    public function playerInArena(Player $player): ?Arena {
         foreach ($this->arenas as $arena) {
             if ($arena->isPlayer($player)) {
                 return $arena;

@@ -26,6 +26,10 @@ class RankedQueueItem extends PracticeItem {
         if ($session === null) {
             return ItemUseResult::FAIL();
         }
+        
+        if (!$session->inLobby()) {
+            return ItemUseResult::FAIL();
+        }
         $form = new DuelQueueForm(true);
         $player->sendForm($form);
         return ItemUseResult::SUCCESS();

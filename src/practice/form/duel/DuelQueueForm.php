@@ -21,10 +21,10 @@ class DuelQueueForm extends SimpleForm {
         $plugin = Practice::getInstance();
         $manager = $plugin->getDuelManager();
 
-        parent::__construct(TextFormat::colorize($ranked ? '&bRanked duels' : '&9Unranked duels'));
+        parent::__construct(TextFormat::colorize($ranked ? 'Ranked duels&m&c' : 'Unranked duels&m&c'));
 
         foreach ($this->types as $type => $typeId) {
-            $this->addButton(new Button(TextFormat::colorize('&7' . $type . PHP_EOL . '&fIn queue: ' . count($manager->getQueuesById($typeId, $ranked)))), function (Player $player, int $button_index) use ($manager, $typeId, $ranked): void {
+            $this->addButton(new Button(TextFormat::colorize($type . '&m&b')), function (Player $player, int $button_index) use ($manager, $typeId, $ranked): void {
                 $queue = $manager->getQueue($player);
 
                 if ($queue !== null) {
