@@ -11,4 +11,10 @@ class WorldFactory {
     static public function get(string $name): ?World {
         return self::$worlds[$name] ?? null;
     }
+
+    static public function loadAll(): void {
+    }
+    
+    static public function saveAll(): void {
+    }
 }

@@ -8,6 +8,8 @@ use practice\duel\DuelManager;
 use practice\session\SessionFactory;
 use pocketmine\plugin\PluginBase;
 use practice\arena\ArenaManager;
+use practice\kit\KitFactory;
+use practice\world\WorldFactory;
 
 class Practice extends PluginBase {
 
@@ -23,7 +25,10 @@ class Practice extends PluginBase {
     }
     
     protected function onEnable(): void {
+        KitFactory::loadAll();
         SessionFactory::loadAll();
+        WorldFactory::loadAll();
+
         SessionFactory::task();
         
         $this->arenaManager = new ArenaManager;
@@ -33,7 +38,9 @@ class Practice extends PluginBase {
     }
     
     protected function onDisable(): void {
+        KitFactory::saveAll();
         SessionFactory::saveAll();
+        WorldFactory::saveAll();
     }
 
     static public function getInstance(): Practice {
