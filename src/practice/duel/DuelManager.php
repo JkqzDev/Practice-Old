@@ -64,6 +64,18 @@ class DuelManager {
     public function getDuels(): array {
         return $this->duels;
     }
+    
+    public function playerInDuel(Player $player): ?Duel {
+        foreach ($this->duels as $duel) {
+            if ($player->isPlayer($player)) {
+                return $duel;
+            }
+        }
+    }
+    
+    public function task(): void {
+        
+    }
 
     static public function getDuelByType(int $type): string {
         return match($type) {

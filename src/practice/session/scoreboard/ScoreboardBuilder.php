@@ -83,6 +83,7 @@ class ScoreboardBuilder {
         if ($session->inLobby()) {
             $lines[] = ' &fOnline: &c' . count($plugin->getServer()->getOnlinePlayers());
             $lines[] = ' &fPlaying: &c' . (count($plugin->getDuelManager()->getDuels()) * 2);
+            $lines[] = ' &fIn-queue: &c' . count($plugin->getDuelManager()->getQueues());
         } elseif ($session->inArena()) {
             $arena = $plugin->getArenaManager()->playerInArena($player);
 

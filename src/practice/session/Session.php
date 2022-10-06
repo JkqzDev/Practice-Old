@@ -21,17 +21,22 @@ class Session {
     public const DUEL = 3;
     public const ARENA = 4;
     
-    static public function create(string $uuid): self {
-        return new self($uuid);
+    static public function create(string $uuid, string $xuid): self {
+        return new self($uuid, $xuid);
     }
     
     private ScoreboardBuilder $scoreboard;
     
     public function __construct(
         private string $uuid,
+        private string $xuid,
         private int $state = self::LOBBY
     ) {
         $this->scoreboard = new ScoreboardBuilder($this, '&l&cMisty Practice');
+    }
+    
+    public function getXuid(): string {
+        return $this->xuid;
     }
     
     public function getPlayer(): ?Player {

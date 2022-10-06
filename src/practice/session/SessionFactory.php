@@ -24,8 +24,9 @@ class SessionFactory {
     
     static public function create(Player $player): void {
         $uuid = $player->getUniqueId()->getBytes();
+        $xuid = $player->getXuid();
         
-        self::$sessions[$player->getXuid()] = Session::create($uuid);
+        self::$sessions[$xuid] = Session::create($uuid, $xuid);
     }
     
     static public function task(): void {
