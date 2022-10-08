@@ -42,7 +42,7 @@ class WorldFactory {
         if (count($worlds) === 0) {
             return null;
         }
-        return array_rand($worlds);
+        return $worlds[array_rand($worlds)];
     }
     
     static public function create(string $name, array $modes, Position $firstPosition, Position $secondPosition, ?Position $firstPortal = null, ?Position $secondPortal = null, bool $copy = false): void {
