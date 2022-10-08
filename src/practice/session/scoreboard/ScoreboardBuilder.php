@@ -105,7 +105,7 @@ class ScoreboardBuilder {
             $lines = array_merge($lines, $duel->scoreboard($player));
         }
         $lines[] = '&r&r';
-        $lines[] = ' &cmisty.lol';
+        $lines[] = ' &clunar.gg';
         $lines[] = '&7&r';
         $this->clear();
         

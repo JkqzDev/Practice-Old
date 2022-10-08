@@ -35,6 +35,19 @@ class EventHandler implements Listener {
             if ($cause === EntityDamageEvent::CAUSE_VOID) {
                 $player->teleport($player->getServer()->getWorldManager()->getDefaultWorld()->getSpawnLocation());
             }
+        } elseif ($session->inDuel()) {
+            $duel = $session->getDuel();
+            $finalHealth = $player->getHealth() - $event->getFinalDamage();
+            
+            if (!$duel->isRunning()) {
+                $event->cancel();
+                return;
+            }
+            
+            if ($finalHealth <= 0.00) {
+                $event->cancel();
+                $duel->finish($player);
+            }
         }
     }
 
@@ -68,6 +81,10 @@ class EventHandler implements Listener {
         
         if ($session === null) {
             SessionFactory::create($player);
+        } else {
+            if ($session->getName() !== $player->getName()) {
+                $session->setName($player->getName());
+            }
         }
     }
 

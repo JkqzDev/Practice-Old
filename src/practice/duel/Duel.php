@@ -8,6 +8,7 @@ use pocketmine\player\Player;
 use pocketmine\world\Position;
 use pocketmine\world\World;
 use practice\session\Session;
+use practice\session\SessionFactory;
 
 class Duel {
 
@@ -48,20 +49,22 @@ class Duel {
         return $this->typeId;
     }
     
-    public function getOpponent(Player $player): Player {
+    public function getOpponent(Player $player): ?Player {
         $firstSession = $this->firstSession;
         $secondSession = $this->secondSession;
         
         if ($firstSession->getXuid() === $player->getXuid()) {
             $opponent = $secondSession->getPlayer();
-            assert($opponent !== null);
             
             return $opponent;
         }
         $opponent = $firstSession->getPlayer();
-        assert($opponent !== null);
         
         return $opponent;
+    }
+    
+    public function isRunning(): bool {
+        return $this->status === self::RUNNING;
     }
     
     public function isPlayer(Player $player): bool {
@@ -73,12 +76,28 @@ class Duel {
     }
     
     public function scoreboard(Player $player): array {
-        $opponent = $this->getOpponent($player);
-        
-        return [
-            ' &fOpponent: &c' . $opponent->getName(),
-            ' &fDuration: &c' . gmdate('i:s', $this->running)
-        ];
+        switch ($this->status) {
+            case self::STARTING:
+                return [
+                    ' &fMatch starting'
+                ];
+                
+            case self::RESTARTING:
+                return [
+                    ' &fMatch ended'
+                ];
+                
+            default:
+                $opponent = $this->getOpponent($player);
+                
+                return [
+                    ' &fKit: &c' . DuelFactory::getName($this->typeId),
+                    ' &fDuration: &c' . gmdate('i:s', $this->running),
+                    ' &r&r',
+                    ' &fYour ping: &c' . $player->getNetworkSession()->getPing(),
+                    ' &fTheir ping: &c' . $opponent->getNetworkSession()->getPing() ?? 0
+                ];
+        }
     }
     
     public function addSpectator(Player $player): void {
@@ -120,10 +139,32 @@ class Duel {
         }
     }
     
-    public function finish(): void {
+    public function finish(Player $loser): void {
+        $firstSession = $this->firstSession;
+        $secondSession = $this->secondSession;
+        $this->loser = $loser->getName();
+        
+        if ($loser->getName() === $firstSession->getName()) {
+            $this->winner = $secondSession->getName();
+        } else {
+            $this->winner = $firstSession->getName();
+        }
+        $firstPlayer = $firstSession->getPlayer();
+        $secondPlayer = $secondSession->getPlayer();
+        
+        $firstPlayer?->getArmorInventory()->clearAll();
+        $firstPlayer?->getInventory()->clearAll();
+        $secondPlayer?->getArmorInventory()->clearAll();
+        $secondPlayer?->getInventory()->clearAll();
+        
+        $firstPlayer?->setHealth($firstPlayer->getMaxHealth());
+        $secondPlayer?->setHealth($secondPlayer->getMaxHealth());
+        
+        $this->status = self::RESTARTING;
     }
     
     public function delete(): void {
+        DuelFactory::remove($this->id);
     }
     
     public function update(): void {
@@ -142,6 +183,30 @@ class Duel {
                 
             case self::RESTARTING:
                 if ($this->restarting <= 0) {
+                    $firstSession = $this->firstSession;
+                    $secondSession = $this->secondSession;
+                    
+                    $firstPlayer = $firstSession->getPlayer();
+                    $secondPlayer = $secondSession->getPlayer();
+                    
+                    $firstPlayer?->teleport($firstPlayer->getServer()->getWorldManager()->getDefaultWorld()->getSpawnLocation());
+                    $secondPlayer?->teleport($secondPlayer->getServer()->getWorldManager()->getDefaultWorld()->getSpawnLocation());
+                    
+                    $firstSession->giveLobyyItems();
+                    $secondSession->giveLobyyItems();
+                    
+                    $firstSession->setDuel(null);
+                    $secondSession->setDuel(null);
+                    
+                    foreach ($this->spectators as $spectator) {
+                        $s_spectator = SessionFactory::get($spectator);
+                        $s_spectator->setDuel(null);
+                        $s_spectator->giveLobyyItems();
+                        
+                        $spectator->teleport($spectator->getServer()->getWorldManager()->getDefaultWorld()->getSpawnLocation());
+                    }
+                    
+                    $this->delete();
                     return;
                 }
                 $this->restarting--;

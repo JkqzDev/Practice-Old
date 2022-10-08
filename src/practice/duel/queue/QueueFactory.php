@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace practice\duel\queue;
 
 use pocketmine\player\Player;
+use practice\duel\DuelFactory;
 use practice\item\duel\LeaveQueueItem;
 use practice\session\Session;
 use practice\session\SessionFactory;
@@ -41,7 +42,14 @@ class QueueFactory {
         $foundQueue = self::found($queue);
         
         if ($foundQueue !== null) {
-            $opponent = $foundQueue->getSession()->getPlayer();
+            $opponent = $foundQueue->getSession();
+            DuelFactory::create($session, $opponent, $duelType, $ranked);
+            
+            self::remove($player);
+            self::remove($opponent->getPlayer());
+            
+            $session->setQueue(null);
+            $opponent->setQueue(null);
         }
     }
     

@@ -5,9 +5,9 @@ declare(strict_types=1);
 namespace practice\duel;
 
 use pocketmine\scheduler\ClosureTask;
-use practice\duel\queue\PlayerQueue;
 use practice\duel\type\Nodebuff;
 use practice\Practice;
+use practice\session\Session;
 
 class DuelFactory {
     
@@ -21,13 +21,19 @@ class DuelFactory {
         return self::$duels[$id] ?? null;
     }
     
-    static public function create(PlayerQueue $first, PlayerQueue $second, int $duelType, bool $ranked): void {
+    static public function create(Session $first, Session $second, int $duelType, bool $ranked): void {
         $id = 0;
         
         while (self::get($id) !== null) {
             $id++;
         }
-        $word = '';
+        $world = Practice::getInstance()->getServer()->getWorldManager()->getDefaultWorld();
+        
+        $duel = new Duel($id, $duelType, 'no_debuff', $ranked, $first, $second, $world->getSpawnLocation(), $world->getSpawnLocation(), $world);
+        $first->setDuel($duel);
+        $second->setDuel($duel);
+        
+        self::$duels[$id] = $duel;
     }
     
     static public function remove(int $id): void {

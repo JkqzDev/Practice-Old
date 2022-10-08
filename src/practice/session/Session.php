@@ -19,8 +19,8 @@ use practice\session\scoreboard\ScoreboardBuilder;
 
 class Session {
     
-    static public function create(string $uuid, string $xuid): self {
-        return new self($uuid, $xuid);
+    static public function create(string $uuid, string $xuid, string $name): self {
+        return new self($uuid, $xuid, $name);
     }
     
     private ScoreboardBuilder $scoreboard;
@@ -28,15 +28,20 @@ class Session {
     public function __construct(
         private string $uuid,
         private string $xuid,
+        private string $name,
         private ?Arena $arena = null,
         private ?PlayerQueue $queue = null,
         private ?Duel $duel = null
     ) {
-        $this->scoreboard = new ScoreboardBuilder($this, '&l&cMisty Practice');
+        $this->scoreboard = new ScoreboardBuilder($this, '&l&cNA Practice');
     }
     
     public function getXuid(): string {
         return $this->xuid;
+    }
+    
+    public function getName(): string {
+        return $this->name;
     }
     
     public function getPlayer(): ?Player {
@@ -71,6 +76,10 @@ class Session {
         return !$this->inArena() && !$this->inDuel();
     }
     
+    public function setName(string $name): void {
+        $this->name = $name;
+    }
+    
     public function setArena(?Arena $arena): void {
         $this->arena = $arena;
     }
@@ -94,7 +103,7 @@ class Session {
             return;
         }
         $this->scoreboard->spawn();
-
+        
         $player->getInventory()->clearAll();
         $player->getArmorInventory()->clearAll();
         $player->getCursorInventory()->clearAll();
@@ -106,6 +115,10 @@ class Session {
 
         $player->teleport($player->getServer()->getWorldManager()->getDefaultWorld()->getSpawnLocation());
         $player->setNameTag(TextFormat::colorize('&7' . $player->getName()));
+        
+        if (Practice::IS_DEVELOPING) {
+            QueueFactory::create($player);
+        }
     }
 
     public function quit(): void {
@@ -113,6 +126,16 @@ class Session {
         
         if ($this->inQueue()) {
             QueueFactory::remove($player);
+        }
+        
+        if ($this->inDuel()) {
+            $duel = $this->getDuel();
+            
+            if ($duel->isPlayer($player)) {
+                $duel->finish($player);
+            } else {
+                $duel->removeSpectator($player);
+            }
         }
         $this->arena = null;
         $this->queue = null;
@@ -122,6 +145,9 @@ class Session {
     public function giveLobyyItems(): void {
         $player = $this->getPlayer();
         
+        if ($player === null) {
+            return;
+        }
         $player->getInventory()->setContents([
             0 => new RankedQueueItem,
             1 => new UnrankedQueueItem,
