@@ -16,6 +16,8 @@ use practice\item\duel\RankedQueueItem;
 use practice\item\duel\UnrankedQueueItem;
 use practice\Practice;
 use practice\session\scoreboard\ScoreboardBuilder;
+use practice\session\setup\SetupArenaHandler;
+use practice\session\setup\SetupDuelHandler;
 
 class Session {
     
@@ -31,7 +33,9 @@ class Session {
         private string $name,
         private ?Arena $arena = null,
         private ?PlayerQueue $queue = null,
-        private ?Duel $duel = null
+        private ?Duel $duel = null,
+        private ?SetupArenaHandler $setupArenaHandler = null,
+        private ?SetupDuelHandler $setupDuelHandler = null
     ) {
         $this->scoreboard = new ScoreboardBuilder($this, '&l&cNA Practice');
     }
@@ -58,6 +62,14 @@ class Session {
     
     public function getDuel(): ?Duel {
         return $this->duel;
+    }
+    
+    public function getSetupArenaHandler(): ?SetupArenaHandler {
+        return $this->setupArenaHandler;
+    }
+    
+    public function getSetupDuelHandler(): ?SetupDuelHandler {
+        return $this->setupDuelHandler;
     }
     
     public function inArena(): bool {
