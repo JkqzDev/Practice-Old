@@ -6,6 +6,7 @@ namespace practice\arena;
 
 use pocketmine\player\Player;
 use pocketmine\world\World;
+use practice\session\SessionFactory;
 
 class Arena {
 

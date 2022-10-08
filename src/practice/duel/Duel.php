@@ -27,14 +27,14 @@ class Duel {
         protected string $worldName,
         protected bool $ranked,
         protected Session $firstSession,
-        protected Session $secondPosition,
+        protected Session $secondSession,
         protected World $world,
         protected int $status = self::STARTING,
         protected int $starting = 5,
         protected int $running = 0,
         protected int $restarting = 5,
-        protected string $winner,
-        protected string $loser,
+        protected string $winner = '',
+        protected string $loser = '',
         protected array $spectators = []
     ) {
         $this->prepare();
@@ -96,7 +96,7 @@ class Duel {
                     ' &fDuration: &c' . gmdate('i:s', $this->running),
                     ' &r&r',
                     ' &fYour ping: &c' . $player->getNetworkSession()->getPing(),
-                    ' &fTheir ping: &c' . $opponent->getNetworkSession()->getPing() ?? 0
+                    ' &fTheir ping: &c' . $opponent->getNetworkSession()->getPing()
                 ];
         }
     }
