@@ -57,10 +57,12 @@ class WorldFactory {
     }
 
     static public function loadAll(): void {
+        @mkdir(Practice::getInstance()->getDataFolder() . 'worlds');
+        
         if (Practice::IS_DEVELOPING) {
             $world = Server::getInstance()->getWorldManager()->getDefaultWorld();
 
-            self::create($world->getFolderName(), ['no debuff'], $world->getSpawnLocation(), $world->getSpawnLocation());
+            self::create($world->getFolderName(), ['no debuff'], $world->getSpawnLocation(), $world->getSpawnLocation(), null, null, true);
         }
     }
     

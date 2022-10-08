@@ -6,7 +6,17 @@ namespace practice\duel;
 
 use pocketmine\scheduler\ClosureTask;
 use pocketmine\world\World;
+use practice\duel\type\BattleRush;
+use practice\duel\type\Boxing;
+use practice\duel\type\Bridge;
+use practice\duel\type\BuildUHC;
+use practice\duel\type\CaveUHC;
+use practice\duel\type\Combo;
+use practice\duel\type\FinalUHC;
+use practice\duel\type\Fist;
+use practice\duel\type\Gapple;
 use practice\duel\type\Nodebuff;
+use practice\duel\type\Sumo;
 use practice\Practice;
 use practice\session\Session;
 use practice\world\WorldFactory;
@@ -26,7 +36,7 @@ class DuelFactory {
     static public function create(Session $first, Session $second, int $duelType, bool $ranked): void {
         $id = 0;
         
-        while (self::get($id) !== null) {
+        while (self::get($id) !== null || is_dir(Practice::getInstance()->getServer()->getDataPath() . 'worlds' . DIRECTORY_SEPARATOR . 'duel-' . $id)) {
             $id++;
         }
         $className = self::getClass($duelType);
@@ -60,6 +70,16 @@ class DuelFactory {
     static public function getName(int $type): string {
         return match($type) {
             Duel::TYPE_NODEBUFF => 'No Debuff',
+            Duel::TYPE_BATTLERUSH => 'Battle Rush',
+            Duel::TYPE_BOXING => 'Boxing',
+            Duel::TYPE_BRIDGE => 'Bridge',
+            Duel::TYPE_BUILDUHC => 'Build UHC',
+            Duel::TYPE_CAVEUHC => 'Cave UHC',
+            Duel::TYPE_COMBO => 'Combo',
+            Duel::TYPE_FINALUHC => 'Final UHC',
+            Duel::TYPE_FIST => 'Fist',
+            Duel::TYPE_GAPPLE => 'Gapple',
+            Duel::TYPE_SUMO => 'Sumo',
             default => 'None'
         };
     }
@@ -75,6 +95,16 @@ class DuelFactory {
     static private function getClass(int $type): string {
         return match($type) {
             Duel::TYPE_NODEBUFF => Nodebuff::class,
+            Duel::TYPE_BATTLERUSH => BattleRush::class,
+            Duel::TYPE_BOXING => Boxing::class,
+            Duel::TYPE_BRIDGE => Bridge::class,
+            Duel::TYPE_BUILDUHC => BuildUHC::class,
+            Duel::TYPE_CAVEUHC => CaveUHC::class,
+            Duel::TYPE_COMBO => Combo::class,
+            Duel::TYPE_FINALUHC => FinalUHC::class,
+            Duel::TYPE_FIST => Fist::class,
+            Duel::TYPE_GAPPLE => Gapple::class,
+            Duel::TYPE_SUMO => Sumo::class,
             default => Nodebuff::class
         };
     }

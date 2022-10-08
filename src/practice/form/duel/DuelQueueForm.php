@@ -14,7 +14,17 @@ use practice\duel\queue\QueueFactory;
 class DuelQueueForm extends SimpleForm {
 
     private array $types = [
-        'No debuff' => Duel::TYPE_NODEBUFF
+        'No Debuff' => Duel::TYPE_NODEBUFF,
+        'Battle Rush' => Duel::TYPE_BATTLERUSH,
+        'Bridge' => Duel::TYPE_BRIDGE,
+        'Combo' => Duel::TYPE_COMBO,
+        'Boxing' => Duel::TYPE_BOXING,
+        'Sumo' => Duel::TYPE_SUMO,
+        'Fist' => Duel::TYPE_FIST,
+        'Gapple' => Duel::TYPE_GAPPLE,
+        'Build UHC' => Duel::TYPE_BUILDUHC,
+        'Final UHC' => Duel::TYPE_FINALUHC,
+        'Cave UHC' => Duel::TYPE_CAVEUHC
     ];
 
     public function __construct(bool $ranked = false) {

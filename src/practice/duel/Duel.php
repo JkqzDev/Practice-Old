@@ -16,6 +16,16 @@ use practice\world\WorldFactory;
 class Duel {
 
     public const TYPE_NODEBUFF = 0;
+    public const TYPE_BOXING = 1;
+    public const TYPE_BRIDGE = 2;
+    public const TYPE_BATTLERUSH = 3;
+    public const TYPE_FIST = 4;
+    public const TYPE_GAPPLE = 5;
+    public const TYPE_SUMO = 6;
+    public const TYPE_FINALUHC = 7;
+    public const TYPE_CAVEUHC = 8;
+    public const TYPE_BUILDUHC = 9;
+    public const TYPE_COMBO = 10;
     
     public const STARTING = 0;
     public const RUNNING = 2;
@@ -137,8 +147,8 @@ class Duel {
             $secondPlayer->getArmorInventory()->clearAll();
             $secondPlayer->getInventory()->clearAll();
             
-            $firstPlayer->teleport($firstPosition);
-            $secondPlayer->teleport($secondPosition);
+            $firstPlayer->teleport(new Position($firstPosition->getX(), $firstPosition->getY(), $firstPosition->getZ(), $world));
+            $secondPlayer->teleport(new Position($secondPosition->getX(), $secondPosition->getY(), $secondPosition->getZ(), $world));
         }
     }
     
