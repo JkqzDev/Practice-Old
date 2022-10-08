@@ -13,7 +13,8 @@ class Arena {
         private string $name,
         private string $kit,
         private World $world,
-        private array $players = []
+        private array $players = [],
+        private array $combats = []
     ) {
         $world->setTime(World::TIME_MIDNIGHT);
         $world->startTime();
@@ -58,6 +59,30 @@ class Arena {
         $player->teleport($this->world->getSpawnLocation());
 
         // KIT
+    }
+    
+    public function quit(Player $player): void {
+        $session = SessionFactory::get($player);
+        
+        if ($session === null) {
+            return;
+        }
+        $this->removePlayer($player);
+        
+        $player->getArmorInventory()->clearAll();
+        $player->getInventory()->clearAll();
+        $player->getCursorInventory()->clearAll();
+        $player->getOffHandInventory()->clearAll();
+
+        $player->setHealth($player->getMaxHealth());
+        $player->getHungerManager()->setFood($player->getHungerManager()->getMaxFood());
+
+        $player->getXpManager()->setXpAndProgress(0, 0.0);
+
+        $player->teleport($player->getServer()->getWorldManager()->getDefaultWorld()->getSpawnLocation());
+        
+        $session->giveLobyyItems();
+        $session->setArena(null);
     }
 
     public function scoreboard(Player $player): array {

@@ -126,9 +126,7 @@ class Session {
         
         if ($this->inQueue()) {
             QueueFactory::remove($player);
-        }
-        
-        if ($this->inDuel()) {
+        } elseif ($this->inDuel()) {
             $duel = $this->getDuel();
             
             if ($duel->isPlayer($player)) {
@@ -136,6 +134,9 @@ class Session {
             } else {
                 $duel->removeSpectator($player);
             }
+        } elseif ($this->inArena()) {
+            $arena = $this->getArena();
+            $arena->quit($player);
         }
         $this->arena = null;
         $this->queue = null;
