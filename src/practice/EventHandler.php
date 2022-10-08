@@ -42,7 +42,9 @@ class EventHandler implements Listener {
         $transaction = $event->getTransaction();
 
         foreach ($transaction->getActions() as $action) {
-            if ($action->getSourceItem()->getNamedTag()->getTag('practice_item') !== null) {
+            $item = $action->getSourceItem();
+            
+            if ($item->getNamedTag()->getTag('practice_item') !== null) {
                 $event->cancel();
             }
         }

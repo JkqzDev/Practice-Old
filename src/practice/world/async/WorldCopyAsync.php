@@ -11,7 +11,7 @@ use pocketmine\scheduler\AsyncTask;
 use pocketmine\Server;
 use pocketmine\utils\Binary;
 use pocketmine\world\format\io\data\BedrockWorldData;
-use Webmozart\PathUtils\Path;
+use Webmozart\PathUtil\Path;
 
 class WorldCopyAsync extends AsyncTask {
 
@@ -57,7 +57,7 @@ class WorldCopyAsync extends AsyncTask {
             $worldData->setString('LevelName', $newName);
             $newNbt = new LittleEndianNbtSerializer;
             $buffer = $newNbt->write(new TreeRoot($worldData));
-            file_put_contents(Path::join($path, 'level.dat'), Binary::writeLInt(BedrockWorldData::CURRENT_STORAGE_VERSION) . Binary::wirteLInt(strlen($buffer)) . $buffer);
+            file_put_contents(Path::join($path, 'level.dat'), Binary::writeLInt(BedrockWorldData::CURRENT_STORAGE_VERSION) . Binary::writeLInt(strlen($buffer)) . $buffer);
         }
     }
 

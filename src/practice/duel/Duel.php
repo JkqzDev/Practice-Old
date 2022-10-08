@@ -48,6 +48,22 @@ class Duel {
         return $this->typeId;
     }
     
+    public function getOpponent(Player $player): Player {
+        $firstSession = $this->firstSession;
+        $secondSession = $this->secondSession;
+        
+        if ($firstSession->getXuid() === $player->getXuid()) {
+            $opponent = $secondSession->getPlayer();
+            assert($opponent !== null);
+            
+            return $opponent;
+        }
+        $opponent = $firstSession->getPlayer();
+        assert($opponent !== null);
+        
+        return $opponent;
+    }
+    
     public function isPlayer(Player $player): bool {
         return $this->firstSession->getXuid() === $player->getXuid() || $this->secondSession->getXuid() === $player->getXuid();
     }
@@ -57,7 +73,12 @@ class Duel {
     }
     
     public function scoreboard(Player $player): array {
-        return [];
+        $opponent = $this->getOpponent($player);
+        
+        return [
+            ' &fOpponent: &c' . $opponent->getName(),
+            ' &fDuration: &c' . gmdate('i:s', $this->duration)
+        ];
     }
     
     public function addSpectator(Player $player): void {
@@ -108,10 +129,10 @@ class Duel {
     public function delete(): void {
     }
     
-    public function running(): void {
+    public function update(): void {
         switch ($this->status) {
             case self::STARTING:
-                if ($this->starting === 0) {
+                if ($this->starting <= 0) {
                     $this->status = self::RUNNING;
                     return;
                 }
@@ -123,7 +144,7 @@ class Duel {
                 break;
                 
             case self::RESTARTING:
-                if ($this->restarting === 0) {
+                if ($this->restarting <= 0) {
                     return;
                 }
                 $this->restarting--;

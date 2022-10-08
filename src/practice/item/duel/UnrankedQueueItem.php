@@ -4,14 +4,13 @@ declare(strict_types=1);
 
 namespace practice\item\duel;
 
-use practice\item\PracticeItem;
-use practice\Practice;
-use practice\session\SessionFactory;
 use pocketmine\item\ItemIds;
 use pocketmine\item\ItemUseResult;
 use pocketmine\math\Vector3;
 use pocketmine\player\Player;
+use practice\item\PracticeItem;
 use practice\form\duel\DuelQueueForm;
+use practice\session\SessionFactory;
 
 class UnrankedQueueItem extends PracticeItem {
     
@@ -21,7 +20,6 @@ class UnrankedQueueItem extends PracticeItem {
     
     public function onClickAir(Player $player, Vector3 $directionVector): ItemUseResult {
         $session = SessionFactory::get($player);
-        $duelManager = Practice::getInstance()->getDuelManager();
         
         if ($session === null) {
             return ItemUseResult::FAIL();
@@ -30,7 +28,7 @@ class UnrankedQueueItem extends PracticeItem {
         if (!$session->inLobby()) {
             return ItemUseResult::FAIL();
         }
-        $form = new DuelQueueForm();
+        $form = new DuelQueueForm;
         $player->sendForm($form);
         return ItemUseResult::SUCCESS();
     }

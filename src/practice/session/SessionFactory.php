@@ -29,6 +29,13 @@ class SessionFactory {
         self::$sessions[$xuid] = Session::create($uuid, $xuid);
     }
     
+    static public function remove(string $xuid): void {
+        if (self::get($xuid) === null) {
+            return;
+        }
+        unset(self::$duels[$xuid]);
+    }
+    
     static public function task(): void {
         Practice::getInstance()->getScheduler()->scheduleRepeatingTask(new ClosureTask(function (): void {
             foreach (self::getAll() as $session) {

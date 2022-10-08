@@ -9,7 +9,7 @@ use cosmicpe\form\SimpleForm;
 use pocketmine\player\Player;
 use pocketmine\utils\TextFormat;
 use practice\duel\Duel;
-use practice\Practice;
+use practice\queue\QueueFactory;
 
 class DuelQueueForm extends SimpleForm {
 
@@ -18,19 +18,16 @@ class DuelQueueForm extends SimpleForm {
     ];
 
     public function __construct(bool $ranked = false) {
-        $plugin = Practice::getInstance();
-        $manager = $plugin->getDuelManager();
-
         parent::__construct(TextFormat::colorize($ranked ? 'Ranked duels&m&c' : 'Unranked duels&m&c'));
 
         foreach ($this->types as $type => $typeId) {
-            $this->addButton(new Button(TextFormat::colorize($type . '&m&b')), function (Player $player, int $button_index) use ($manager, $typeId, $ranked): void {
-                $queue = $manager->getQueue($player);
+            $this->addButton(new Button(TextFormat::colorize($type . '&m&b')), function (Player $player, int $button_index) use ($typeId, $ranked): void {
+                $queue = QueueFactory::get($player);
 
                 if ($queue !== null) {
                     return;
                 }
-                $manager->createQueue($player, $typeId, $ranked);
+                QueueFactory::create($player, $typeId, $ranked);
             });
         }
     }

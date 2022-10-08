@@ -12,8 +12,11 @@ class PlayerQueue {
     public function __construct(
         private string $xuid,
         private int $duelType,
-        private bool $ranked
-    ) {}
+        private bool $ranked,
+        private int $time = 0,
+    ) {
+        $this->time = time();
+    }
 
     public function getSession(): ?Session {
         return SessionFactory::get($this->xuid);
@@ -21,6 +24,10 @@ class PlayerQueue {
 
     public function getDuelType(): int {
         return $this->duelType;
+    }
+    
+    public function getTime(): int {
+        return time() - $this->time;
     }
 
     public function isRanked(): bool {

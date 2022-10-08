@@ -7,11 +7,8 @@ namespace practice\provider;
 use practice\Practice;
 
 class ProviderManager {
-
-    public function __construct() {
+    
+    static public function loadAll(): void {
         $plugin = Practice::getInstance();
-        $plugin->saveDefaultConfig();
-
-        
     }
 }

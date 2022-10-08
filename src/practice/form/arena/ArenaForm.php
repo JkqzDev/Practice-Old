@@ -8,6 +8,7 @@ use cosmicpe\form\entries\simple\Button;
 use cosmicpe\form\SimpleForm;
 use pocketmine\player\Player;
 use pocketmine\utils\TextFormat;
+use practice\arena\ArenaFactory;
 use practice\Practice;
 use practice\session\Session;
 use practice\session\SessionFactory;
@@ -16,11 +17,9 @@ class ArenaForm extends SimpleForm {
 
     public function __construct() {
         $plugin = Practice::getInstance();
-        $manager = $plugin->getArenaManager();
-
         parent::__construct(TextFormat::colorize('Arenas FFA&m&c'));
 
-        foreach ($manager->getArenas() as $arena) {
+        foreach (ArenaFactory::getAll() as $arena) {
             $this->addButton(new Button(TextFormat::colorize($arena->getName() . '&m&b')), function (Player $player, int $button_index) use ($arena): void {
                 $session = SessionFactory::get($player);
 
@@ -31,7 +30,7 @@ class ArenaForm extends SimpleForm {
                 if (!$session->inLobby()) {
                     return;
                 }
-                $session->setState(Session::ARENA);
+                $session->setArena($arena);
                 $arena->join($player);
             });
         }

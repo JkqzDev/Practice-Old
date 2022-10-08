@@ -4,13 +4,15 @@ declare(strict_types=1);
 
 namespace practice\session\scoreboard;
 
-use practice\Practice;
-use practice\session\Session;
 use pocketmine\network\mcpe\protocol\RemoveObjectivePacket;
 use pocketmine\network\mcpe\protocol\SetDisplayObjectivePacket;
 use pocketmine\network\mcpe\protocol\SetScorePacket;
 use pocketmine\network\mcpe\protocol\types\ScorePacketEntry;
 use pocketmine\utils\TextFormat;
+use practice\duel\DuelFactory;
+use practice\duel\queue\QueueFactory;
+use practice\Practice;
+use practice\session\Session;
 
 class ScoreboardBuilder {
     
@@ -32,10 +34,11 @@ class ScoreboardBuilder {
     }
     
     public function despawn(): void {
+        // Nothing 
     }
     
     public function clear(): void {
-        $packet = new SetScorePacket();
+        $packet = new SetScorePacket;
         $packet->entries = $this->lines;
         $packet->type = SetScorePacket::TYPE_REMOVE;
         $this->session->getPlayer()?->getNetworkSession()->sendDataPacket($packet);
@@ -82,12 +85,24 @@ class ScoreboardBuilder {
 
         if ($session->inLobby()) {
             $lines[] = ' &fOnline: &c' . count($plugin->getServer()->getOnlinePlayers());
-            $lines[] = ' &fPlaying: &c' . (count($plugin->getDuelManager()->getDuels()) * 2);
-            $lines[] = ' &fIn-queue: &c' . count($plugin->getDuelManager()->getQueues());
+            $lines[] = ' &fPlaying: &c' . (count(DuelFactory::getAll()) * 2);
+            $lines[] = ' &fIn-queue: &c' . count(QueueFactory::getAll());
+            
+            if ($session->inQueue()) {
+                $queue = $session->getQueue();
+                
+                $lines[] = '&7&r&r&r';
+                $lines[] = $queue->isRanked() ? ' &cRanked ' . DuelFactory::getName($queue->getDuelType()) : ' &cUnranked ' . DuelFactory::getName($queue->getDuelType());
+                $lines[] = ' &fTime: &c' . gmdate('i:s', $queue->getTime());
+            }
         } elseif ($session->inArena()) {
-            $arena = $plugin->getArenaManager()->playerInArena($player);
+            $arena = $session->getArena();
 
             $lines = array_merge($lines, $arena->scoreboard($player));
+        } elseif ($session->inDuel()) {
+            $duel = $session->getDuel();
+            
+            $lines = array_merge($lines, $duel->scoreboard($player));
         }
         $lines[] = '&r&r';
         $lines[] = ' &cmisty.lol';

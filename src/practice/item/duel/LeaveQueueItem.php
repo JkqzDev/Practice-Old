@@ -8,9 +8,9 @@ use pocketmine\item\ItemIds;
 use pocketmine\player\Player;
 use pocketmine\math\Vector3;
 use pocketmine\item\ItemUseResult;
+use practice\duel\queue\QueueFactory;
 use practice\item\PracticeItem;
 use practice\Practice;
-use practice\session\SessionFactory;
 
 class LeaveQueueItem extends PracticeItem {
 
@@ -27,7 +27,9 @@ class LeaveQueueItem extends PracticeItem {
         $session->giveLobyyItems();
 
         if ($session->inQueue()) {
-            Practice::getInstance()->getDuelManager()->removeQueue($player);
+            $session->setQueue(null);
+            
+            QueueFactory::remove($player);
         }
         return ItemUseResult::SUCCESS();
     }

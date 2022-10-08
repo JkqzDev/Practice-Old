@@ -4,22 +4,19 @@ declare(strict_types=1);
 
 namespace practice\session;
 
-use practice\session\scoreboard\ScoreboardBuilder;
 use pocketmine\player\Player;
 use pocketmine\Server;
 use pocketmine\utils\TextFormat;
+use practice\arena\Arena;
+use practice\duel\Duel;
+use practice\duel\queue\PlayerQueue;
 use practice\item\arena\JoinArenaItem;
 use practice\item\duel\RankedQueueItem;
 use practice\item\duel\UnrankedQueueItem;
 use practice\Practice;
+use practice\session\scoreboard\ScoreboardBuilder;
 
 class Session {
-    
-    public const LOBBY = 0;
-    public const QUEUE = 1;
-    public const CREATOR = 2;
-    public const DUEL = 3;
-    public const ARENA = 4;
     
     static public function create(string $uuid, string $xuid): self {
         return new self($uuid, $xuid);
@@ -30,7 +27,9 @@ class Session {
     public function __construct(
         private string $uuid,
         private string $xuid,
-        private int $state = self::LOBBY
+        private ?Arena $arena = null,
+        private ?PlayerQueue $queue = null,
+        private ?Duel $duel = null
     ) {
         $this->scoreboard = new ScoreboardBuilder($this, '&l&cMisty Practice');
     }
@@ -42,30 +41,45 @@ class Session {
     public function getPlayer(): ?Player {
         return Server::getInstance()->getPlayerByRawUUID($this->uuid);
     }
+    
+    public function getArena(): ?Arena {
+        return $this->arena;
+    }
 
-    public function inQueue(): bool {
-        $player = $this->getPlayer();
-
-        if ($player === null || !$player->isOnline()) {
-            return false;
-        }
-        return Practice::getInstance()->getDuelManager()->getQueue($player) !== null;
+    public function getQueue(): ?PlayerQueue {
+        return $this->queue;
+    }
+    
+    public function getDuel(): ?Duel {
+        return $this->duel;
     }
     
     public function inArena(): bool {
-        return $this->state === self::ARENA;
+        return $this->arena !== null;
+    }
+    
+    public function inQueue(): bool {
+        return $this->queue !== null;
     }
     
     public function inDuel(): bool {
-        return $this->state === self::DUEL;
+        return $this->duel !== null;
     }
 
     public function inLobby(): bool {
         return !$this->inArena() && !$this->inDuel();
     }
     
-    public function setState(int $state): void {
-        $this->state = $state;
+    public function setArena(?Arena $arena): void {
+        $this->arena = $arena;
+    }
+    
+    public function setQueue(?PlayerQueue $queue): void {
+        $this->queue = $queue;
+    }
+    
+    public function setDuel(?Duel $duel): void {
+        $this->duel = $duel;
     }
     
     public function update(): void {
@@ -94,13 +108,13 @@ class Session {
     }
 
     public function quit(): void {
-        $this->state = self::LOBBY;
+        $this->arena = null;
+        $this->queue = null;
+        $this->duel = null;
     }
-
 
     public function giveLobyyItems(): void {
         $player = $this->getPlayer();
-        $this->state = self::LOBBY;
         
         $player->getInventory()->setContents([
             0 => new RankedQueueItem,
