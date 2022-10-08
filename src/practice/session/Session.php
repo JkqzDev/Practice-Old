@@ -15,9 +15,9 @@ use practice\item\arena\JoinArenaItem;
 use practice\item\duel\RankedQueueItem;
 use practice\item\duel\UnrankedQueueItem;
 use practice\Practice;
+use practice\session\handler\SetupArenaHandler;
+use practice\session\handler\SetupDuelHandler;
 use practice\session\scoreboard\ScoreboardBuilder;
-use practice\session\setup\SetupArenaHandler;
-use practice\session\setup\SetupDuelHandler;
 
 class Session {
     
@@ -103,6 +103,22 @@ class Session {
     public function setDuel(?Duel $duel): void {
         $this->duel = $duel;
     }
+
+    public function startSetupArenaHandler(): void {
+        $this->setupArenaHandler = new SetupArenaHandler;
+    }
+
+    public function startSetupDuelHandler(): void {
+        $this->setupDuelHandler = new SetupDuelHandler;
+    }
+
+    public function stopSetupArenaHandler(): void {
+        $this->setupArenaHandler = null;
+    }
+
+    public function stopSetupDuelHandler(): void {
+        $this->setupDuelHandler = null;
+    }
     
     public function update(): void {
         $this->scoreboard->update();
@@ -153,6 +169,9 @@ class Session {
         $this->arena = null;
         $this->queue = null;
         $this->duel = null;
+
+        $this->stopSetupArenaHandler();
+        $this->stopSetupDuelHandler();
     }
 
     public function giveLobyyItems(): void {

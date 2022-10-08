@@ -5,9 +5,11 @@ declare(strict_types=1);
 namespace practice\duel;
 
 use pocketmine\scheduler\ClosureTask;
+use pocketmine\world\World;
 use practice\duel\type\Nodebuff;
 use practice\Practice;
 use practice\session\Session;
+use practice\world\WorldFactory;
 
 class DuelFactory {
     
@@ -27,13 +29,25 @@ class DuelFactory {
         while (self::get($id) !== null) {
             $id++;
         }
-        $world = Practice::getInstance()->getServer()->getWorldManager()->getDefaultWorld();
-        
-        $duel = new Duel($id, $duelType, 'no_debuff', $ranked, $first, $second, $world->getSpawnLocation(), $world->getSpawnLocation(), $world);
-        $first->setDuel($duel);
-        $second->setDuel($duel);
-        
-        self::$duels[$id] = $duel;
+        $className = self::getClass($duelType);
+        $duelName = self::getName($duelType);
+        $worldData = WorldFactory::getRandom(strtolower($duelName));
+
+        if ($worldData === null) {
+            return;
+        }
+        $worldData->copyWorld(
+            'duel-' . $id,
+            Practice::getInstance()->getServer()->getDataPath() . 'worlds',
+            function (World $world) use ($id, $worldData, $className, $first, $second, $duelType, $ranked): void {
+                $duel = new $className($id, $duelType, $worldData->getName(), $ranked, $first, $second, $world);
+
+                $first->setDuel($duel);
+                $second->setDuel($duel);
+
+                self::$duels[$id] = $duel;
+            }
+        );
     }
     
     static public function remove(int $id): void {

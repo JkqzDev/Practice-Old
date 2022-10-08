@@ -7,8 +7,11 @@ namespace practice\duel;
 use pocketmine\player\Player;
 use pocketmine\world\Position;
 use pocketmine\world\World;
+use practice\Practice;
 use practice\session\Session;
 use practice\session\SessionFactory;
+use practice\world\async\WorldDeleteAsync;
+use practice\world\WorldFactory;
 
 class Duel {
 
@@ -21,19 +24,17 @@ class Duel {
     public function __construct(
         protected int $id,
         protected int $typeId,
-        protected string $kit,
+        protected string $worldName,
         protected bool $ranked,
         protected Session $firstSession,
-        protected Session $secondSession,
-        protected Position $firstPosition,
-        protected Position $secondPosition,
+        protected Session $secondPosition,
         protected World $world,
         protected int $status = self::STARTING,
         protected int $starting = 5,
         protected int $running = 0,
         protected int $restarting = 5,
-        protected string $winner = '',
-        protected string $loser = '',
+        protected string $winner,
+        protected string $loser,
         protected array $spectators = []
     ) {
         $this->prepare();
@@ -114,17 +115,19 @@ class Duel {
     }
     
     public function prepare(): void {
+        $worldName = $this->worldName;
         $world = $this->world;
         
         $firstSession = $this->firstSession;
         $secondSession = $this->secondSession;
         
-        $firstPosition = $this->firstPosition;
-        $secondPosition = $this->secondPosition;
-        
         $world->setTime(World::TIME_MIDNIGHT);
         $world->stopTime();
         
+        $worldData = WorldFactory::get($worldName);
+        $firstPosition = $worldData->getFirstPosition();
+        $secondPosition = $worldData->getSecondPosition();
+
         $firstPlayer = $firstSession->getPlayer();
         $secondPlayer = $secondSession->getPlayer();
         
@@ -164,6 +167,11 @@ class Duel {
     }
     
     public function delete(): void {
+        Practice::getInstance()->getServer()->getWorldManager()->unloadWorld($this->world);
+        Practice::getInstance()->getServer()->getAsyncPool()->submitTask(new WorldDeleteAsync(
+            'duel-' . $this->id,
+            Practice::getInstance()->getServer()->getDataPath() . 'worlds'
+        ));
         DuelFactory::remove($this->id);
     }
     
