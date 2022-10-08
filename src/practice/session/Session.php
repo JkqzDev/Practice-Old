@@ -9,6 +9,7 @@ use pocketmine\Server;
 use pocketmine\utils\TextFormat;
 use practice\arena\Arena;
 use practice\duel\Duel;
+use practice\duel\queue\QueueFactory;
 use practice\duel\queue\PlayerQueue;
 use practice\item\arena\JoinArenaItem;
 use practice\item\duel\RankedQueueItem;
@@ -108,6 +109,11 @@ class Session {
     }
 
     public function quit(): void {
+        $player = $this->getPlayer();
+        
+        if ($this->inQueue()) {
+            QueueFactory::remove($player);
+        }
         $this->arena = null;
         $this->queue = null;
         $this->duel = null;

@@ -9,7 +9,7 @@ use cosmicpe\form\SimpleForm;
 use pocketmine\player\Player;
 use pocketmine\utils\TextFormat;
 use practice\duel\Duel;
-use practice\queue\QueueFactory;
+use practice\duel\queue\QueueFactory;
 
 class DuelQueueForm extends SimpleForm {
 

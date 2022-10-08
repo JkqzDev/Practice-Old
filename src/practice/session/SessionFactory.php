@@ -33,7 +33,7 @@ class SessionFactory {
         if (self::get($xuid) === null) {
             return;
         }
-        unset(self::$duels[$xuid]);
+        unset(self::$sessions[$xuid]);
     }
     
     static public function task(): void {

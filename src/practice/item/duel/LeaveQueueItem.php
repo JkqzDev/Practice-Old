@@ -11,6 +11,7 @@ use pocketmine\item\ItemUseResult;
 use practice\duel\queue\QueueFactory;
 use practice\item\PracticeItem;
 use practice\Practice;
+use practice\session\SessionFactory;
 
 class LeaveQueueItem extends PracticeItem {
 

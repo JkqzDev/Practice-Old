@@ -14,7 +14,7 @@ class DuelFactory {
     static private array $duels = [];
     
     static public function getAll(): array {
-        return $this->duels;
+        return self::$duels;
     }
     
     static public function get(int $id): ?Duel {

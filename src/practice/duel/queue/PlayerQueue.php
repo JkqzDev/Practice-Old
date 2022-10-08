@@ -17,6 +17,10 @@ class PlayerQueue {
     ) {
         $this->time = time();
     }
+    
+    public function getXuid(): string {
+        return $this->xuid;
+    }
 
     public function getSession(): ?Session {
         return SessionFactory::get($this->xuid);

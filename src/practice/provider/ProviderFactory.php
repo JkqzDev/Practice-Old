@@ -6,7 +6,7 @@ namespace practice\provider;
 
 use practice\Practice;
 
-class ProviderManager {
+class ProviderFactory {
     
     static public function loadAll(): void {
         $plugin = Practice::getInstance();

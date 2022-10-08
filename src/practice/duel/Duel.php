@@ -18,22 +18,22 @@ class Duel {
     public const RESTARTING = 3;
 
     public function __construct(
-        private int $id,
-        private int $typeId,
-        private string $kit,
-        private bool $ranked,
-        private Session $firstSession,
-        private Session $secondSession,
-        private Position $firstPosition,
-        private Position $secondPosition,
-        private World $world,
-        private int $status = self::STARTING,
-        private int $starting = 5,
-        private int $running = 0,
-        private int $restarting = 5,
-        private string $winner = '',
-        private string $loser = '',
-        private array $spectators = []
+        protected int $id,
+        protected int $typeId,
+        protected string $kit,
+        protected bool $ranked,
+        protected Session $firstSession,
+        protected Session $secondSession,
+        protected Position $firstPosition,
+        protected Position $secondPosition,
+        protected World $world,
+        protected int $status = self::STARTING,
+        protected int $starting = 5,
+        protected int $running = 0,
+        protected int $restarting = 5,
+        protected string $winner = '',
+        protected string $loser = '',
+        protected array $spectators = []
     ) {
         $this->prepare();
     }
@@ -77,7 +77,7 @@ class Duel {
         
         return [
             ' &fOpponent: &c' . $opponent->getName(),
-            ' &fDuration: &c' . gmdate('i:s', $this->duration)
+            ' &fDuration: &c' . gmdate('i:s', $this->running)
         ];
     }
     
@@ -105,9 +105,6 @@ class Duel {
         
         $world->setTime(World::TIME_MIDNIGHT);
         $world->stopTime();
-        
-        $firstSession->setState(Session::DUEL);
-        $secondSession->setState(Session::DUEL);
         
         $firstPlayer = $firstSession->getPlayer();
         $secondPlayer = $secondSession->getPlayer();

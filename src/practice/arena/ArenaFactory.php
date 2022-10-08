@@ -8,7 +8,7 @@ use pocketmine\player\Player;
 use pocketmine\world\World;
 use practice\Practice;
 
-class ArenaManager {
+class ArenaFactory {
     
     static private array $arenas = [];
 

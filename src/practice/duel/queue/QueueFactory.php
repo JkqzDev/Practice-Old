@@ -38,7 +38,6 @@ class QueueFactory {
         $player->getInventory()->setContents([
             new LeaveQueueItem
         ]);
-        
         $foundQueue = self::found($queue);
         
         if ($foundQueue !== null) {
