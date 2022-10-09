@@ -5,15 +5,18 @@ declare(strict_types=1);
 namespace practice\arena;
 
 use pocketmine\player\Player;
+use pocketmine\Server;
+use pocketmine\world\Position;
 use pocketmine\world\World;
 use practice\session\SessionFactory;
 
-class Arena {
+final class Arena {
 
     public function __construct(
         private string $name,
         private string $kit,
         private World $world,
+        private array $spawns = [],
         private array $players = [],
         private array $combats = []
     ) {
@@ -57,7 +60,7 @@ class Arena {
 
         $player->getXpManager()->setXpAndProgress(0, 0.0);
 
-        $player->teleport($this->world->getSpawnLocation());
+        $player->teleport($this->spawns[array_rand($this->spawns)]);
 
         // KIT
     }
@@ -91,5 +94,44 @@ class Arena {
             ' &fKills: &c0 &7(0)',
             ' &fDeaths: &c0'
         ];
+    }
+    
+    public function serializeData(): array {
+        $data = [
+            'kit' => $this->kit,
+            'world' => $this->world->getFolderName(),
+            'spawns' => []
+        ];
+        
+        foreach ($this->spawns as $spawn) {
+            $data['spawns'][] = [
+                'x' => $spawn->getX(),
+                'y' => $spawn->getY(),
+                'z' => $spawn->getZ()
+            ];
+        }
+        
+        return $data;
+    }
+    
+    static public function deserializeData(array $data): ?self {
+        $storage = [
+            'kit' => $data['kit'],
+            'spawns' => []
+        ];
+        
+        if (!Server::getInstance()->getWorldManager()->isWorldGenerated($data['world'])) {
+            return null;
+        }
+        
+        if (!Server::getInstance()->getWorldManager()->isWorldLoaded($data['world'])) {
+            Server::getInstance()->getWorldManager()->loadWorld($data['world']);
+        }
+        $storage['world'] = Server::getInstance()->getWorldManager()->getWorldByName($data['world']);
+        
+        foreach ($data['spawns'] as $spawn) {
+            $storage['spawns'][] = new Position(floatval($spawn['x']), floatval($spawn['y']), floatval($spawn['z']), $storage['world']);
+        }
+        return $storage;
     }
 }

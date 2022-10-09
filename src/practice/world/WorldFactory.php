@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace practice\world;
 
 use pocketmine\Server;
+use pocketmine\utils\Config;
 use pocketmine\world\Position;
 use practice\Practice;
 
@@ -64,8 +65,31 @@ class WorldFactory {
 
             self::create($world->getFolderName(), ['no debuff'], $world->getSpawnLocation(), $world->getSpawnLocation(), null, null, true);
         }
+        $plugin = Practice::getInstance();
+        @mkdir($plugin->getDataFolder() . 'storage');
+        
+        $config = new Config($plugin->getDataFolder() . 'storage' . DIRECTORY_SEPARATOR . 'worlds.json', Config::JSON);
+        
+        foreach ($config->getAll() as $name => $data) {
+            $d_data = World::deserializeData($data);
+            
+            if ($d_data === null) {
+                continue;
+            }
+            self::create($name, $d_data['modes'], $d_data['firstPosition'], $d_data['secondPosition'], $d_data['firstPortal'], $d_data['secondPortal']);
+        }
     }
     
     static public function saveAll(): void {
+        @mkdir($plugin->getDataFolder() . 'storage');
+        
+        $config = new Config($plugin->getDataFolder() . 'storage' . DIRECTORY_SEPARATOR . 'worlds.json', Config::JSON);
+        $worlds = [];
+        
+        foreach (self::getAll() as $name => $world) {
+            $worlds[$name] = $world->serializeData();
+        }
+        $config->setAll($worlds);
+        $config->save();
     }
 }

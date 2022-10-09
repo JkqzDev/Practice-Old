@@ -19,7 +19,7 @@ use practice\session\handler\SetupArenaHandler;
 use practice\session\handler\SetupDuelHandler;
 use practice\session\scoreboard\ScoreboardBuilder;
 
-class Session {
+final class Session {
     
     static public function create(string $uuid, string $xuid, string $name): self {
         return new self($uuid, $xuid, $name);

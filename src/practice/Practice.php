@@ -30,7 +30,9 @@ class Practice extends PluginBase {
         DuelFactory::task();
         SessionFactory::task();
         
-        $this->getServer()->getPluginManager()->registerEvents(new EventHandler(), $this);
+        $this->registerHandlers();
+        $this->registerCommands();
+        $this->unregisterCommands();
     }
     
     protected function onDisable(): void {
@@ -42,5 +44,29 @@ class Practice extends PluginBase {
 
     static public function getInstance(): Practice {
         return self::$instance;
+    }
+    
+    protected function registerHandlers(): void {
+        $this->getServer()->getPluginManager()->registerEvents(new EventHandler(), $this);
+    }
+    
+    protected function registerCommands(): void {
+    }
+    
+    protected function unregisterCommands(): void {
+        $commands = [
+            'me',
+            'kill',
+            'suicide',
+            'clear',
+        ];
+        
+        foreach ($commands as $commandName) {
+            $command = $this->getServer()->getCommandMap()->getCommand($commandName);
+            
+            if ($command !== null) {
+                $this->getServer()->getCommandMap()->unregister($command);
+            }
+        }
     }
 }

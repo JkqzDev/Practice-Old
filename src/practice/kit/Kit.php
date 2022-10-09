@@ -4,14 +4,122 @@ declare(strict_types=1);
 
 namespace practice\kit;
 
-class Kit {
+use pocketmine\data\bedrock\EffectIdMap;
+use pocketmine\data\bedrock\EnchantmentIdMap;
+use pocketmine\entity\effect\EffectInstance;
+use pocketmine\item\enchantment\EnchantmentInstance;
+use pocketmine\item\ItemFactory;
+use pocketmine\player\Player;
+
+final class Kit {
 
     public function __construct(
-        private int $speedKnockback = 10,
-        private float $horizontalKnockback = 0.4,
-        private float $verticalKnockback = 0.4,
-        private array $armorContents = [],
-        private array $inventoryContents = [],
-        private array $effects = []
+        private int $attackCooldown,
+        private float $horizontalKnockback,
+        private float $verticalKnockback,
+        private array $armorContents,
+        private array $inventoryContents,
+        private array $effects
     ) {}
+    
+    public function getAttackCooldown(): int {
+        return $this->attackCooldown;
+    }
+    
+    public function getHorizontalKnockback(): float {
+        return $this->horizontalKnockback;
+    }
+    
+    public function getVerticalKnockback(): float {
+        return $this->verticalKnockback;
+    }
+    
+    public function setAttackCooldown(int $attackCooldown): void {
+        $this->attackCooldown = $attackCooldown;
+    }
+    
+    public function setHorizontalKnockback(float $horizontalKnockback): void {
+        $this->horizontalKnockback = $horizontalKnockback;
+    }
+    
+    public function setVerticalKnockback(float $verticalKnockback): void {
+        $this->verticalKnockback = $verticalKnockback;
+    }
+    
+    public function giveTo(Player $player): void {
+        $player->getArmorInventory()->setContents($this->armorContents);
+        $player->getInventory()->setContents($this->inventoryContents);
+        $player->getInventory()->setHeldItemIndex(0);
+        $effectManager = $player->getEffects();
+        
+        foreach ($this->effects as $effect) {
+            $effectManager->add($effect);
+        }
+    }
+    
+    public function serializeData(): array {
+        return [
+            'attackCooldown' => $this->attackCooldown,
+            'horizontalKnockback' => $this->horizontalnockback,
+            'verticalKnockback' => $this->verticalKnockback
+        ];
+    }
+    
+    static public function deserializeData(array $data): array {
+        $storage = [
+            'attackCooldown' => $data['attackCooldown'] ?? 10,
+            'horizontalKnockback' => $data['horizontalKnockback'] ?? 0.4,
+            'verticalKnockback' => $data['verticalKnockback'] ?? 0.4,
+            'armorContents' => [],
+            'inventoryContents' => [],
+            'effects' => []
+        ];
+        
+        $armorContents = $data['armorContents'] ?? [];
+        $inventoryContents = $data['inventoryContents'] ?? [];
+        $effects = $data['effects'] ?? [];
+        
+        foreach ($armorContents as $slot => $armor) {
+            $item = ItemFactory::getInstance()->get(intval($armor['id']), intval($armor['meta']));
+            
+            if (isset($armor['unbreakable'])) {
+                $item->setUnbreakable(boolval($armor['unbreakable']));
+            }
+            
+            if (isset($armor['enchantments'])) {
+                foreach ($armor['enchantments'] as $enchantId => $enchantLevel) {
+                    $enchant = EnchantmentIdMap::getInstance()->fromId(intval($enchantId));
+                    
+                    if ($enchant !== null) {
+                        $item->addEnchantment(new EnchantmentInstance($enchant, intval($enchantLevel));
+                    }
+                }
+            }
+            $storage['armorContents'][$slot] = $item;
+        }
+        
+        foreach ($inventoryContents as $slot => $it) {
+            $item = ItemFactory::getInstance()->get(intval($it['id']), intval($it['meta']), intval($it['count'] ?? 1));
+            
+            if (isset($it['enchantments'])) {
+                foreach ($it['enchantments'] as $enchantId => $enchantLevel) {
+                    $enchant = EnchantmentIdMap::getInstance()->fromId(intval($enchantId));
+                    
+                    if ($enchant !== null) {
+                        $item->addEnchantment(new EnchantmentInstance($enchant, intval($enchantLevel));
+                    }
+                }
+            }
+            $storage['inventoryContents'][$slot] = $item;
+        }
+        
+        foreach ($effects as $id => $eff) {
+            $effect = EffectIdMap::getInstance()->fromId(intval($id));
+                    
+            if ($effect !== null) {
+                $storage['effects'][intval($id)] = new EffectInstance($effect, intval($eff['duration']), intval($eff['amplifier']), false);
+            }
+        }
+        return $storage;
+    }
 }

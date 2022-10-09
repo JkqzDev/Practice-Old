@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace practice\session\handler;
 
-use pocketmine\world\Position;
+use pocketmine\math\Vector3;
 
 final class SetupDuelHandler {
     
@@ -15,10 +15,10 @@ final class SetupDuelHandler {
         private int $mode = self::SETUP_SPAWN,
         private array $modes = [],
         private bool $withPortal = false,
-        private ?Position $firstPosition = null,
-        private ?Position $secondPosition = null,
-        private ?Position $firstPortal = null,
-        private ?Position $secondPortal = null,
+        private ?Vector3 $firstPosition = null,
+        private ?Vector3 $secondPosition = null,
+        private ?Vector3 $firstPortal = null,
+        private ?Vector3 $secondPortal = null,
         private ?string $world = null
     ) {}
     
@@ -34,19 +34,19 @@ final class SetupDuelHandler {
         $this->withPortal = $withPortal;
     }
 
-    public function setFirstPosition(Position $position): void {
+    public function setFirstPosition(Vector3 $position): void {
         $this->firstPosition = $position;
     }
 
-    public function setSecondPosition(Position $position): void {
+    public function setSecondPosition(Vector3 $position): void {
         $this->secondPosition = $position;
     }
 
-    public function setFirstPortal(Position $position): void {
+    public function setFirstPortal(Vector3 $position): void {
         $this->firstPortal = $position;
     }
 
-    public function setSecondPortal(Position $position): void {
+    public function setSecondPortal(Vector3 $position): void {
         $this->secondPortal = $position;
     }
 
