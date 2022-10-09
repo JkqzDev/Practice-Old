@@ -80,7 +80,7 @@ class ScoreboardBuilder {
             return;
         }
         $lines = [
-            '&7'
+            '&7------------------'
         ];
 
         if ($session->inLobby()) {
@@ -91,7 +91,7 @@ class ScoreboardBuilder {
             if ($session->inQueue()) {
                 $queue = $session->getQueue();
                 
-                $lines[] = '&7&r&r&r';
+                $lines[] = '&7------------------&r&r&r';
                 $lines[] = $queue->isRanked() ? ' &cRanked ' . DuelFactory::getName($queue->getDuelType()) : ' &cUnranked ' . DuelFactory::getName($queue->getDuelType());
                 $lines[] = ' &fTime: &c' . gmdate('i:s', $queue->getTime());
             }
@@ -105,8 +105,8 @@ class ScoreboardBuilder {
             $lines = array_merge($lines, $duel->scoreboard($player));
         }
         $lines[] = '&r&r';
-        $lines[] = ' &clunar.gg';
-        $lines[] = '&7&r';
+        $lines[] = ' &cmisty.lol';
+        $lines[] = '&7------------------&r';
         $this->clear();
         
         foreach ($lines as $line) {

@@ -8,6 +8,7 @@ use pocketmine\player\Player;
 use pocketmine\Server;
 use pocketmine\world\Position;
 use pocketmine\world\World;
+use practice\kit\KitFactory;
 use practice\session\SessionFactory;
 
 final class Arena {
@@ -62,7 +63,8 @@ final class Arena {
 
         $player->teleport($this->spawns[array_rand($this->spawns)]);
 
-        // KIT
+        $kit = KitFactory::get(strtolower($this->kit));
+        $kit?->giveTo($player);
     }
     
     public function quit(Player $player): void {

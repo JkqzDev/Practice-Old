@@ -7,6 +7,7 @@ namespace practice\duel;
 use pocketmine\player\Player;
 use pocketmine\world\Position;
 use pocketmine\world\World;
+use practice\kit\KitFactory;
 use practice\Practice;
 use practice\session\Session;
 use practice\session\SessionFactory;
@@ -134,6 +135,8 @@ class Duel {
         $world->setTime(World::TIME_MIDNIGHT);
         $world->stopTime();
         
+        $kit = KitFactory::get(strtolower(DuelFactory::getName($this->typeId)));
+        
         $worldData = WorldFactory::get($worldName);
         $firstPosition = $worldData->getFirstPosition();
         $secondPosition = $worldData->getSecondPosition();
@@ -146,6 +149,9 @@ class Duel {
             $firstPlayer->getInventory()->clearAll();
             $secondPlayer->getArmorInventory()->clearAll();
             $secondPlayer->getInventory()->clearAll();
+            
+            $kit?->giveTo($firstPlayer);
+            $kit?->giveTo($secondPlayer);
             
             $firstPlayer->teleport(new Position($firstPosition->getX(), $firstPosition->getY(), $firstPosition->getZ(), $world));
             $secondPlayer->teleport(new Position($secondPosition->getX(), $secondPosition->getY(), $secondPosition->getZ(), $world));

@@ -20,7 +20,7 @@ class KitFactory {
     }
     
     static public function create(string $name, int $attackCooldown, float $horizontalKnockback, float $verticalKnockback, array $armorContents = [], array $inventoryContents = [], array $effects = []): void {
-        self::$kits[$name] = new Kit($name, $attackCooldown, $horizontalKnockback, $verticalKnockback, $armorContents, $inventoryContents, $effects);
+        self::$kits[$name] = new Kit($attackCooldown, $horizontalKnockback, $verticalKnockback, $armorContents, $inventoryContents, $effects);
     }
 
     static public function loadAll(): void {
@@ -32,6 +32,7 @@ class KitFactory {
             
             self::create($name, $kitData['attackCooldown'], $kitData['horizontalKnockback'], $kitData['verticalKnockback'], $kitData['armorContents'], $kitData['inventoryContents'], $kitData['effects']);
         }
+        var_dump(array_keys(self::getAll()));
     }
     
     static public function saveAll(): void {

@@ -60,16 +60,16 @@ final class Kit {
     public function serializeData(): array {
         return [
             'attackCooldown' => $this->attackCooldown,
-            'horizontalKnockback' => $this->horizontalnockback,
+            'horizontalKnockback' => $this->horizontalKnockback,
             'verticalKnockback' => $this->verticalKnockback
         ];
     }
     
     static public function deserializeData(array $data): array {
         $storage = [
-            'attackCooldown' => $data['attackCooldown'] ?? 10,
-            'horizontalKnockback' => $data['horizontalKnockback'] ?? 0.4,
-            'verticalKnockback' => $data['verticalKnockback'] ?? 0.4,
+            'attackCooldown' => intval($data['attackCooldown'] ?? 10),
+            'horizontalKnockback' => floatval($data['horizontalKnockback'] ?? 0.4),
+            'verticalKnockback' => floatval($data['verticalKnockback'] ?? 0.4),
             'armorContents' => [],
             'inventoryContents' => [],
             'effects' => []
@@ -91,7 +91,7 @@ final class Kit {
                     $enchant = EnchantmentIdMap::getInstance()->fromId(intval($enchantId));
                     
                     if ($enchant !== null) {
-                        $item->addEnchantment(new EnchantmentInstance($enchant, intval($enchantLevel));
+                        $item->addEnchantment(new EnchantmentInstance($enchant, intval($enchantLevel)));
                     }
                 }
             }
@@ -106,7 +106,7 @@ final class Kit {
                     $enchant = EnchantmentIdMap::getInstance()->fromId(intval($enchantId));
                     
                     if ($enchant !== null) {
-                        $item->addEnchantment(new EnchantmentInstance($enchant, intval($enchantLevel));
+                        $item->addEnchantment(new EnchantmentInstance($enchant, intval($enchantLevel)));
                     }
                 }
             }

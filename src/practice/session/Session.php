@@ -37,7 +37,7 @@ final class Session {
         private ?SetupArenaHandler $setupArenaHandler = null,
         private ?SetupDuelHandler $setupDuelHandler = null
     ) {
-        $this->scoreboard = new ScoreboardBuilder($this, '&l&cNA Practice');
+        $this->scoreboard = new ScoreboardBuilder($this, 'server.logo');
     }
     
     public function getXuid(): string {

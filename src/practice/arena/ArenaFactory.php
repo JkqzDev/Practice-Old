@@ -28,7 +28,7 @@ class ArenaFactory {
     
     static public function loadAll(): void {
         if (Practice::IS_DEVELOPING) {
-            self::create('No debuff (test)', 'no_debuff', Practice::getInstance()->getServer()->getWorldManager()->getDefaultWorld());
+            self::create('No debuff (test)', 'no_debuff', Practice::getInstance()->getServer()->getWorldManager()->getDefaultWorld(), [Practice::getInstance()->getServer()->getWorldManager()->getDefaultWord()->getSpawnLocation()->asPosition()]);
         }
         $plugin = Practice::getInstance();
         @mkdir($plugin->getDataFolder() . 'storage');
