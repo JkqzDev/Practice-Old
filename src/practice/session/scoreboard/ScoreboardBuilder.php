@@ -34,7 +34,10 @@ class ScoreboardBuilder {
     }
     
     public function despawn(): void {
-        // Nothing 
+        $pk = RemoveObjectivePacket::create(
+            $this->session->getPlayer()?->getName()
+        );
+        $this->session->getPlayer()?->getNetworkSession()->sendDataPacket($pk);
     }
     
     public function clear(): void {

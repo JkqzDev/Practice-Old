@@ -15,17 +15,20 @@ use practice\item\arena\JoinArenaItem;
 use practice\item\duel\RankedQueueItem;
 use practice\item\duel\UnrankedQueueItem;
 use practice\Practice;
-use practice\session\handler\SetupArenaHandler;
-use practice\session\handler\SetupDuelHandler;
+use practice\session\handler\HandlerTrait;
+use practice\session\setting\Setting;
+use practice\session\setting\SettingTrait;
 use practice\session\scoreboard\ScoreboardBuilder;
+use practice\session\scoreboard\ScoreboardTrait;
 
 final class Session {
+    use HandlerTrait;
+    use SettingTrait;
+    use ScoreboardTrait;
     
     static public function create(string $uuid, string $xuid, string $name): self {
         return new self($uuid, $xuid, $name);
     }
-    
-    private ScoreboardBuilder $scoreboard;
     
     public function __construct(
         private string $uuid,
@@ -33,11 +36,10 @@ final class Session {
         private string $name,
         private ?Arena $arena = null,
         private ?PlayerQueue $queue = null,
-        private ?Duel $duel = null,
-        private ?SetupArenaHandler $setupArenaHandler = null,
-        private ?SetupDuelHandler $setupDuelHandler = null
+        private ?Duel $duel = null
     ) {
-        $this->scoreboard = new ScoreboardBuilder($this, 'server.logo');
+        $this->setSetting(Setting::create());
+        $this->setScoreboard(new ScoreboardBuilder($this, 'server.logo'));
     }
     
     public function getXuid(): string {
@@ -62,14 +64,6 @@ final class Session {
     
     public function getDuel(): ?Duel {
         return $this->duel;
-    }
-    
-    public function getSetupArenaHandler(): ?SetupArenaHandler {
-        return $this->setupArenaHandler;
-    }
-    
-    public function getSetupDuelHandler(): ?SetupDuelHandler {
-        return $this->setupDuelHandler;
     }
     
     public function inArena(): bool {
@@ -102,22 +96,6 @@ final class Session {
     
     public function setDuel(?Duel $duel): void {
         $this->duel = $duel;
-    }
-
-    public function startSetupArenaHandler(): void {
-        $this->setupArenaHandler = new SetupArenaHandler;
-    }
-
-    public function startSetupDuelHandler(): void {
-        $this->setupDuelHandler = new SetupDuelHandler;
-    }
-
-    public function stopSetupArenaHandler(): void {
-        $this->setupArenaHandler = null;
-    }
-
-    public function stopSetupDuelHandler(): void {
-        $this->setupDuelHandler = null;
     }
     
     public function update(): void {
