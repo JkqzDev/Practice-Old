@@ -4,7 +4,9 @@ declare(strict_types=1);
 
 namespace practice\session\setting\gameplay;
 
-class GameplaySetting {
+use practice\session\setting\Setting;
+
+class GameplaySetting extends Setting {
     
     public function __construct(string $name, bool $value = true) {
         parent::__construct($name, $value);

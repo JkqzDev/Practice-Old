@@ -5,8 +5,9 @@ declare(strict_types=1);
 namespace practice\session\setting\display;
 
 use practice\session\Session;
+use practice\session\setting\Setting;
 
-class DisplaySetting {
+class DisplaySetting extends Setting {
     
     public function __construct(string $name, bool $value = true) {
         parent::__construct($name, $value);
