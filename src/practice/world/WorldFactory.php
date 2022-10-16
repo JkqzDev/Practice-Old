@@ -58,14 +58,14 @@ class WorldFactory {
     }
 
     static public function loadAll(): void {
-        @mkdir(Practice::getInstance()->getDataFolder() . 'worlds');
+        $plugin = Practice::getInstance();
+        @mkdir($plugin->getDataFolder() . 'worlds');
         
         if (Practice::IS_DEVELOPING) {
             $world = Server::getInstance()->getWorldManager()->getDefaultWorld();
 
             self::create($world->getFolderName(), ['no debuff'], $world->getSpawnLocation(), $world->getSpawnLocation(), null, null, true);
         }
-        $plugin = Practice::getInstance();
         @mkdir($plugin->getDataFolder() . 'storage');
         
         $config = new Config($plugin->getDataFolder() . 'storage' . DIRECTORY_SEPARATOR . 'worlds.json', Config::JSON);
@@ -81,6 +81,7 @@ class WorldFactory {
     }
     
     static public function saveAll(): void {
+        $plugin = Practice::getInstance();
         @mkdir($plugin->getDataFolder() . 'storage');
         
         $config = new Config($plugin->getDataFolder() . 'storage' . DIRECTORY_SEPARATOR . 'worlds.json', Config::JSON);

@@ -69,7 +69,7 @@ final class Arena {
         $this->blocks[$block->getPosition()->__toString()] = $block;
     }
     
-    public function handleDamage(EntityDamateEvent $event): void {
+    public function handleDamage(EntityDamageEvent $event): void {
         $player = $event->getEntity();
         
         if (!$player instanceof Player) {
@@ -192,7 +192,7 @@ final class Arena {
         return $data;
     }
     
-    static public function deserializeData(array $data): ?self {
+    static public function deserializeData(array $data): ?array {
         $storage = [
             'kit' => $data['kit'],
             'spawns' => []
