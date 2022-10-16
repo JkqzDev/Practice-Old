@@ -24,7 +24,7 @@ use pocketmine\utils\TextFormat;
 
 class EventHandler implements Listener {
     
-    public function handleBreak(BlockBreakEvenr $event): void {
+    public function handleBreak(BlockBreakEvent $event): void {
         $player = $event->getPlayer();
         $session = SessionFactory::get($player);
         
@@ -34,6 +34,12 @@ class EventHandler implements Listener {
         
         if ($session->inLobby()) {
             $event->cancel();
+        } elseif ($session->inDuel()) {
+            $duel = $session->getDuel();
+            $duel->handleBreak($event);
+        } elseif ($session->inArena()) {
+            $arena = $session->getArena();
+            $arena->handleBreak($event);
         }
     }
     
@@ -47,6 +53,12 @@ class EventHandler implements Listener {
         
         if ($session->inLobby()) {
             $event->cancel();
+        } elseif ($session->inDuel()) {
+            $duel = $session->getDuel();
+            $duel->handlePlace($event);
+        } elseif ($session->inArena()) {
+            $arena = $session->getArena();
+            $arena->handlePlace($event);
         }
     }
     
@@ -80,17 +92,10 @@ class EventHandler implements Listener {
             }
         } elseif ($session->inDuel()) {
             $duel = $session->getDuel();
-            $finalHealth = $player->getHealth() - $event->getFinalDamage();
-            
-            if (!$duel->isRunning()) {
-                $event->cancel();
-                return;
-            }
-            
-            if ($finalHealth == 0.00) {
-                $event->cancel();
-                $duel->finish($player);
-            }
+            $duel->handleDamage($event);
+        } elseif ($session->inArena()) {
+            $arena = $session->getArena();
+            $arena->handleDamage($event);
         }
     }
     

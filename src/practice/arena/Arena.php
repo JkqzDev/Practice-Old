@@ -4,6 +4,10 @@ declare(strict_types=1);
 
 namespace practice\arena;
 
+use pocketmine\event\block\BlockBreakEvent;
+use pocketmine\event\block\BlockPlaceEvent;
+use pocketmine\event\entity\EntityDamageEvent;
+use pocketmine\event\entity\EntityDamageByEntityEvent;
 use pocketmine\player\Player;
 use pocketmine\Server;
 use pocketmine\world\Position;
@@ -19,7 +23,8 @@ final class Arena {
         private World $world,
         private array $spawns = [],
         private array $players = [],
-        private array $combats = []
+        private array $combats = [],
+        private array $blocks = []
     ) {
         $world->setTime(World::TIME_MIDNIGHT);
         $world->startTime();
@@ -46,6 +51,64 @@ final class Arena {
             return;
         }
         unset($this->players[spl_object_hash($player)]);
+    }
+    
+    public function handleBreak(BlockBreakEvent $event): void {
+        $block = $event->getBlock();
+        
+        if (!isset($this->blocks[$block->getPosition()->__toString()])) {
+            $event->cancel();
+            return;
+        }
+        unset($this->blocks[$block->getPosition()->__toString()]);
+    }
+    
+    public function handlePlace(BlockPlaceEvent $event): void {
+        $block = $event->getBlock();
+        
+        $this->blocks[$block->getPosition()->__toString()] = $block;
+    }
+    
+    public function handleDamage(EntityDamateEvent $event): void {
+        $player = $event->getEntity();
+        
+        if (!$player instanceof Player) {
+            return;
+        }
+        
+        if ($event instanceof EntityDamageByEntityEvent) {
+            $damager = $event->getDamager();
+            
+            if ($damager instanceof Player) {
+                if (!$this->isPlayer($damager)) {
+                    $event->cancel();
+                    return;
+                }
+                
+                if (isset($this->combats[$player->getName()])) {
+                    $combat = $this->combats[$player->getName()];
+                    
+                    if ($combat['time'] > time() && $combat['player']->getName() !== $damager->getName()) {
+                        $event->cancel();
+                        return;
+                    }
+                }
+                $this->combats[$player->getName()] = ['time' => time() + 15, 'player' => $damager];
+                $this->combats[$damager->getName()] = ['time' => time() + 15, 'player' => $player];
+            }
+        }
+        $finalHealth = $player->getHealth() - $event->getFinalDamage();
+        
+        if ($finalHealth <= 0.00) {
+            $event->cancel();
+            
+            if (isset($this->combats[$player->getName()])) {
+                $combat = $this->combats[$player->getName()];
+                $session = SessionFactory::get($combat['player']);
+                
+            }
+            $this->quit($player);
+        }
     }
 
     public function join(Player $player): void {
@@ -92,10 +155,23 @@ final class Arena {
     }
 
     public function scoreboard(Player $player): array {
-        return [
+        $time = 0;
+        
+        $lines = [
             ' &fKills: &c0 &7(0)',
             ' &fDeaths: &c0'
         ];
+        
+        if (isset($this->combats[$player->getName()])) {
+            $combat = $this->combats[$player->getName()];
+            
+            if ($combat['time'] > time()) {
+                $time = $combat['time'] - time();
+            }
+        }
+        $lines[] = '&r&r&r&r';
+        $lines[] = ' &fCombat: &c' . $time;
+        return $lines;
     }
     
     public function serializeData(): array {

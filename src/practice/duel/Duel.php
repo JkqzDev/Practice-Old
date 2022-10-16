@@ -4,7 +4,11 @@ declare(strict_types=1);
 
 namespace practice\duel;
 
+use pocketmine\event\block\BlockBreakEvent;
+use pocketmine\event\block\BlockPlaceEvent;
+use pocketmine\event\entity\EntityDamageEvent;
 use pocketmine\player\Player;
+use pocketmine\utils\TextFormat;
 use pocketmine\world\Position;
 use pocketmine\world\World;
 use practice\kit\KitFactory;
@@ -46,7 +50,8 @@ class Duel {
         protected int $restarting = 5,
         protected string $winner = '',
         protected string $loser = '',
-        protected array $spectators = []
+        protected array $spectators = [],
+        protected array $blocks = []
     ) {
         $this->prepare();
     }
@@ -125,6 +130,41 @@ class Duel {
         unset($this->spectators[$hash]);
     }
     
+    public function handleBreak(BlockBreakEvent $event): void {
+        $block = $event->getBlock();
+        
+        if (!isset($this->blocks[$block->getPosition()->__toString()])) {
+            $event->cancel();
+            return;
+        }
+        unset($this->blocks[$block->getPosition()->__toString()]);
+    }
+    
+    public function handlePlace(BlockPlaceEvent $event): void {
+        $block = $event->getBlock();
+        
+        $this->blocks[$block->getPosition()->__toString()] = $block;
+    }
+    
+    public function handleDamage(EntityDamageEvent $event): void {
+        $player = $event->getEntity();
+        
+        if (!$player instanceof Player) {
+            return;
+        }
+        $finalHealth = $player->getHealth() - $event->getFinalDamage();
+        
+        if (!$this->isRunning()) {
+            $event->cancel();
+            return;
+        }
+            
+        if ($finalHealth <= 0.00) {
+            $event->cancel();
+            $this->finish($player);
+        }
+    }
+    
     public function prepare(): void {
         $worldName = $this->worldName;
         $world = $this->world;
@@ -192,12 +232,26 @@ class Duel {
     }
     
     public function update(): void {
+        $firstPlayer = $this->firstSession->getPlayer();
+        $secondPlayer = $this->secondSession->getPlayer();
+        
         switch ($this->status) {
             case self::STARTING:
                 if ($this->starting <= 0) {
                     $this->status = self::RUNNING;
+                    
+                    $firstPlayer->sendMessage(TextFormat::colorize('&cMatch started.'));
+                    $secondPlayer->sendMessage(TextFormat::colorize('&cMatch started.'));
+                    
+                    $firstPlayer->sendTitle('Match Started!', TextFormat::colorize('&7The match has begun.'));
+                    $secondPlayer->sendTitle('Match Started!', TextFormat::colorize('&7The match has begun.'));
                     return;
                 }
+                $firstPlayer->sendMessage(TextFormat::colorize('&7The match will be starting in &c' . $this->starting . '&7..'));
+                $secondPlayer->sendMessage(TextFormat::colorize('&7The match will be starting in &c' . $this->starting . '&7..'));
+                
+                $firstPlayer->sendTitle('Match starting', TextFormat::colorize('&7The match will be starting in &c' . $this->starting . '&7..'));
+                $secondPlayer->sendTitle('Match starting', TextFormat::colorize('&7The match will be starting in &c' . $this->starting . '&7..'));
                 $this->starting--;
                 break;
                 
