@@ -25,6 +25,7 @@ use practice\session\setting\Setting;
 use practice\session\setting\SettingTrait;
 use practice\session\scoreboard\ScoreboardBuilder;
 use practice\session\scoreboard\ScoreboardTrait;
+use practice\session\setting\display\DisplaySetting;
 
 final class Session {
     use PlayerData;
@@ -128,7 +129,11 @@ final class Session {
         if ($player === null) {
             return;
         }
-        $this->scoreboard->spawn();
+        $scoreboardSetting = $this->getSetting(Setting::SCOREBOARD);
+
+        if ($scoreboardSetting instanceof DisplaySetting && $scoreboardSetting->isEnabled()) {
+            $this->scoreboard->spawn();
+        }
         
         $player->setGamemode(GameMode::SURVIVAL());
         
