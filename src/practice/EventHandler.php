@@ -10,7 +10,6 @@ use pocketmine\event\block\LeavesDecayEvent;
 use pocketmine\event\entity\EntityDamageEvent;
 use pocketmine\event\entity\EntityRegainHealthEvent;
 use pocketmine\event\inventory\InventoryTransactionEvent;
-use practice\session\SessionFactory;
 use pocketmine\event\Listener;
 use pocketmine\event\player\PlayerExhaustEvent;
 use pocketmine\event\player\PlayerInteractEvent;
@@ -22,6 +21,7 @@ use pocketmine\network\mcpe\protocol\LevelSoundEventPacket;
 use pocketmine\network\mcpe\protocol\types\LevelSoundEvent;
 use pocketmine\player\Player;
 use pocketmine\utils\TextFormat;
+use practice\session\SessionFactory;
 
 final class EventHandler implements Listener {
     

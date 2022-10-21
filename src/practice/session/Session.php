@@ -16,6 +16,7 @@ use practice\item\arena\JoinArenaItem;
 use practice\item\duel\DuelSpectateItem;
 use practice\item\duel\queue\RankedQueueItem;
 use practice\item\duel\queue\UnrankedQueueItem;
+use practice\item\player\PlayerProfileItem;
 use practice\party\Party;
 use practice\Practice;
 use practice\session\data\PlayerData;
@@ -184,7 +185,8 @@ final class Session {
             0 => new RankedQueueItem,
             1 => new UnrankedQueueItem,
             2 => new JoinArenaItem,
-            4 => new DuelSpectateItem
+            4 => new DuelSpectateItem,
+            8 => new PlayerProfileItem
         ]);
     }
 }
