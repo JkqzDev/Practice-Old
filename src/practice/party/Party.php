@@ -13,6 +13,7 @@ class Party {
         private bool $open = true,
         private array $members = []
     ) {
+        $this->addMemeber($owner);
     }
 
     public function getOwner(): Player {

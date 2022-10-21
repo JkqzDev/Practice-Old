@@ -4,11 +4,9 @@ declare(strict_types=1);
 
 namespace practice\arena;
 
-use pocketmine\player\Player;
 use pocketmine\utils\Config;
 use pocketmine\world\World;
 use practice\Practice;
-use practice\session\SessionFactory;
 
 class ArenaFactory {
     
