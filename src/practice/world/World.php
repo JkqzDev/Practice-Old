@@ -16,7 +16,7 @@ class World {
         private Position $firstPosition,
         private Position $secondPosition,
         private array $modes = [],
-        private bool $copy = false,
+        bool $copy = false,
         private ?Position $firstPortal = null,
         private ?Position $secondPortal = null
     ) {
@@ -125,12 +125,14 @@ class World {
             $storage['firstPortal'] = new Position(
                 floatval($data['firstPortal']['x']),
                 floatval($data['firstPortal']['y']),
-                floatval($data['firstPortal']['z'])
+                floatval($data['firstPortal']['z']),
+                null
             );
             $storage['secondPortal'] = new Position(
                 floatval($data['secondPortal']['x']),
                 floatval($data['secondPortal']['y']),
-                floatval($data['secondPortal']['z'])
+                floatval($data['secondPortal']['z']),
+                null
             );
         }
         return $storage;

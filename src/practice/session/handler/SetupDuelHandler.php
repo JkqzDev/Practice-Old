@@ -30,10 +30,6 @@ final class SetupDuelHandler {
         private ?string $world = null
     ) {}
     
-    public function getMode(): int {
-        return $this->mode;
-    }
-    
     public function addMode(string $mode): void {
         $this->modes[] = $mode;
     }
@@ -116,7 +112,7 @@ final class SetupDuelHandler {
         $player->setGamemode(GameMode::CREATIVE());
 
         $firstPosition = BlockFactory::getInstance()->get(BlockLegacyIds::DIAMOND_ORE, 0);
-        $secondPosition = BlockFactory::getInstance()->get(BlockLegacyIds::GOLD_ORE);
+        $secondPosition = BlockFactory::getInstance()->get(BlockLegacyIds::GOLD_ORE, 0);
 
         $save = ItemFactory::getInstance()->get(ItemIds::DYE, 10);
         $cancel = ItemFactory::getInstance()->get(ItemIds::DYE, 1);

@@ -7,6 +7,7 @@ namespace practice\kit;
 use pocketmine\data\bedrock\EffectIdMap;
 use pocketmine\data\bedrock\EnchantmentIdMap;
 use pocketmine\entity\effect\EffectInstance;
+use pocketmine\item\Durable;
 use pocketmine\item\enchantment\EnchantmentInstance;
 use pocketmine\item\ItemFactory;
 use pocketmine\player\Player;
@@ -82,7 +83,7 @@ final class Kit {
         foreach ($armorContents as $slot => $armor) {
             $item = ItemFactory::getInstance()->get(intval($armor['id']), intval($armor['meta']));
             
-            if (isset($armor['unbreakable'])) {
+            if (isset($armor['unbreakable']) && $item instanceof Durable) {
                 $item->setUnbreakable(boolval($armor['unbreakable']));
             }
             
