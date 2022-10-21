@@ -10,6 +10,7 @@ use cosmicpe\form\entries\simple\Button;
 use cosmicpe\form\SimpleForm;
 use pocketmine\player\Player;
 use pocketmine\utils\TextFormat;
+use practice\session\Session;
 use practice\session\SessionFactory;
 use practice\session\setting\display\DisplaySetting;
 use practice\session\setting\gameplay\GameplaySetting;
@@ -44,23 +45,30 @@ class PlayerProfileForm extends SimpleForm {
         if ($session === null) {
             return;
         }
-        $customForm = new CustomForm(TextFormat::colorize('&gPlayer Settings'));
-        $settings = $session->getSettings();
+        $customForm = new class($session) extends CustomForm {
+            
+            public function __construct(Session $session) {
+                parent::__construct(TextFormat::colorize('&gPlayer Settings'));
+                $settings = $session->getSettings();
 
-        foreach ($settings as $setting) {
-            if ($setting instanceof DisplaySetting) {
-                $toggle = new ToggleEntry($setting->getName(), $setting->isEnabled());
-                $customForm->addEntry($toggle, function (Player $player, ToggleEntry $entry, bool $value) use ($session, $setting): void {
-                    $setting->setEnabled($value);
-                    $setting->execute($session);
-                });
-            } elseif ($setting instanceof GameplaySetting) {
-                $toggle = new ToggleEntry($setting->getName(), $setting->isEnabled());
-                $customForm->addEntry($toggle, function (Player $player, ToggleEntry $entry, bool $value) use ($setting): void {
-                    $setting->setEnabled($value);
-                });
+                foreach ($settings as $setting) {
+                    if ($setting instanceof DisplaySetting) {
+                        $toggle = new ToggleEntry($setting->getName(), $setting->isEnabled());
+
+                        $this->addEntry($toggle, function (Player $player, ToggleEntry $entry, bool $value) use ($session, $setting): void {
+                            $setting->setEnabled($value);
+                            $setting->execute($session);
+                        });
+                    } elseif ($setting instanceof GameplaySetting) {
+                        $toggle = new ToggleEntry($setting->getName(), $setting->isEnabled());
+
+                        $this->addEntry($toggle, function (Player $player, ToggleEntry $entry, bool $value) use ($setting): void {
+                            $setting->setEnabled($value);
+                        });
+                    }
+                }
             }
-        }
+        };
         $player->sendForm($customForm);
     }
 }

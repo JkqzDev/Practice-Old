@@ -11,7 +11,7 @@ use practice\duel\Duel;
 
 class Boxing extends Duel {
     
-    private int $fistHit = 0, $secondHit = 0;
+    private int $firstHit = 0, $secondHit = 0;
     private int $firstCombo = 0, $secondCombo = 0;
     
     public function handleDamage(EntityDamageEvent $event): void {

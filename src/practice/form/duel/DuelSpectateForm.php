@@ -38,62 +38,72 @@ final class DuelSpectateForm extends SimpleForm {
     }
 
     private function firstPage(Player $player, array $matches): void {
-        $simpleForm = new SimpleForm(TextFormat::colorize('&3Unranked Duels'), TextFormat::colorize('&7Select duel for spectate'));
+        $simpleForm = new class($player, $matches) extends SimpleForm {
 
-        foreach ($matches as $match) {
-            assert($match instanceof Duel);
-            $button = new Button(TextFormat::colorize('&f' . $match->getFirstSession()->getName() . ' vs ' . $match->getSecondSession()->getName() . PHP_EOL . '&7Gamemode: ' . DuelFactory::getName($match->getTypeId())));
+            public function __construct(Player $player, array $matches) {
+                parent::__construct(TextFormat::colorize('&3Unranked Duels'), TextFormat::colorize('&7Select duel for spectate'));
 
-            $simpleForm->addButton($button, function (Player $player, int $button_index) use ($match): void {
-                if ($match->isEnded()) {
-                    return;
+                foreach ($matches as $match) {
+                    assert($match instanceof Duel);
+                    $button = new Button(TextFormat::colorize('&f' . $match->getFirstSession()->getName() . ' vs ' . $match->getSecondSession()->getName() . PHP_EOL . '&7Gamemode: ' . DuelFactory::getName($match->getTypeId())));
+        
+                    $this->addButton($button, function (Player $player, int $button_index) use ($match): void {
+                        if ($match->isEnded()) {
+                            return;
+                        }
+                        $session = SessionFactory::get($player);
+        
+                        if ($session === null) {
+                            return;
+                        }
+                        $session->setDuel($match);
+        
+                        $player->getInventory()->clearAll();
+                        $player->getArmorInventory()->clearAll();
+                        $player->getOffHandInventory()->clearAll();
+                        $player->getCursorInventory()->clearAll();
+        
+                        $player->setGamemode(GameMode::SPECTATOR());
+                        $player->teleport($match->getWorld()->getSpawnLocation());
+                    });
                 }
-                $session = SessionFactory::get($player);
-
-                if ($session === null) {
-                    return;
-                }
-                $session->setDuel($match);
-
-                $player->getInventory()->clearAll();
-                $player->getArmorInventory()->clearAll();
-                $player->getOffHandInventory()->clearAll();
-                $player->getCursorInventory()->clearAll();
-
-                $player->setGamemode(GameMode::SPECTATOR());
-                $player->teleport($match->getWorld()->getSpawnLocation());
-            });
-        }
+            }
+        };
         $player->sendForm($simpleForm);
     }
 
     private function secondPage(Player $player, array $matches): void {
-        $simpleForm = new SimpleForm(TextFormat::colorize('&3Ranked Duels'), TextFormat::colorize('&7Select duel for spectate'));
+        $simpleForm = new class($player, $matches) extends SimpleForm {
 
-        foreach ($matches as $match) {
-            assert($match instanceof Duel);
-            $button = new Button(TextFormat::colorize('&f' . $match->getFirstSession()->getName() . ' vs ' . $match->getSecondSession()->getName() . PHP_EOL . '&7Gamemode: ' . DuelFactory::getName($match->getTypeId())));
+            public function __construct(Player $player, array $matches) {
+                parent::__construct(TextFormat::colorize('&3Ranked Duels'), TextFormat::colorize('&7Select duel for spectate'));
 
-            $simpleForm->addButton($button, function (Player $player, int $button_index) use ($match): void {
-                if ($match->isEnded()) {
-                    return;
+                foreach ($matches as $match) {
+                    assert($match instanceof Duel);
+                    $button = new Button(TextFormat::colorize('&f' . $match->getFirstSession()->getName() . ' vs ' . $match->getSecondSession()->getName() . PHP_EOL . '&7Gamemode: ' . DuelFactory::getName($match->getTypeId())));
+        
+                    $this->addButton($button, function (Player $player, int $button_index) use ($match): void {
+                        if ($match->isEnded()) {
+                            return;
+                        }
+                        $session = SessionFactory::get($player);
+        
+                        if ($session === null) {
+                            return;
+                        }
+                        $session->setDuel($match);
+        
+                        $player->getInventory()->clearAll();
+                        $player->getArmorInventory()->clearAll();
+                        $player->getOffHandInventory()->clearAll();
+                        $player->getCursorInventory()->clearAll();
+        
+                        $player->setGamemode(GameMode::SPECTATOR());
+                        $player->teleport($match->getWorld()->getSpawnLocation());
+                    });
                 }
-                $session = SessionFactory::get($player);
-
-                if ($session === null) {
-                    return;
-                }
-                $session->setDuel($match);
-
-                $player->getInventory()->clearAll();
-                $player->getArmorInventory()->clearAll();
-                $player->getOffHandInventory()->clearAll();
-                $player->getCursorInventory()->clearAll();
-
-                $player->setGamemode(GameMode::SPECTATOR());
-                $player->teleport($match->getWorld()->getSpawnLocation());
-            });
-        }
+            }
+        };
         $player->sendForm($simpleForm);
     }
 }
