@@ -13,6 +13,7 @@ use pocketmine\event\inventory\InventoryTransactionEvent;
 use practice\session\SessionFactory;
 use pocketmine\event\Listener;
 use pocketmine\event\player\PlayerExhaustEvent;
+use pocketmine\event\player\PlayerInteractEvent;
 use pocketmine\event\player\PlayerJoinEvent;
 use pocketmine\event\player\PlayerLoginEvent;
 use pocketmine\event\player\PlayerQuitEvent;
@@ -126,6 +127,26 @@ class EventHandler implements Listener {
     
     public function handleExhaust(PlayerExhaustEvent $event): void {
         $event->cancel();
+    }
+
+    public function handleInteract(PlayerInteractEvent $event): void {
+        $player = $event->getPlayer();
+        $session = SessionFactory::get($player);
+
+        if ($session === null) {
+            return;
+        }
+
+        if ($session->inLobby()) {
+            $handlerSetupArena = $session->getSetupArenaHandler();
+            $handlerSetupDuel = $session->getSetupDuelHandler();
+
+            if ($handlerSetupArena !== null) {
+                $handlerSetupArena->handleInteract($event);
+            } elseif ($handlerSetupDuel !== null) {
+                $handlerSetupDuel->handleInteract($event);
+            }
+        }
     }
     
     public function handleJoin(PlayerJoinEvent $event): void {

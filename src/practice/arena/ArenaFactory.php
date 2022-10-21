@@ -25,6 +25,13 @@ class ArenaFactory {
     static public function create(string $name, string $kit, World $world, array $spawns): void {
         self::$arenas[$name] = new Arena($name, $kit, $world, $spawns);
     }
+
+    static public function remove(string $name): void {
+        if (self::get($name) === null) {
+            return;
+        }
+        unset(self::$arenas[$name]);
+    }
     
     static public function loadAll(): void {
         if (Practice::IS_DEVELOPING) {

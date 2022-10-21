@@ -84,7 +84,7 @@ class ScoreboardBuilder {
             return;
         }
         $lines = [
-            '&7------------------'
+            '&7'
         ];
 
         if ($session->inLobby()) {
@@ -97,7 +97,7 @@ class ScoreboardBuilder {
             if ($session->inQueue()) {
                 $queue = $session->getQueue();
                 
-                $lines[] = '&7------------------&r&r&r';
+                $lines[] = '&7&r&r&r';
                 $lines[] = $queue->isRanked() ? ' &bRanked ' . DuelFactory::getName($queue->getDuelType()) : ' &bUnranked ' . DuelFactory::getName($queue->getDuelType());
                 $lines[] = ' &fTime: &b' . gmdate('i:s', $queue->getTime());
             }
@@ -112,7 +112,7 @@ class ScoreboardBuilder {
         }
         $lines[] = '&r&r';
         $lines[] = ' &7hsm.lol';
-        $lines[] = '&7------------------&r';
+        $lines[] = '&7&r';
         $this->clear();
         
         foreach ($lines as $line) {

@@ -128,7 +128,7 @@ final class Session {
         }
         $this->scoreboard->spawn();
         
-        $player->setGamemode(GameMode::SURVIVAL);
+        $player->setGamemode(GameMode::SURVIVAL());
         
         $player->getInventory()->clearAll();
         $player->getArmorInventory()->clearAll();

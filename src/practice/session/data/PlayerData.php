@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace practice\session\data;
 
-class PlayerData {
+trait PlayerData {
     
     private int $kills = 0;
     private int $deaths = 0;

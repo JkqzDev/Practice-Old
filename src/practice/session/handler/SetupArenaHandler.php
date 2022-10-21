@@ -34,8 +34,12 @@ final class SetupArenaHandler {
         return $this->kit;
     }
 
-    public function existSpawn(Position $position): bool {
+    private function existSpawn(Position $position): bool {
         return isset($this->spawns[$position->__toString()]);
+    }
+
+    public function setName(string $name): void {
+        $this->name = $name;
     }
 
     public function setWorld(string $world): void {
@@ -46,15 +50,15 @@ final class SetupArenaHandler {
         $this->kit = $kit;
     }
 
-    public function addSpawn(Position $position): void {
+    private function addSpawn(Position $position): void {
         $this->spawns[$position->__toString()] = $position;
     }
 
-    public function deleteSpawns(): void {
+    private function deleteSpawns(): void {
         $this->spawns = [];
     }
 
-    public function create(Player $player): void {
+    private function create(Player $player): void {
         $server = Server::getInstance();
         $name = $this->name;
         
@@ -66,6 +70,12 @@ final class SetupArenaHandler {
 
         if ($this->kit === null) {
             $player->sendMessage(TextFormat::colorize('&cKit is null'));
+            return;
+        }
+
+        if (ArenaFactory::get($name) !== null) {
+            $player->sendMessage(TextFormat::colorize('&cArena already exists!'));
+            $this->finalizeCreator($player);
             return;
         }
         $kit = $this->kit;
@@ -82,6 +92,8 @@ final class SetupArenaHandler {
     }
     
     public function prepareCreator(Player $player): void {
+        $server = Server::getInstance();
+
         if ($this->world === null) {
             return;
         }
@@ -101,12 +113,14 @@ final class SetupArenaHandler {
         $save = ItemFactory::getInstance()->get(ItemIds::DYE, 10);
         $cancel = ItemFactory::getInstance()->get(ItemIds::DYE, 1);
         
-        $player->getInventory()->setContents(
+        $player->getInventory()->setContents([
             0 => $selectSpawns,
             1 => $deleteSpawns,
             7 => $save,
             8 => $cancel
-        );
+        ]);
+
+        $player->sendMessage(TextFormat::colorize('&aNow you have setup arena mode'));
     }
     
     public function finalizeCreator(Player $player): void {
@@ -118,13 +132,13 @@ final class SetupArenaHandler {
         $player->getOffHandInventory()->clearAll();
         
         $player->teleport(Server::getInstance()->getWorldManager()->getDefaultWorld()->getSpawnLocation());
-        $player->setGamemode(GameMode::SURVIVAL);
+        $player->setGamemode(GameMode::SURVIVAL());
         
         $session->giveLobyyItems();
         $session->stopSetupArenaHandler();
     }
     
-    public function handleItemUse(PlayerInteractEvent $event): void {
+    public function handleInteract(PlayerInteractEvent $event): void {
         $block = $event->getBlock();
         $item = $event->getItem();
         $player = $event->getPlayer();
@@ -140,11 +154,20 @@ final class SetupArenaHandler {
             $world = $this->world;
             
             if ($this->existSpawn($position)) {
+                $player->sendMessage(TextFormat::colorize('&cSpawn already exists!'));
+                return;
+            }
+
+            if ($position->getWorld()->getFolderName() !== $world) {
+                $player->sendMessage(TextFormat::colorize('&cYou can\'t add a spawn in another world'));
                 return;
             }
             $this->addSpawn($position);
+            $player->sendMessage(TextFormat::colorize('&aYou have added a new spawn'));
         } elseif ($item->getId() === BlockLegacyIds::GOLD_ORE) {
             $event->cancel();
+            $this->deleteSpawns();
+            $player->sendMessage(TextFormat::colorize('&cYou have removed all spawns'));
         } elseif ($item->getId() === ItemIds::DYE && $item->getMeta() === 10) {
             $event->cancel();
             $this->create($player);

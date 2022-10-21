@@ -44,6 +44,15 @@ final class Arena {
         return isset($this->players[spl_object_hash($player)]);
     }
 
+    public function inCombat(Player $player): bool {
+        if (isset($this->combats[$player->getName()])) {
+            $combat = $this->combats[$player->getName()];
+            
+            return $combat['time'] >= time();
+        }
+        return false;
+    }
+
     public function addPlayer(Player $player): void {
         $this->players[spl_object_hash($player)] = $player;
     }
@@ -95,7 +104,7 @@ final class Arena {
                 if (isset($this->combats[$player->getName()])) {
                     $combat = $this->combats[$player->getName()];
                     
-                    if ($combat['time'] > time() && $combat['player']->getName() !== $damager->getName()) {
+                    if ($combat['time'] >= time() && $combat['player']->getName() !== $damager->getName()) {
                         $event->cancel();
                         return;
                     }
@@ -108,18 +117,22 @@ final class Arena {
         
         if ($finalHealth <= 0.00) {
             $event->cancel();
-            $session->addDeaths();
+            $session->addDeath();
             $session->resetKillstreak();
             
             if (isset($this->combats[$player->getName()])) {
                 $combat = $this->combats[$player->getName()];
-                $damager = SessionFactory::get($combat['player']);
-                $damager->addKills();
-                $damager->addKillstreak();
+
+                if ($combat['time'] >= time()) {
+                    $damager = SessionFactory::get($combat['player']);
+                    $damager->addKill();
+                    $damager->addKillstreak();
                 
-                unset($this->combats[$damager->getName()]);
+                    unset($this->combats[$damager->getName()]);
                 
-                Server::getInstance()->broadcastMessage(TextFormat::colorize('&a' . $damager->getName() . ' &2[' . $damager->getKills() . '] &7killed &c' . $player->getName() . ' &4[' . $session->getKills() . ']'));
+                    Server::getInstance()->broadcastMessage(TextFormat::colorize('&a' . $damager->getName() . ' &2[' . $damager->getKills() . '] &7killed &c' . $player->getName() . ' &4[' . $session->getKills() . ']'));
+                }
+                unset($this->combats[$player->getName()]);
             }
             $this->quit($player);
         }
@@ -144,7 +157,7 @@ final class Arena {
         $kit?->giveTo($player);
     }
     
-    public function quit(Player $player): void {
+    public function quit(Player $player, bool $withCombat = true): void {
         $session = SessionFactory::get($player);
         
         if ($session === null) {
@@ -152,7 +165,7 @@ final class Arena {
         }
         $this->removePlayer($player);
         
-        $player->setGamemode(GameMode::SURVIVAL);
+        $player->setGamemode(GameMode::SURVIVAL());
         
         $player->getArmorInventory()->clearAll();
         $player->getInventory()->clearAll();
@@ -169,8 +182,21 @@ final class Arena {
         $session->giveLobyyItems();
         $session->setArena(null);
         
-        if (isset($this->combats[$player->getName()])) {
-            unset($this->combats[$player->getName()]);
+        if ($withCombat) {
+            if (isset($this->combats[$player->getName()])) {
+                $combat = $this->combats[$player->getName()];
+
+                if ($combat['time'] >= time()) {
+                    $damager = SessionFactory::get($combat['player']);
+                    $damager->addKill();
+                    $damager->addKillstreak();
+                
+                    unset($this->combats[$damager->getName()]);
+                
+                    Server::getInstance()->broadcastMessage(TextFormat::colorize('&a' . $damager->getName() . ' &2[' . $damager->getKills() . '] &7killed &c' . $player->getName() . ' &4[' . $session->getKills() . ']'));
+                }
+                unset($this->combats[$player->getName()]);
+            }
         }
     }
 
