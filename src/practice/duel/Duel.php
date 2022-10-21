@@ -7,6 +7,7 @@ namespace practice\duel;
 use pocketmine\event\block\BlockBreakEvent;
 use pocketmine\event\block\BlockPlaceEvent;
 use pocketmine\event\entity\EntityDamageEvent;
+use pocketmine\player\GameMode;
 use pocketmine\player\Player;
 use pocketmine\utils\TextFormat;
 use pocketmine\world\Position;
@@ -33,8 +34,8 @@ class Duel {
     public const TYPE_COMBO = 10;
     
     public const STARTING = 0;
-    public const RUNNING = 2;
-    public const RESTARTING = 3;
+    public const RUNNING = 1;
+    public const RESTARTING = 2;
 
     public function __construct(
         protected int $id,
@@ -105,14 +106,23 @@ class Duel {
                 ];
                 
             default:
+                if ($this->isSpectator($player)) {
+                    return [
+                        ' &fKit: &b' . DuelFactory::getName($this->typeId),
+                        ' &fType: &b' . ($this->ranked ? 'Ranked' : 'Unranked'),
+                        ' &r&r',
+                        ' &fDuration: &b' . gmdate('i:s', $this->running),
+                        ' &fSpectators: &b' . count($this->spectators)
+                    ];
+                }
                 $opponent = $this->getOpponent($player);
                 
                 return [
-                    ' &fKit: &c' . DuelFactory::getName($this->typeId),
-                    ' &fDuration: &c' . gmdate('i:s', $this->running),
+                    ' &fKit: &b' . DuelFactory::getName($this->typeId),
+                    ' &fDuration: &b' . gmdate('i:s', $this->running),
                     ' &r&r',
-                    ' &fYour ping: &c' . $player->getNetworkSession()->getPing(),
-                    ' &fTheir ping: &c' . $opponent->getNetworkSession()->getPing()
+                    ' &fYour ping: &b' . $player->getNetworkSession()->getPing(),
+                    ' &fTheir ping: &b' . $opponent->getNetworkSession()->getPing()
                 ];
         }
     }
@@ -185,6 +195,9 @@ class Duel {
         $secondPlayer = $secondSession->getPlayer();
         
         if ($firstPlayer !== null && $secondPlayer !== null) {
+            $firstPlayer->setGamemode(GameMode::SURVIVAL);
+            $secondPlayer->setGamemode(GameMode::SURVIVAL);
+            
             $firstPlayer->getArmorInventory()->clearAll();
             $firstPlayer->getInventory()->clearAll();
             $secondPlayer->getArmorInventory()->clearAll();
@@ -205,9 +218,13 @@ class Duel {
         
         if ($loser->getName() === $firstSession->getName()) {
             $this->winner = $secondSession->getName();
+            $secondSession->getPlayer()?->sendTitle(TextFormat::colorize('&l&aWON!&r'), TextFormat::colorize('&7You won the fight!'));
         } else {
             $this->winner = $firstSession->getName();
+            $firstSession->getPlayer()?->sendTitle(TextFormat::colorize('&l&aWON!&r'), TextFormat::colorize('&7You won the fight!'));
         }
+        $loser->sendTitle(TextFormat::colorize('&l&cDEFEAT!&r'), TextFormat::colorize('&a' . $this->winner . '&7 won the fight!'));
+        
         $firstPlayer = $firstSession->getPlayer();
         $secondPlayer = $secondSession->getPlayer();
         
@@ -240,18 +257,18 @@ class Duel {
                 if ($this->starting <= 0) {
                     $this->status = self::RUNNING;
                     
-                    $firstPlayer->sendMessage(TextFormat::colorize('&cMatch started.'));
-                    $secondPlayer->sendMessage(TextFormat::colorize('&cMatch started.'));
+                    $firstPlayer->sendMessage(TextFormat::colorize('&bMatch started.'));
+                    $secondPlayer->sendMessage(TextFormat::colorize('&bMatch started.'));
                     
                     $firstPlayer->sendTitle('Match Started!', TextFormat::colorize('&7The match has begun.'));
                     $secondPlayer->sendTitle('Match Started!', TextFormat::colorize('&7The match has begun.'));
                     return;
                 }
-                $firstPlayer->sendMessage(TextFormat::colorize('&7The match will be starting in &c' . $this->starting . '&7..'));
-                $secondPlayer->sendMessage(TextFormat::colorize('&7The match will be starting in &c' . $this->starting . '&7..'));
+                $firstPlayer->sendMessage(TextFormat::colorize('&7The match will be starting in &b' . $this->starting . '&7..'));
+                $secondPlayer->sendMessage(TextFormat::colorize('&7The match will be starting in &b' . $this->starting . '&7..'));
                 
-                $firstPlayer->sendTitle('Match starting', TextFormat::colorize('&7The match will be starting in &c' . $this->starting . '&7..'));
-                $secondPlayer->sendTitle('Match starting', TextFormat::colorize('&7The match will be starting in &c' . $this->starting . '&7..'));
+                $firstPlayer->sendTitle('Match starting', TextFormat::colorize('&7The match will be starting in &b' . $this->starting . '&7..'));
+                $secondPlayer->sendTitle('Match starting', TextFormat::colorize('&7The match will be starting in &b' . $this->starting . '&7..'));
                 $this->starting--;
                 break;
                 
@@ -283,7 +300,6 @@ class Duel {
                         
                         $spectator->teleport($spectator->getServer()->getWorldManager()->getDefaultWorld()->getSpawnLocation());
                     }
-                    
                     $this->delete();
                     return;
                 }

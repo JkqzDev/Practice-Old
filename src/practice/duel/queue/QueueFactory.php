@@ -37,7 +37,7 @@ class QueueFactory {
         self::$queues[$xuid] = $queue;
         
         $player->getInventory()->setContents([
-            new LeaveQueueItem
+            8 => new LeaveQueueItem
         ]);
         $foundQueue = self::found($queue);
         

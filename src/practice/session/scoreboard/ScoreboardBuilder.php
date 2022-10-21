@@ -12,6 +12,7 @@ use pocketmine\utils\TextFormat;
 use practice\duel\DuelFactory;
 use practice\duel\queue\QueueFactory;
 use practice\Practice;
+use practice\session\SessionFactory;
 use practice\session\Session;
 
 class ScoreboardBuilder {
@@ -87,16 +88,18 @@ class ScoreboardBuilder {
         ];
 
         if ($session->inLobby()) {
-            $lines[] = ' &fOnline: &c' . count($plugin->getServer()->getOnlinePlayers());
-            $lines[] = ' &fPlaying: &c' . (count(DuelFactory::getAll()) * 2);
-            $lines[] = ' &fIn-queue: &c' . count(QueueFactory::getAll());
+            $playing = array_filter(SessionFactory::getAll(), function (Session $target): bool {
+                return !$target->inLobby() && $target->getPlayer() !== null;
+            });
+            $lines[] = ' &fOnline: &b' . count($plugin->getServer()->getOnlinePlayers());
+            $lines[] = ' &fPlaying: &b' . count($playing);
             
             if ($session->inQueue()) {
                 $queue = $session->getQueue();
                 
                 $lines[] = '&7------------------&r&r&r';
-                $lines[] = $queue->isRanked() ? ' &cRanked ' . DuelFactory::getName($queue->getDuelType()) : ' &cUnranked ' . DuelFactory::getName($queue->getDuelType());
-                $lines[] = ' &fTime: &c' . gmdate('i:s', $queue->getTime());
+                $lines[] = $queue->isRanked() ? ' &bRanked ' . DuelFactory::getName($queue->getDuelType()) : ' &bUnranked ' . DuelFactory::getName($queue->getDuelType());
+                $lines[] = ' &fTime: &b' . gmdate('i:s', $queue->getTime());
             }
         } elseif ($session->inArena()) {
             $arena = $session->getArena();
@@ -108,7 +111,7 @@ class ScoreboardBuilder {
             $lines = array_merge($lines, $duel->scoreboard($player));
         }
         $lines[] = '&r&r';
-        $lines[] = ' &cmisty.lol';
+        $lines[] = ' &7hsm.lol';
         $lines[] = '&7------------------&r';
         $this->clear();
         

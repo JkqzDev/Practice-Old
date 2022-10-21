@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace practice\session;
 
+use pocketmine\player\GameMode;
 use pocketmine\player\Player;
 use pocketmine\Server;
 use pocketmine\utils\TextFormat;
@@ -14,7 +15,9 @@ use practice\duel\queue\PlayerQueue;
 use practice\item\arena\JoinArenaItem;
 use practice\item\duel\RankedQueueItem;
 use practice\item\duel\UnrankedQueueItem;
+use practice\party\Party;
 use practice\Practice;
+use practice\session\data\PlayerData;
 use practice\session\handler\HandlerTrait;
 use practice\session\setting\Setting;
 use practice\session\setting\SettingTrait;
@@ -22,6 +25,7 @@ use practice\session\scoreboard\ScoreboardBuilder;
 use practice\session\scoreboard\ScoreboardTrait;
 
 final class Session {
+    use PlayerData;
     use HandlerTrait;
     use SettingTrait;
     use ScoreboardTrait;
@@ -34,12 +38,14 @@ final class Session {
         private string $uuid,
         private string $xuid,
         private string $name,
+        private int $enderpearl = 0,
         private ?Arena $arena = null,
         private ?PlayerQueue $queue = null,
-        private ?Duel $duel = null
+        private ?Duel $duel = null,
+        private ?Party $party = null
     ) {
-        $this->setSetting(Setting::create());
-        $this->setScoreboard(new ScoreboardBuilder($this, 'server.logo'));
+        $this->setSettings(Setting::create());
+        $this->setScoreboard(new ScoreboardBuilder($this, '&l&bHSM &r&7[South]&r'));
     }
     
     public function getXuid(): string {
@@ -66,6 +72,10 @@ final class Session {
         return $this->duel;
     }
     
+    public function getParty(): ?Party {
+        return $this->party;
+    }
+    
     public function inArena(): bool {
         return $this->arena !== null;
     }
@@ -76,6 +86,10 @@ final class Session {
     
     public function inDuel(): bool {
         return $this->duel !== null;
+    }
+    
+    public function inParty(): bool {
+        return $this->party !== null;
     }
 
     public function inLobby(): bool {
@@ -98,6 +112,10 @@ final class Session {
         $this->duel = $duel;
     }
     
+    public function setParty(?Party $party): void {
+        $this->party = $party;
+    }
+    
     public function update(): void {
         $this->scoreboard->update();
     }
@@ -109,6 +127,8 @@ final class Session {
             return;
         }
         $this->scoreboard->spawn();
+        
+        $player->setGamemode(GameMode::SURVIVAL);
         
         $player->getInventory()->clearAll();
         $player->getArmorInventory()->clearAll();
@@ -147,6 +167,7 @@ final class Session {
         $this->arena = null;
         $this->queue = null;
         $this->duel = null;
+        $this->party = null;
 
         $this->stopSetupArenaHandler();
         $this->stopSetupDuelHandler();
