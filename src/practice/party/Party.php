@@ -6,7 +6,7 @@ namespace practice\party;
 
 use pocketmine\player\Player;
 
-class Party {
+final class Party {
 
     public function __construct(
         private Player $owner,

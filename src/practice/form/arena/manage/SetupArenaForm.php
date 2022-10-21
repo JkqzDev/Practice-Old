@@ -12,7 +12,7 @@ use pocketmine\utils\TextFormat;
 use practice\arena\ArenaFactory;
 use practice\session\SessionFactory;
 
-class SetupArenaForm extends CustomForm {
+final class SetupArenaForm extends CustomForm {
 
     public function __construct(
         private ?string $name = null,

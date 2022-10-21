@@ -23,7 +23,7 @@ use pocketmine\network\mcpe\protocol\types\LevelSoundEvent;
 use pocketmine\player\Player;
 use pocketmine\utils\TextFormat;
 
-class EventHandler implements Listener {
+final class EventHandler implements Listener {
     
     public function handleBreak(BlockBreakEvent $event): void {
         $player = $event->getPlayer();

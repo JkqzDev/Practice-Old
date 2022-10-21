@@ -7,7 +7,7 @@ namespace practice\duel\queue;
 use practice\session\Session;
 use practice\session\SessionFactory;
 
-class PlayerQueue {
+final class PlayerQueue {
     
     public function __construct(
         private string $xuid,

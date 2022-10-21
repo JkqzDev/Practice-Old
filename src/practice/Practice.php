@@ -12,7 +12,7 @@ use practice\kit\KitFactory;
 use practice\session\SessionFactory;
 use practice\world\WorldFactory;
 
-class Practice extends PluginBase {
+final class Practice extends PluginBase {
 
     public const IS_DEVELOPING = false;
 

@@ -13,8 +13,9 @@ use practice\duel\Duel;
 use practice\duel\queue\QueueFactory;
 use practice\duel\queue\PlayerQueue;
 use practice\item\arena\JoinArenaItem;
-use practice\item\duel\RankedQueueItem;
-use practice\item\duel\UnrankedQueueItem;
+use practice\item\duel\DuelSpectateItem;
+use practice\item\duel\queue\RankedQueueItem;
+use practice\item\duel\queue\UnrankedQueueItem;
 use practice\party\Party;
 use practice\Practice;
 use practice\session\data\PlayerData;
@@ -182,7 +183,8 @@ final class Session {
         $player->getInventory()->setContents([
             0 => new RankedQueueItem,
             1 => new UnrankedQueueItem,
-            2 => new JoinArenaItem
+            2 => new JoinArenaItem,
+            4 => new DuelSpectateItem
         ]);
     }
 }

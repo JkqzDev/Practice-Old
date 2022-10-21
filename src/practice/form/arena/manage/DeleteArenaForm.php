@@ -10,7 +10,7 @@ use pocketmine\player\Player;
 use pocketmine\utils\TextFormat;
 use practice\arena\ArenaFactory;
 
-class DeleteArenaForm extends CustomForm {
+final class DeleteArenaForm extends CustomForm {
 
     public function __construct() {
         parent::__construct(TextFormat::colorize('&bDelete Arena'));

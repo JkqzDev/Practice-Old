@@ -59,6 +59,18 @@ class Duel {
 
     protected function init(): void {}
 
+    public function getFirstSession(): Session {
+        return $this->firstSession;
+    }
+    
+    public function getSecondSession(): Session {
+        return $this->secondSession;
+    }
+
+    public function getWorld(): World {
+        return $this->world;
+    }
+
     public function getId(): int {
         return $this->id;
     }
@@ -80,9 +92,17 @@ class Duel {
         
         return $opponent;
     }
+
+    public function isRanked(): bool {
+        return $this->ranked;
+    }
     
     public function isRunning(): bool {
         return $this->status === self::RUNNING;
+    }
+
+    public function isEnded(): bool {
+        return $this->status === self::RESTARTING;
     }
     
     public function isPlayer(Player $player): bool {

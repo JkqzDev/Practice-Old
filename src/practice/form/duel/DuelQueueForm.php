@@ -11,7 +11,7 @@ use pocketmine\utils\TextFormat;
 use practice\duel\Duel;
 use practice\duel\queue\QueueFactory;
 
-class DuelQueueForm extends SimpleForm {
+final class DuelQueueForm extends SimpleForm {
 
     private array $types = [
         'No Debuff' => Duel::TYPE_NODEBUFF,

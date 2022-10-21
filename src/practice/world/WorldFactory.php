@@ -9,7 +9,7 @@ use pocketmine\utils\Config;
 use pocketmine\world\Position;
 use practice\Practice;
 
-class WorldFactory {
+final class WorldFactory {
 
     static private array $worlds = [];
     

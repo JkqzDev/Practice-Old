@@ -6,11 +6,10 @@ namespace practice\duel\queue;
 
 use pocketmine\player\Player;
 use practice\duel\DuelFactory;
-use practice\item\duel\LeaveQueueItem;
-use practice\session\Session;
+use practice\item\duel\queue\LeaveQueueItem;
 use practice\session\SessionFactory;
 
-class QueueFactory {
+final class QueueFactory {
     
     static private array $queues = [];
     

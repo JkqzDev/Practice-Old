@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace practice\item\duel;
+namespace practice\item\duel\queue;
 
 use pocketmine\item\ItemIds;
 use pocketmine\item\ItemUseResult;

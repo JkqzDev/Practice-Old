@@ -9,7 +9,7 @@ use pocketmine\world\Position;
 use practice\Practice;
 use practice\world\async\WorldCopyAsync;
 
-class World {
+final class World {
 
     public function __construct(
         private string $name,

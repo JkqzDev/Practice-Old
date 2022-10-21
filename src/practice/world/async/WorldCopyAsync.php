@@ -13,7 +13,7 @@ use pocketmine\utils\Binary;
 use pocketmine\world\format\io\data\BedrockWorldData;
 use Webmozart\PathUtil\Path;
 
-class WorldCopyAsync extends AsyncTask {
+final class WorldCopyAsync extends AsyncTask {
 
     public function __construct(
         private string $world,

@@ -12,7 +12,7 @@ use practice\form\arena\manage\DeleteArenaForm;
 use practice\form\arena\manage\SetupArenaForm;
 use practice\session\SessionFactory;
 
-class ArenaCommand extends Command {
+final class ArenaCommand extends Command {
 
     public function __construct() {
         parent::__construct('arena', 'Arena command');

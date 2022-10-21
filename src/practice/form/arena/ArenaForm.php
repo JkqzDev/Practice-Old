@@ -13,7 +13,7 @@ use practice\Practice;
 use practice\session\Session;
 use practice\session\SessionFactory;
 
-class ArenaForm extends SimpleForm {
+final class ArenaForm extends SimpleForm {
 
     public function __construct() {
         $plugin = Practice::getInstance();

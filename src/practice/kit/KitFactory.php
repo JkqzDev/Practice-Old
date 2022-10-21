@@ -7,7 +7,7 @@ namespace practice\kit;
 use pocketmine\utils\Config;
 use practice\Practice;
 
-class KitFactory {
+final class KitFactory {
 
     static private array $kits = [];
     
