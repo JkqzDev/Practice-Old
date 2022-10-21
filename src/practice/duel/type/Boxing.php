@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace practice\duel\type;
 
-use pocketmine\event\entity\EntityDamateByEntityEvent;
+use pocketmine\event\entity\EntityDamageByEntityEvent;
 use pocketmine\event\entity\EntityDamageEvent;
 use pocketmine\player\Player;
 use practice\duel\Duel;
@@ -62,7 +62,7 @@ class Boxing extends Duel {
                 $this->finish($secondSession->getPlayer());
             } elseif ($this->secondHit >= 100) {
                 $this->finish($firstSession->getPlayer());
-            )
+            }
         }
     }
 }

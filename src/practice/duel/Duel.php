@@ -195,8 +195,8 @@ class Duel {
         $secondPlayer = $secondSession->getPlayer();
         
         if ($firstPlayer !== null && $secondPlayer !== null) {
-            $firstPlayer->setGamemode(GameMode::SURVIVAL);
-            $secondPlayer->setGamemode(GameMode::SURVIVAL);
+            $firstPlayer->setGamemode(GameMode::SURVIVAL());
+            $secondPlayer->setGamemode(GameMode::SURVIVAL());
             
             $firstPlayer->getArmorInventory()->clearAll();
             $firstPlayer->getInventory()->clearAll();
