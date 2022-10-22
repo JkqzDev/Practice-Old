@@ -7,9 +7,11 @@ namespace practice\duel\type;
 use pocketmine\color\Color;
 use pocketmine\item\ItemFactory;
 use pocketmine\item\ItemIds;
+use pocketmine\math\AxisAlignedBB;
 use pocketmine\player\GameMode;
 use pocketmine\player\Player;
 use pocketmine\world\Position;
+use pocketmine\world\World;
 use practice\duel\DuelFactory;
 use practice\duel\Duel;
 use practice\kit\KitFactory;
@@ -21,7 +23,9 @@ class BattleRush extends Duel {
     private AxisAlignedBB $firstPortal, $secondPortal;
     
     protected function init(): void {
+        $worldName = $this->worldName;
         $worldData = WorldFactory::get($worldName);
+        
         $firstPortal = $worldData->getFirstPortal();
         $secondPortal = $worldData->getSecondPortal();
         
@@ -82,7 +86,7 @@ class BattleRush extends Duel {
             $player->getInventory()->setContents($inventoryContents);
             $effectManager = $player->getEffects();
         
-            foreach ($this->effects as $effect) {
+            foreach ($effects as $effect) {
                 $effectManager->add($effect);
             }
         }

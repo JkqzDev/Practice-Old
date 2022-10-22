@@ -57,7 +57,7 @@ final class SetupDuelForm extends CustomForm {
                 if (in_array(strtolower($name), $this->duels)) {
                     $modes[] = strtolower($name);
                     
-                    if (strtolower($name) === 'bridge') {
+                    if (strtolower($name) === 'bridge' || strtolower($name) === 'battlerush') {
                         $withPortal = true;
                     }
                 }

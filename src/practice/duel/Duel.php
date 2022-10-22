@@ -278,7 +278,7 @@ class Duel {
                 if ($this->starting <= 0) {
                     $this->status = self::RUNNING;
                     
-                    if ($fistPlayer->isImmobile()) {
+                    if ($firstPlayer->isImmobile()) {
                         $firstPlayer->setImmobile(false);
                     }
                     
