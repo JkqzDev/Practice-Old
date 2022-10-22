@@ -34,11 +34,19 @@ class Boxing extends Duel {
                     $this->firstCombo++;
                     
                     $this->secondCombo = 0;
+
+                    if ($this->firstHit >= 100) {
+                        $this->finish($secondSession->getPlayer());
+                    }
                 } else {
                     $this->secondHit++;
                     $this->secondCombo++;
                     
                     $this->firstCombo = 0;
+
+                    if ($this->secondHit >= 100) {
+                        $this->finish($firstSession->getPlayer());
+                    }
                 }
             }
         }
@@ -94,7 +102,7 @@ class Boxing extends Duel {
         return parent::scoreboard($player);
     }
     
-    public function update(): void {
+    /*public function update(): void {
         parent::update();
         
         if ($this->status === self::RUNNING) {
@@ -107,5 +115,5 @@ class Boxing extends Duel {
                 $this->finish($firstSession->getPlayer());
             }
         }
-    }
+    }*/
 }

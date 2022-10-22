@@ -4,12 +4,18 @@ declare(strict_types=1);
 
 namespace practice\duel\type;
 
+use pocketmine\block\VanillaBlocks;
 use pocketmine\color\Color;
+use pocketmine\event\block\BlockBreakEvent;
+use pocketmine\event\block\BlockPlaceEvent;
+use pocketmine\event\entity\EntityDamageEvent;
+use pocketmine\event\player\PlayerMoveEvent;
 use pocketmine\item\ItemFactory;
 use pocketmine\item\ItemIds;
 use pocketmine\math\AxisAlignedBB;
 use pocketmine\player\GameMode;
 use pocketmine\player\Player;
+use pocketmine\utils\TextFormat;
 use pocketmine\world\Position;
 use pocketmine\world\World;
 use practice\duel\DuelFactory;
@@ -19,6 +25,11 @@ use practice\world\WorldFactory;
 
 class BattleRush extends Duel {
     
+    private const STARTING_BATTLE = 0;
+    private const RUNNING_BATTLE = 1;
+
+    private int $mode = self::RUNNING_BATTLE;
+
     private int $firstPoints = 0, $secondPoints = 0;
     private AxisAlignedBB $firstPortal, $secondPortal;
     
@@ -54,6 +65,43 @@ class BattleRush extends Duel {
         } else {
             $this->secondPoints++;
         }
+        $firstPlayer = $this->firstSession->getPlayer();
+        $secondPlayer = $this->secondSession->getPlayer();
+
+        if ($firstPlayer === null && $secondPlayer === null) {
+            return;
+        }
+        $this->starting = 5;
+        $this->mode = self::STARTING_BATTLE;
+
+        $this->teleportPlayer($firstPlayer);
+        $this->teleportPlayer($secondPlayer, false);
+
+        if ($this->firstPoints >= 3) {
+            $this->finish($secondPlayer);
+            return;
+        }
+
+        if ($this->secondPoints >= 3) {
+            $this->finish($firstPlayer);
+            return;
+        }
+        $this->giveKit($firstPlayer);
+        $this->giveKit($secondPlayer, false);
+
+        $firstPlayer->setImmobile(true);
+        $secondPlayer->setImmobile(true);
+
+        $title = ($firstPlayer ? '&9' . $firstPlayer->getName() : '&c' . $secondPlayer->getName()) . '&escored!';
+        $subTitle = '&9' . $this->firstPoints . ' &7- &c' . $this->secondPoints;
+
+        $firstPlayer->sendTitle(TextFormat::colorize($title), TextFormat::colorize($subTitle));
+        $secondPlayer->sendTitle(TextFormat::colorize($title), TextFormat::colorize($subTitle));
+
+        foreach ($this->blocks as $key => $block) {
+            $this->world->setBlock($block->getPosition(), VanillaBlocks::AIR());
+            unset($this->blocks[$key]);
+        }
     }
     
     private function giveKit(Player $player, bool $firstPlayer = true): void {
@@ -62,6 +110,9 @@ class BattleRush extends Duel {
         $player->getCursorInventory()->clearAll();
         $player->getOffHandInventory()->clearAll();
         
+        $player->setHealth($player->getMaxHealth());
+        $player->getHungerManager()->setFood($player->getHungerManager()->getMaxFood());
+
         if ($kit !== null) {
             $armorContents = $kit->getArmorContents();
             $inventoryContents = $kit->getInventoryContents();
@@ -104,9 +155,81 @@ class BattleRush extends Duel {
             $player->teleport(Position::fromObject($secondPosition, $this->world));
         }
     }
+
+    public function handleBreak(BlockBreakEvent $event): void {
+        $block = $event->getBlock();
+        
+        if (!isset($this->blocks[$block->getPosition()->__toString()])) {
+            $event->cancel();
+            return;
+        }
+        
+        unset($this->blocks[$block->getPosition()->__toString()]);
+    }
+    
+    public function handlePlace(BlockPlaceEvent $event): void {
+        $block = $event->getBlock();
+        $worldName = $this->worldName;
+        $worldData = WorldFactory::get($worldName);
+
+        if ($block->getPosition()->equals($worldData->getFirstPosition()) || $block->getPosition()->equals($worldData->getSecondPosition())) {
+            $event->cancel();
+            return;
+        }
+        $firstPortal = clone $this->firstPortal;
+        $firstPortal->expand(5.0, 10.0, 5.0);
+        $secondPortal = clone $this->secondPortal;
+        $secondPortal->expand(5.0, 10.0, 5.0);
+
+        if ($firstPortal->isVectorInside($block->getPosition()) || $secondPortal->isVectorInside($block->getPosition())) {
+            $event->cancel();
+            return;
+        }
+        $this->blocks[$block->getPosition()->__toString()] = $block;
+    }
+
+    public function handleDamage(EntityDamageEvent $event): void {
+        $player = $event->getEntity();
+        
+        if (!$player instanceof Player) {
+            return;
+        }
+        $finalHealth = $player->getHealth() - $event->getFinalDamage();
+        
+        if (!$this->isRunning() || $this->mode === self::STARTING_BATTLE) {
+            $event->cancel();
+            return;
+        }
+            
+        if ($finalHealth <= 0.00) {
+            $event->cancel();
+            $isFirst = $player->getName() === $this->firstSession->getName();
+
+            $this->giveKit($player, $isFirst);
+            $this->teleportPlayer($player, $isFirst);
+        }
+    }
+
+    public function handleMove(PlayerMoveEvent $event): void {
+        $player = $event->getPlayer();
+        $isFirst = $player->getName() === $this->firstSession->getName();
+
+        $ownPortal = $isFirst ? $this->firstPortal : $this->secondPortal;
+        $opponentPortal = $isFirst ? $this->secondPortal : $this->firstPortal;
+
+        if ($ownPortal->isVectorInside($player->getPosition())) {
+            $this->teleportPlayer($player, $isFirst);
+            $this->giveKit($player, $isFirst);
+            return;
+        }
+
+        if ($opponentPortal->isVectorInside($player->getPosition())) {
+            $this->addPoint($isFirst);
+            return;
+        }
+    }
     
     public function prepare(): void {
-        $worldName = $this->worldName;
         $world = $this->world;
         
         $firstSession = $this->firstSession;
@@ -134,23 +257,65 @@ class BattleRush extends Duel {
             $this->teleportPlayer($secondPlayer, false);
         }
     }
+
+    public function scoreboard(Player $player): array {
+        if ($this->status === self::RUNNING) {
+            $firstPoints = $this->firstPoints;
+            $secondPoints = $this->secondPoints;
+
+            if ($this->isSpectator($player)) {
+                return [
+                    ' &9[B] &9' . str_repeat('●', $firstPoints) . ' &7' . str_repeat('●', 3 - $firstPoints),
+                    ' &c[R] &c' . str_repeat('●', $secondPoints) . ' &7' . str_repeat('●', 3 - $secondPoints),
+                    ' &r ',
+                    ' &fDuration: &b' . gmdate('i:s', $this->running)
+                ];
+            }
+            $opponent = $this->getOpponent($player);
+
+            return [
+                ' &9[B] &9' . str_repeat('●', $firstPoints) . ' &7' . str_repeat('●', 3 - $firstPoints),
+                ' &c[R] &c' . str_repeat('●', $secondPoints) . ' &7' . str_repeat('●', 3 - $secondPoints),
+                ' &r ',
+                ' &fDuration: &b' . gmdate('i:s', $this->running),
+                ' &r&r ',
+                ' &aYour ping: ' . $player->getNetworkSession()->getPing(),
+                ' &cTheir ping: ' . $opponent->getNetworkSession()->getPing()
+            ];
+        }
+        return parent::scoreboard($player);
+    }
     
     public function update(): void {
         parent::update();
         
         if ($this->status === self::RUNNING) {
-            $firstSession = $this->firstSession;
-            $secondSession = $this->secondSession;
-            
-            $firstPlayer = $firstSession->getPlayer();
-            $secondPlayer = $secondSession->getPlayer();
-            
-            if ($firstPlayer !== null && $secondPlayer !== null) {
-                if ($firstPlayer->getPosition()->getY() < 0) {
-                    $this->teleportPlayer($firstPlayer);
-                } elseif ($secondPlayer->getPosition()->getY() < 0) {
-                    $this->teleportPlayer($secondPlayer, false);
+            $firstPlayer = $this->firstSession->getPlayer();
+            $secondPlayer = $this->secondSession->getPlayer();
+
+            if ($this->mode === self::STARTING_BATTLE) {
+                if ($this->starting <= 0) {
+                    $this->mode = self::RUNNING_BATTLE;
+
+                    if ($firstPlayer->isImmobile()) {
+                        $firstPlayer->setImmobile(false);
+                    }
+
+                    if ($secondPlayer->isImmobile()) {
+                        $secondPlayer->setImmobile(false);
+                    }
+                    return;
                 }
+                $this->starting--;
+                return;
+            }
+
+            if ($firstPlayer->getPosition()->getY() < 0) {
+                $this->teleportPlayer($firstPlayer);
+                $this->giveKit($firstPlayer);
+            } elseif ($secondPlayer->getPosition()->getY() < 0) {
+                $this->teleportPlayer($secondPlayer, false);
+                $this->giveKit($secondPlayer, false);
             }
         }
     }
