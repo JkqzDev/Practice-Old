@@ -39,7 +39,7 @@ final class DuelCommand extends Command {
                 $form = new SetupDuelForm;
                 $sender->sendForm($form);
             } elseif ($subCommand === 'delete') {
-                $form = new DeleteSetupForm;
+                $form = new DeleteDuelForm;
                 $sender->sendForm($form);
             }
         }

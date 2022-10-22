@@ -32,7 +32,6 @@ final class KitFactory {
             
             self::create($name, $kitData['attackCooldown'], $kitData['horizontalKnockback'], $kitData['verticalKnockback'], $kitData['armorContents'], $kitData['inventoryContents'], $kitData['effects']);
         }
-        var_dump(array_keys(self::getAll()));
     }
     
     static public function saveAll(): void {

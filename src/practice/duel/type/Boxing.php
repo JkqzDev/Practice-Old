@@ -45,8 +45,50 @@ class Boxing extends Duel {
     
     public function scoreboard(Player $player): array {
         if ($this->status === self::RUNNING) {
+            $firstSession = $this->firstSession;
+            $secondSession = $this->secondSession;
+            
             if ($this->isSpectator($player)) {
+                return [
+                    ' &fKit: &b' . DuelFactory::getName($this->typeId),
+                    ' &fType: &b' . ($this->ranked ? 'Ranked' : 'Unranked'),
+                    ' &r&r',
+                    ' &fDuration: &b' . gmdate('i:s', $this->running),
+                    ' &fSpectators: &b' . count($this->spectators),
+                    ' &fHits: &a' . $this->firstHit . ' &7| &c' . $this->secondHit
+                ];
             }
+            $opponent = $this->getOpponent($player);
+            $isFirst = $firstSession->getName() === $player->getName();
+            
+            $playerHits = $this->firstHit;
+            $playerCombo = $this->firstCombo;
+            
+            $opponentHits = $this->secondHit;
+            $opponentCombo = $this->secondCombo;
+            
+            $hits = $this->firstHit - $this->secondHit;
+            
+            if (!$isFirst) {
+                $hits = $this->secondHit - $this->firstHit;
+                
+                $playerCombo = $this->secondCombo;
+                $opponentCombo = $this->firstCombo;
+                
+                $playerHits = $this->secondHit;
+                $opponentHits = $this->firstHit;
+            }
+            
+            return [
+                ' &fOpponent: &b' . $opponent->getName(),
+                ' &r&r&r',
+                ' &bHits: ' . ($hits >= 0 ? '&a(+' . $hits . ')' : '&c(-' . $hits . ')'),
+                '  &aYou: &f' . $playerHits . ($playerCombo > 0 ? '&e(' . $playerCombo . ' combo)' : ''),
+                '  &cThem: &f' . $opponentHits . ($opponentCombo > 0 ? '&e(' . $opponentCombo . ' combo)' : ''),
+                ' &r&r&r&r',
+                ' &aYour ping: ' . $player->getNetworkSession()->getPing(),
+                ' &cTheir ping: ' . $opponent->getNetworkSession()->getPing()
+            ];
         }
         return parent::scoreboard($player);
     }

@@ -7,6 +7,7 @@ namespace practice\duel;
 use pocketmine\event\block\BlockBreakEvent;
 use pocketmine\event\block\BlockPlaceEvent;
 use pocketmine\event\entity\EntityDamageEvent;
+use pocketmine\event\PlayerMoveEvent;
 use pocketmine\player\GameMode;
 use pocketmine\player\Player;
 use pocketmine\utils\TextFormat;
@@ -142,8 +143,8 @@ class Duel {
                     ' &fKit: &b' . DuelFactory::getName($this->typeId),
                     ' &fDuration: &b' . gmdate('i:s', $this->running),
                     ' &r&r',
-                    ' &fYour ping: &b' . $player->getNetworkSession()->getPing(),
-                    ' &fTheir ping: &b' . $opponent->getNetworkSession()->getPing()
+                    ' &aYour ping: ' . $player->getNetworkSession()->getPing(),
+                    ' &cTheir ping: ' . $opponent->getNetworkSession()->getPing()
                 ];
         }
     }
@@ -194,6 +195,10 @@ class Duel {
             $event->cancel();
             $this->finish($player);
         }
+    }
+    
+    public function handleMove(PlayerMoveEvent $event): void {
+        // Nothing
     }
     
     public function prepare(): void {
