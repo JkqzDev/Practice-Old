@@ -54,7 +54,7 @@ final class SetupDuelForm extends CustomForm {
             $array = explode(', ', $value);
             
             foreach ($array as $name) {
-                if (in_array(strtolower($name), $this->modes)) {
+                if (in_array(strtolower($name), $this->duels)) {
                     $modes[] = strtolower($name);
                     
                     if (strtolower($name) === 'bridge') {

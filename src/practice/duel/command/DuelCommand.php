@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace practice\arena\command;
+namespace practice\duel\command;
 
 use pocketmine\command\Command;
 use pocketmine\command\CommandSender;

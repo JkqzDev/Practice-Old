@@ -2,13 +2,13 @@
 
 declare(strict_types=1);
 
-namespace practice\form\arena\manage;
+namespace practice\form\duel\manage;
 
 use cosmicpe\form\CustomForm;
 use cosmicpe\form\entries\custom\InputEntry;
 use pocketmine\player\Player;
 use pocketmine\utils\TextFormat;
-use practice\arena\WorldFactory;
+use practice\world\WorldFactory;
 
 final class DeleteDuelForm extends CustomForm {
 
