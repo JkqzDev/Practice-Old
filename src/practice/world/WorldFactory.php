@@ -75,7 +75,6 @@ final class WorldFactory {
             
             self::create($name, $d_data['modes'], $d_data['firstPosition'], $d_data['secondPosition'], $d_data['firstPortal'], $d_data['secondPortal']);
         }
-        var_dump(self::$worlds);
     }
     
     static public function saveAll(): void {

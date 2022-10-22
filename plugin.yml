@@ -6,3 +6,5 @@ api: 4.0.0
 permissions:
   arena.command:
     default: op
+  duel.command:
+    default: op

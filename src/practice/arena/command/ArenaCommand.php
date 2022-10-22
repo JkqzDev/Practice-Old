@@ -42,7 +42,7 @@ final class ArenaCommand extends Command {
         }
         $subCommand = strtolower($args[0]);
 
-        if ($subCommand === 'create') {
+        if ($subCommand === 'setup') {
             $form = new SetupArenaForm;
             $sender->sendForm($form);
         } elseif ($subCommand === 'delete') {
