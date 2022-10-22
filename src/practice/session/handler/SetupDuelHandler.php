@@ -111,14 +111,14 @@ final class SetupDuelHandler {
         
         $player->setGamemode(GameMode::CREATIVE());
 
-        $firstPosition = BlockFactory::getInstance()->get(BlockLegacyIds::DIAMOND_ORE, 0);
-        $secondPosition = BlockFactory::getInstance()->get(BlockLegacyIds::GOLD_ORE, 0);
+        $firstPosition = BlockFactory::getInstance()->get(BlockLegacyIds::DIAMOND_ORE, 0)->asItem();
+        $secondPosition = BlockFactory::getInstance()->get(BlockLegacyIds::GOLD_ORE, 0)->asItem();
 
         $save = ItemFactory::getInstance()->get(ItemIds::DYE, 10);
         $cancel = ItemFactory::getInstance()->get(ItemIds::DYE, 1);
 
-        $firstPortal = BlockFactory::getInstance()->get(BlockLegacyIds::LAPIS_ORE, 0);
-        $secondPortal = BlockFactory::getInstance()->get(BlockLegacyIds::EMERALD_ORE, 0);
+        $firstPortal = BlockFactory::getInstance()->get(BlockLegacyIds::LAPIS_ORE, 0)->asItem();
+        $secondPortal = BlockFactory::getInstance()->get(BlockLegacyIds::EMERALD_ORE, 0)->asItem();
 
         $player->getInventory()->setContents([
             0 => $firstPosition,

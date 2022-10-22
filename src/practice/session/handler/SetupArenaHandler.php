@@ -108,8 +108,8 @@ final class SetupArenaHandler {
         
         $player->setGamemode(GameMode::CREATIVE());
         
-        $selectSpawns = BlockFactory::getInstance()->get(BlockLegacyIds::DIAMOND_ORE, 0);
-        $deleteSpawns = BlockFactory::getInstance()->get(BlockLegacyIds::GOLD_ORE, 0);
+        $selectSpawns = BlockFactory::getInstance()->get(BlockLegacyIds::DIAMOND_ORE, 0)->asItem();
+        $deleteSpawns = BlockFactory::getInstance()->get(BlockLegacyIds::GOLD_ORE, 0)->asItem();
         $save = ItemFactory::getInstance()->get(ItemIds::DYE, 10);
         $cancel = ItemFactory::getInstance()->get(ItemIds::DYE, 1);
         
