@@ -35,6 +35,9 @@ final class EventHandler implements Listener {
         }
         
         if ($session->inLobby()) {
+            if ($player->getServer()->isOp($player->getName())) {
+                return;
+            }
             $event->cancel();
         } elseif ($session->inDuel()) {
             $duel = $session->getDuel();
@@ -54,6 +57,9 @@ final class EventHandler implements Listener {
         }
         
         if ($session->inLobby()) {
+            if ($player->getServer()->isOp($player->getName())) {
+                return;
+            }
             $event->cancel();
         } elseif ($session->inDuel()) {
             $duel = $session->getDuel();
