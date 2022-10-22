@@ -17,10 +17,10 @@ final class ArenaForm extends SimpleForm {
 
     public function __construct() {
         $plugin = Practice::getInstance();
-        parent::__construct(TextFormat::colorize('Arenas FFA&m&c'));
+        parent::__construct(TextFormat::colorize('&eArenas FFA'));
 
         foreach (ArenaFactory::getAll() as $arena) {
-            $this->addButton(new Button(TextFormat::colorize($arena->getName() . '&m&b')), function (Player $player, int $button_index) use ($arena): void {
+            $this->addButton(new Button(TextFormat::colorize('&7' . $arena->getName() . PHP_EOL . '&f' . count($arena->getPlayers()))), function (Player $player, int $button_index) use ($arena): void {
                 $session = SessionFactory::get($player);
 
                 if ($session === null) {

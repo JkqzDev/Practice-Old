@@ -28,10 +28,10 @@ final class DuelQueueForm extends SimpleForm {
     ];
 
     public function __construct(bool $ranked = false) {
-        parent::__construct(TextFormat::colorize($ranked ? 'Ranked duels&m&c' : 'Unranked duels&m&c'));
+        parent::__construct(TextFormat::colorize($ranked ? '&bRanked duels' : '&9Unranked duels'));
 
         foreach ($this->types as $type => $typeId) {
-            $this->addButton(new Button(TextFormat::colorize($type . '&m&b')), function (Player $player, int $button_index) use ($typeId, $ranked): void {
+            $this->addButton(new Button(TextFormat::colorize('&7' . $type)), function (Player $player, int $button_index) use ($typeId, $ranked): void {
                 $queue = QueueFactory::get($player);
 
                 if ($queue !== null) {

@@ -35,6 +35,18 @@ final class Kit {
         return $this->verticalKnockback;
     }
     
+    public function getArmorContents(): array {
+        return $this->armorContents;
+    }
+    
+    public function getInventoryContents(): array {
+        return $this->inventoryContents;
+    }
+    
+    public function getEffects(): array {
+        return $this->effects;
+    }
+    
     public function setAttackCooldown(int $attackCooldown): void {
         $this->attackCooldown = $attackCooldown;
     }
@@ -48,6 +60,9 @@ final class Kit {
     }
     
     public function giveTo(Player $player): void {
+        $player->getCursorInventory()->clearAll();
+        $player->getOffHandInventory()->clearAll();
+        
         $player->getArmorInventory()->setContents($this->armorContents);
         $player->getInventory()->setContents($this->inventoryContents);
         $player->getInventory()->setHeldItemIndex(0);

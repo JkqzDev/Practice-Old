@@ -123,8 +123,8 @@ final class SetupArenaHandler {
         $player->getInventory()->setContents([
             0 => $selectSpawns,
             1 => $deleteSpawns,
-            7 => $save,
-            8 => $cancel
+            8 => $save,
+            7 => $cancel
         ]);
 
         $player->sendMessage(TextFormat::colorize('&aNow you have setup arena mode'));

@@ -94,7 +94,7 @@ final class SetupDuelHandler {
         WorldFactory::create($name, $this->modes, $this->firstPosition, $this->secondPosition, $this->firstPortal, $this->secondPortal, true);
         
         $this->finalizeCreator($player);
-        $player->sendMessage(TextFormat::colorize('&cDuel world ' . $name . ' successfully created'));
+        $player->sendMessage(TextFormat::colorize('&aDuel world ' . $name . ' successfully created'));
     }
 
     public function prepareCreator(Player $player): void {

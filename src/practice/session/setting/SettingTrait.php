@@ -6,7 +6,6 @@ namespace practice\session\setting;
 
 trait SettingTrait {
     
-    /** @var Setting[] */
     private array $settings = [];
 
     public function getSettings(): array {
