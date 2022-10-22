@@ -134,7 +134,6 @@ final class Session {
         if ($scoreboardSetting instanceof DisplaySetting && $scoreboardSetting->isEnabled()) {
             $this->scoreboard->spawn();
         }
-        
         $player->setGamemode(GameMode::SURVIVAL());
         
         $player->getInventory()->clearAll();
