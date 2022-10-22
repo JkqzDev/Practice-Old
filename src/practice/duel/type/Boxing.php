@@ -7,6 +7,7 @@ namespace practice\duel\type;
 use pocketmine\event\entity\EntityDamageByEntityEvent;
 use pocketmine\event\entity\EntityDamageEvent;
 use pocketmine\player\Player;
+use practice\duel\DuelFactory;
 use practice\duel\Duel;
 
 class Boxing extends Duel {
@@ -80,11 +81,11 @@ class Boxing extends Duel {
             }
             
             return [
-                ' &fOpponent: &b' . $opponent->getName(),
+                ' &fFighting: &b' . $opponent->getName(),
                 ' &r&r&r',
                 ' &bHits: ' . ($hits >= 0 ? '&a(+' . $hits . ')' : '&c(-' . $hits . ')'),
-                '  &aYou: &f' . $playerHits . ($playerCombo > 0 ? '&e(' . $playerCombo . ' combo)' : ''),
-                '  &cThem: &f' . $opponentHits . ($opponentCombo > 0 ? '&e(' . $opponentCombo . ' combo)' : ''),
+                '  &aYou: &f' . $playerHits . ($playerCombo > 0 ? ' &e(' . $playerCombo . ' combo)' : ''),
+                '  &cThem: &f' . $opponentHits . ($opponentCombo > 0 ? ' &e(' . $opponentCombo . ' combo)' : ''),
                 ' &r&r&r&r',
                 ' &aYour ping: ' . $player->getNetworkSession()->getPing(),
                 ' &cTheir ping: ' . $opponent->getNetworkSession()->getPing()

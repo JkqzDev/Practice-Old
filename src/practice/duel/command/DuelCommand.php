@@ -8,6 +8,7 @@ use pocketmine\command\Command;
 use pocketmine\command\CommandSender;
 use pocketmine\player\Player;
 use pocketmine\utils\TextFormat;
+use practice\duel\queue\QueueFactory;
 use practice\form\duel\manage\DeleteDuelForm;
 use practice\form\duel\manage\SetupDuelForm;
 use practice\session\SessionFactory;
@@ -29,6 +30,19 @@ final class DuelCommand extends Command {
         }
         
         if (!isset($args[0])) {
+            return;
+        }
+        
+        if (is_numeric($args[0])) {
+            $queue = QueueFactory::get($sender);
+            
+            if ($queue === null) {
+                QueueFactory::create($sender, intval($args[0]));
+                $sender->sendMessage('You have joined to queue type ' . intval($args[0]));
+                return;
+            }
+            QueueFactory::remove($sender);
+            $sender->sendMessage('You have left to queue');
             return;
         }
         

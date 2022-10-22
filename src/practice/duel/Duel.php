@@ -7,7 +7,7 @@ namespace practice\duel;
 use pocketmine\event\block\BlockBreakEvent;
 use pocketmine\event\block\BlockPlaceEvent;
 use pocketmine\event\entity\EntityDamageEvent;
-use pocketmine\event\PlayerMoveEvent;
+use pocketmine\event\player\PlayerMoveEvent;
 use pocketmine\player\GameMode;
 use pocketmine\player\Player;
 use pocketmine\utils\TextFormat;
