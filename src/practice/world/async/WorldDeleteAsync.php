@@ -6,7 +6,7 @@ namespace practice\world\async;
 
 use pocketmine\scheduler\AsyncTask;
 
-class WorldDeleteAsync extends AsyncTask {
+final class WorldDeleteAsync extends AsyncTask {
 
     public function __construct(
         private string $world,

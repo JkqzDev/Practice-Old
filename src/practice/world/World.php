@@ -5,20 +5,20 @@ declare(strict_types=1);
 namespace practice\world;
 
 use Closure;
-use pocketmine\math\Vector3;
+use pocketmine\world\Position;
 use practice\Practice;
 use practice\world\async\WorldCopyAsync;
 
-class World {
+final class World {
 
     public function __construct(
         private string $name,
-        private Vector3 $firstPosition,
-        private Vector3 $secondPosition,
+        private Position $firstPosition,
+        private Position $secondPosition,
         private array $modes = [],
-        private bool $copy = false,
-        private ?Vector3 $firstPortal = null,
-        private ?Vector3 $secondPortal = null
+        bool $copy = false,
+        private ?Position $firstPortal = null,
+        private ?Position $secondPortal = null
     ) {
         if ($copy) {
             Practice::getInstance()->getServer()->getAsyncPool()->submitTask(new WorldCopyAsync(
@@ -34,11 +34,11 @@ class World {
         return $this->name;
     }
 
-    public function getFirstPosition(): Vector3 {
+    public function getFirstPosition(): Position {
         return $this->firstPosition;
     }
 
-    public function getSecondPosition(): Vector3 {
+    public function getSecondPosition(): Position {
         return $this->secondPosition;
     }
 
@@ -46,11 +46,11 @@ class World {
         return in_array($mode, $this->modes);
     }
 
-    public function getFirstPortal(): ?Vector3 {
+    public function getFirstPortal(): ?Position {
         return $this->firstPortal;
     }
 
-    public function getSecondPortal(): ?Vector3 {
+    public function getSecondPortal(): ?Position {
         return $this->secondPortal;
     }
 
@@ -105,30 +105,34 @@ class World {
     static public function deserializeData(array $data): array {
         $storage = [
             'modes' => $data['modes'],
-            'firstPosition' => new Vector3(
+            'firstPosition' => new Position(
                 floatval($data['firstPosition']['x']),
                 floatval($data['firstPosition']['y']),
-                floatval($data['firstPosition']['z'])
+                floatval($data['firstPosition']['z']),
+                null
             ),
-            'secondPosition' => new Vector3(
+            'secondPosition' => new Position(
                 floatval($data['secondPosition']['x']),
                 floatval($data['secondPosition']['y']),
-                floatval($data['secondPosition']['z'])
+                floatval($data['secondPosition']['z']),
+                null
             ),
             'firstPortal' => null,
             'secondPortal' => null
         ];
         
         if ($data['firstPortal'] !== null && $data['secondPortal'] !== null) {
-            $storage['firstPortal'] = new Vector3(
+            $storage['firstPortal'] = new Position(
                 floatval($data['firstPortal']['x']),
                 floatval($data['firstPortal']['y']),
-                floatval($data['firstPortal']['z'])
+                floatval($data['firstPortal']['z']),
+                null
             );
-            $storage['secondPortal'] = new Vector3(
+            $storage['secondPortal'] = new Position(
                 floatval($data['secondPortal']['x']),
                 floatval($data['secondPortal']['y']),
-                floatval($data['secondPortal']['z'])
+                floatval($data['secondPortal']['z']),
+                null
             );
         }
         return $storage;

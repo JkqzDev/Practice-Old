@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace practice\party;
 
-class PartyFactory {
+final class PartyFactory {
     
     static private array $parties = [];
     

@@ -10,9 +10,9 @@ use pocketmine\event\block\LeavesDecayEvent;
 use pocketmine\event\entity\EntityDamageEvent;
 use pocketmine\event\entity\EntityRegainHealthEvent;
 use pocketmine\event\inventory\InventoryTransactionEvent;
-use practice\session\SessionFactory;
 use pocketmine\event\Listener;
 use pocketmine\event\player\PlayerExhaustEvent;
+use pocketmine\event\player\PlayerInteractEvent;
 use pocketmine\event\player\PlayerJoinEvent;
 use pocketmine\event\player\PlayerLoginEvent;
 use pocketmine\event\player\PlayerQuitEvent;
@@ -21,8 +21,9 @@ use pocketmine\network\mcpe\protocol\LevelSoundEventPacket;
 use pocketmine\network\mcpe\protocol\types\LevelSoundEvent;
 use pocketmine\player\Player;
 use pocketmine\utils\TextFormat;
+use practice\session\SessionFactory;
 
-class EventHandler implements Listener {
+final class EventHandler implements Listener {
     
     public function handleBreak(BlockBreakEvent $event): void {
         $player = $event->getPlayer();
@@ -126,6 +127,26 @@ class EventHandler implements Listener {
     
     public function handleExhaust(PlayerExhaustEvent $event): void {
         $event->cancel();
+    }
+
+    public function handleInteract(PlayerInteractEvent $event): void {
+        $player = $event->getPlayer();
+        $session = SessionFactory::get($player);
+
+        if ($session === null) {
+            return;
+        }
+
+        if ($session->inLobby()) {
+            $handlerSetupArena = $session->getSetupArenaHandler();
+            $handlerSetupDuel = $session->getSetupDuelHandler();
+
+            if ($handlerSetupArena !== null) {
+                $handlerSetupArena->handleInteract($event);
+            } elseif ($handlerSetupDuel !== null) {
+                $handlerSetupDuel->handleInteract($event);
+            }
+        }
     }
     
     public function handleJoin(PlayerJoinEvent $event): void {

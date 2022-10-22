@@ -3,3 +3,6 @@ version: 1.0.0
 author: JuqnGOOD
 main: practice\Practice
 api: 4.0.0
+permissions:
+  arena.command:
+    default: op

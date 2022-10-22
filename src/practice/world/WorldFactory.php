@@ -9,7 +9,7 @@ use pocketmine\utils\Config;
 use pocketmine\world\Position;
 use practice\Practice;
 
-class WorldFactory {
+final class WorldFactory {
 
     static private array $worlds = [];
     
@@ -73,11 +73,9 @@ class WorldFactory {
         foreach ($config->getAll() as $name => $data) {
             $d_data = World::deserializeData($data);
             
-            if ($d_data === null) {
-                continue;
-            }
             self::create($name, $d_data['modes'], $d_data['firstPosition'], $d_data['secondPosition'], $d_data['firstPortal'], $d_data['secondPortal']);
         }
+        var_dump(self::$worlds);
     }
     
     static public function saveAll(): void {

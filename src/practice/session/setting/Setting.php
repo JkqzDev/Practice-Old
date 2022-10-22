@@ -9,12 +9,16 @@ use practice\session\setting\display\Scoreboard;
 use practice\session\setting\gameplay\AutoRespawn;
 
 class Setting {
+
+    public const SCOREBOARD = 'scoreboard';
+    public const CPS_COUNTER = 'cps_counter';
+    public const AUTO_RESPAWN = 'auto_respawn';
     
     static public function create(): array {
         return [
-            'scoreboard' => new Scoreboard,
-            'cps_counter' => new CPSCounter,
-            'auto_respawn' => new AutoRespawn
+            self::SCOREBOARD => new Scoreboard,
+            self::CPS_COUNTER => new CPSCounter,
+            self::AUTO_RESPAWN => new AutoRespawn
         ];
     }
     

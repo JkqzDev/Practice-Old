@@ -6,14 +6,15 @@ namespace practice;
 
 use pocketmine\plugin\PluginBase;
 use practice\arena\ArenaFactory;
+use practice\arena\command\ArenaCommand;
 use practice\duel\DuelFactory;
 use practice\kit\KitFactory;
 use practice\session\SessionFactory;
 use practice\world\WorldFactory;
 
-class Practice extends PluginBase {
+final class Practice extends PluginBase {
 
-    public const IS_DEVELOPING = true;
+    public const IS_DEVELOPING = false;
 
     static private Practice $instance;
     
@@ -51,6 +52,14 @@ class Practice extends PluginBase {
     }
     
     protected function registerCommands(): void {
+        $commands = [
+            // Arena
+            new ArenaCommand
+        ];
+
+        foreach ($commands as $command) {
+            $this->getServer()->getCommandMap()->register('Practice', $command);
+        }
     }
     
     protected function unregisterCommands(): void {

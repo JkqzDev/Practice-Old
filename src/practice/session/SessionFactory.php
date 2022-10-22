@@ -8,7 +8,7 @@ use practice\Practice;
 use pocketmine\player\Player;
 use pocketmine\scheduler\ClosureTask;
 
-class SessionFactory {
+final class SessionFactory {
     
     static private array $sessions = [];
     

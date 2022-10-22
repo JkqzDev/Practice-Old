@@ -4,13 +4,11 @@ declare(strict_types=1);
 
 namespace practice\arena;
 
-use pocketmine\player\Player;
 use pocketmine\utils\Config;
 use pocketmine\world\World;
 use practice\Practice;
-use practice\session\SessionFactory;
 
-class ArenaFactory {
+final class ArenaFactory {
     
     static private array $arenas = [];
 
@@ -24,6 +22,13 @@ class ArenaFactory {
 
     static public function create(string $name, string $kit, World $world, array $spawns): void {
         self::$arenas[$name] = new Arena($name, $kit, $world, $spawns);
+    }
+
+    static public function remove(string $name): void {
+        if (self::get($name) === null) {
+            return;
+        }
+        unset(self::$arenas[$name]);
     }
     
     static public function loadAll(): void {

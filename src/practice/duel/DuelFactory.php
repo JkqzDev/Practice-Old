@@ -21,7 +21,7 @@ use practice\Practice;
 use practice\session\Session;
 use practice\world\WorldFactory;
 
-class DuelFactory {
+final class DuelFactory {
     
     static private array $duels = [];
     

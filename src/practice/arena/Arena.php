@@ -8,8 +8,10 @@ use pocketmine\event\block\BlockBreakEvent;
 use pocketmine\event\block\BlockPlaceEvent;
 use pocketmine\event\entity\EntityDamageEvent;
 use pocketmine\event\entity\EntityDamageByEntityEvent;
+use pocketmine\player\GameMode;
 use pocketmine\player\Player;
 use pocketmine\Server;
+use pocketmine\utils\TextFormat;
 use pocketmine\world\Position;
 use pocketmine\world\World;
 use practice\kit\KitFactory;
@@ -40,6 +42,15 @@ final class Arena {
 
     public function isPlayer(Player $player): bool {
         return isset($this->players[spl_object_hash($player)]);
+    }
+
+    public function inCombat(Player $player): bool {
+        if (isset($this->combats[$player->getName()])) {
+            $combat = $this->combats[$player->getName()];
+            
+            return $combat['time'] >= time();
+        }
+        return false;
     }
 
     public function addPlayer(Player $player): void {
@@ -75,6 +86,11 @@ final class Arena {
         if (!$player instanceof Player) {
             return;
         }
+        $session = SessionFactory::get($player);
+        
+        if ($session === null) {
+            return;
+        }
         
         if ($event instanceof EntityDamageByEntityEvent) {
             $damager = $event->getDamager();
@@ -88,7 +104,7 @@ final class Arena {
                 if (isset($this->combats[$player->getName()])) {
                     $combat = $this->combats[$player->getName()];
                     
-                    if ($combat['time'] > time() && $combat['player']->getName() !== $damager->getName()) {
+                    if ($combat['time'] >= time() && $combat['player']->getName() !== $damager->getName()) {
                         $event->cancel();
                         return;
                     }
@@ -101,11 +117,22 @@ final class Arena {
         
         if ($finalHealth <= 0.00) {
             $event->cancel();
+            $session->addDeath();
+            $session->resetKillstreak();
             
             if (isset($this->combats[$player->getName()])) {
                 $combat = $this->combats[$player->getName()];
-                $session = SessionFactory::get($combat['player']);
+
+                if ($combat['time'] >= time()) {
+                    $damager = SessionFactory::get($combat['player']);
+                    $damager->addKill();
+                    $damager->addKillstreak();
                 
+                    unset($this->combats[$damager->getName()]);
+                
+                    Server::getInstance()->broadcastMessage(TextFormat::colorize('&a' . $damager->getName() . ' &2[' . $damager->getKills() . '] &7killed &c' . $player->getName() . ' &4[' . $session->getKills() . ']'));
+                }
+                unset($this->combats[$player->getName()]);
             }
             $this->quit($player);
         }
@@ -130,13 +157,15 @@ final class Arena {
         $kit?->giveTo($player);
     }
     
-    public function quit(Player $player): void {
+    public function quit(Player $player, bool $withCombat = true): void {
         $session = SessionFactory::get($player);
         
         if ($session === null) {
             return;
         }
         $this->removePlayer($player);
+        
+        $player->setGamemode(GameMode::SURVIVAL());
         
         $player->getArmorInventory()->clearAll();
         $player->getInventory()->clearAll();
@@ -152,14 +181,37 @@ final class Arena {
         
         $session->giveLobyyItems();
         $session->setArena(null);
+        
+        if ($withCombat) {
+            if (isset($this->combats[$player->getName()])) {
+                $combat = $this->combats[$player->getName()];
+
+                if ($combat['time'] >= time()) {
+                    $damager = SessionFactory::get($combat['player']);
+                    $damager->addKill();
+                    $damager->addKillstreak();
+                
+                    unset($this->combats[$damager->getName()]);
+                
+                    Server::getInstance()->broadcastMessage(TextFormat::colorize('&a' . $damager->getName() . ' &2[' . $damager->getKills() . '] &7killed &c' . $player->getName() . ' &4[' . $session->getKills() . ']'));
+                }
+                unset($this->combats[$player->getName()]);
+            }
+        }
     }
 
     public function scoreboard(Player $player): array {
         $time = 0;
+        $session = SessionFactory::get($player);
+        
+        if ($session === null) {
+            return [];
+        }
         
         $lines = [
-            ' &fKills: &c0 &7(0)',
-            ' &fDeaths: &c0'
+            ' &fKills: &b' . $session->getKills(),
+            ' &fDeaths: &b' . $session->getDeaths(),
+            ' &fKillstreak: &b' . $session->getKillstreak()
         ];
         
         if (isset($this->combats[$player->getName()])) {
@@ -170,7 +222,7 @@ final class Arena {
             }
         }
         $lines[] = '&r&r&r&r';
-        $lines[] = ' &fCombat: &c' . $time;
+        $lines[] = ' &fCombat: &7' . $time . 's';
         return $lines;
     }
     
