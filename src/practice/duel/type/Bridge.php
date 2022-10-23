@@ -4,8 +4,24 @@ declare(strict_types=1);
 
 namespace practice\duel\type;
 
+use pocketmine\block\VanillaBlocks;
+use pocketmine\color\Color;
+use pocketmine\event\block\BlockBreakEvent;
+use pocketmine\event\block\BlockPlaceEvent;
+use pocketmine\event\entity\EntityDamageEvent;
+use pocketmine\event\player\PlayerMoveEvent;
+use pocketmine\item\ItemFactory;
+use pocketmine\item\ItemIds;
+use pocketmine\math\AxisAlignedBB;
+use pocketmine\player\GameMode;
 use pocketmine\player\Player;
+use pocketmine\utils\TextFormat;
+use pocketmine\world\Position;
+use pocketmine\world\World;
+use practice\duel\DuelFactory;
 use practice\duel\Duel;
+use practice\kit\KitFactory;
+use practice\world\WorldFactory;
 
 class Bridge extends Duel {
     
