@@ -39,6 +39,12 @@ final class Practice extends PluginBase {
     }
     
     protected function onEnable(): void {
+        $this->registerEntities();
+        $this->registerItems();
+        $this->registerHandlers();
+        $this->registerCommands();
+        $this->unregisterCommands();
+        
         ArenaFactory::loadAll();
         KitFactory::loadAll();
         SessionFactory::loadAll();
@@ -46,12 +52,6 @@ final class Practice extends PluginBase {
         
         DuelFactory::task();
         SessionFactory::task();
-        
-        $this->registerEntities();
-        $this->registerItems();
-        $this->registerHandlers();
-        $this->registerCommands();
-        $this->unregisterCommands();
     }
     
     protected function onDisable(): void {
