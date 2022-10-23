@@ -30,7 +30,7 @@ class Bridge extends Duel {
             floatval($firstPortal->getZ()),
             floatval($firstPortal->getX()),
             floatval($firstPortal->getY()),
-            floatval($firstPortal->getZ()),
+            floatval($firstPortal->getZ())
         );
         $this->firstPortal->expand(8.0, 30.0, 8.0);
         
@@ -39,8 +39,8 @@ class Bridge extends Duel {
             floatval($secondPortal->getY()),
             floatval($secondPortal->getZ()),
             floatval($secondPortal->getX()),
-            floatval($secondPortal->getY(),
-            floatval($secondPortal->getZ()),
+            floatval($secondPortal->getY()),
+            floatval($secondPortal->getZ())
         );
         $this->secondPortal->expand(8.0, 30.0, 8.0);
     }
