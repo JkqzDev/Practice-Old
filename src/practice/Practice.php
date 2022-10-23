@@ -42,6 +42,8 @@ final class Practice extends PluginBase {
         KitFactory::saveAll();
         SessionFactory::saveAll();
         WorldFactory::saveAll();
+        
+        DuelFactory::disable();
     }
 
     static public function getInstance(): Practice {

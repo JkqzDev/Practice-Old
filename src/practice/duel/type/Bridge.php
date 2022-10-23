@@ -123,7 +123,7 @@ class Bridge extends Duel {
             }
             
             foreach ($inventoryContents as $slot => $item) {
-                if ($item->getId() === ItemIds::WOOL) {
+                if ($item->getId() === ItemIds::TERRACOTTA) {
                     $inventoryContents[$slot] = ItemFactory::getInstance()->get($item->getId(), $firstPlayer ? 11 : 14, $item->getCount());
                 }
             }
@@ -262,8 +262,8 @@ class Bridge extends Duel {
 
             if ($this->isSpectator($player)) {
                 return [
-                    ' &9[B] &9' . str_repeat('█', $firstPoints) . ' &7' . str_repeat('█', 5 - $firstPoints),
-                    ' &c[R] &c' . str_repeat('█', $secondPoints) . ' &7' . str_repeat('█', 5 - $secondPoints),
+                    ' &9[B] &9' . str_repeat('█', $firstPoints) . '&7' . str_repeat('█', 5 - $firstPoints),
+                    ' &c[R] &c' . str_repeat('█', $secondPoints) . '&7' . str_repeat('█', 5 - $secondPoints),
                     ' &r ',
                     ' &fDuration: &b' . gmdate('i:s', $this->running)
                 ];
@@ -271,8 +271,8 @@ class Bridge extends Duel {
             $opponent = $this->getOpponent($player);
 
             return [
-                ' &9[B] &9' . str_repeat('█', $firstPoints) . ' &7' . str_repeat('█', 5 - $firstPoints),
-                ' &c[R] &c' . str_repeat('█', $secondPoints) . ' &7' . str_repeat('█', 5 - $secondPoints),
+                ' &9[B] &9' . str_repeat('█', $firstPoints) . '&7' . str_repeat('█', 5 - $firstPoints),
+                ' &c[R] &c' . str_repeat('█', $secondPoints) . '&7' . str_repeat('█', 5 - $secondPoints),
                 ' &r ',
                 ' &fDuration: &b' . gmdate('i:s', $this->running),
                 ' &r&r ',

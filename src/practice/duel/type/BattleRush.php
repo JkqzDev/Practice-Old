@@ -169,21 +169,26 @@ class BattleRush extends Duel {
     
     public function handlePlace(BlockPlaceEvent $event): void {
         $block = $event->getBlock();
+        $position = $block->getPosition();
+        
         $worldName = $this->worldName;
         $worldData = WorldFactory::get($worldName);
-
-        if ($block->getPosition()->equals($worldData->getFirstPosition()) || $block->getPosition()->equals($worldData->getSecondPosition())) {
+        
+        $firstPosition = $worldData->getFirstPosition();
+        $secondPosition = $worldData->getSecondPosition();
+        
+        if ($position->getX() === $firstPosition->getX() && $position->getZ() === $firstPosition->getZ() || $position->getX() === $secondPosition->getX() && $position->getZ() === $secondPosition->getZ()) {
             $event->cancel();
             return;
         }
         $firstPortal = $this->firstPortal;
         $secondPortal = $this->secondPortal;
 
-        if ($firstPortal->isVectorInside($block->getPosition()) || $secondPortal->isVectorInside($block->getPosition())) {
+        if ($firstPortal->isVectorInside($position) || $secondPortal->isVectorInside($position)) {
             $event->cancel();
             return;
         }
-        $this->blocks[$block->getPosition()->__toString()] = $block;
+        $this->blocks[$position->__toString()] = $block;
     }
 
     public function handleDamage(EntityDamageEvent $event): void {
@@ -274,8 +279,8 @@ class BattleRush extends Duel {
 
             if ($this->isSpectator($player)) {
                 return [
-                    ' &9[B] &9' . str_repeat('█', $firstPoints) . ' &7' . str_repeat('█', 3 - $firstPoints),
-                    ' &c[R] &c' . str_repeat('█', $secondPoints) . ' &7' . str_repeat('█', 3 - $secondPoints),
+                    ' &9[B] &9' . str_repeat('█', $firstPoints) . '&7' . str_repeat('█', 3 - $firstPoints),
+                    ' &c[R] &c' . str_repeat('█', $secondPoints) . '&7' . str_repeat('█', 3 - $secondPoints),
                     ' &r ',
                     ' &fDuration: &b' . gmdate('i:s', $this->running)
                 ];
@@ -283,8 +288,8 @@ class BattleRush extends Duel {
             $opponent = $this->getOpponent($player);
 
             return [
-                ' &9[B] &9' . str_repeat('█', $firstPoints) . ' &7' . str_repeat('█', 3 - $firstPoints),
-                ' &c[R] &c' . str_repeat('█', $secondPoints) . ' &7' . str_repeat('█', 3 - $secondPoints),
+                ' &9[B] &9' . str_repeat('█', $firstPoints) . '&7' . str_repeat('█', 3 - $firstPoints),
+                ' &c[R] &c' . str_repeat('█', $secondPoints) . '&7' . str_repeat('█', 3 - $secondPoints),
                 ' &r ',
                 ' &fDuration: &b' . gmdate('i:s', $this->running),
                 ' &r&r ',
