@@ -15,6 +15,7 @@ use pocketmine\event\player\PlayerExhaustEvent;
 use pocketmine\event\player\PlayerInteractEvent;
 use pocketmine\event\player\PlayerJoinEvent;
 use pocketmine\event\player\PlayerLoginEvent;
+use pocketmine\event\player\PlayerMoveEvent;
 use pocketmine\event\player\PlayerQuitEvent;
 use pocketmine\event\server\DataPacketSendEvent;
 use pocketmine\network\mcpe\protocol\LevelSoundEventPacket;
@@ -34,6 +35,9 @@ final class EventHandler implements Listener {
         }
         
         if ($session->inLobby()) {
+            if ($player->getServer()->isOp($player->getName())) {
+                return;
+            }
             $event->cancel();
         } elseif ($session->inDuel()) {
             $duel = $session->getDuel();
@@ -53,6 +57,9 @@ final class EventHandler implements Listener {
         }
         
         if ($session->inLobby()) {
+            if ($player->getServer()->isOp($player->getName())) {
+                return;
+            }
             $event->cancel();
         } elseif ($session->inDuel()) {
             $duel = $session->getDuel();
@@ -171,6 +178,20 @@ final class EventHandler implements Listener {
             if ($session->getName() !== $player->getName()) {
                 $session->setName($player->getName());
             }
+        }
+    }
+    
+    public function handleMove(PlayerMoveEvent $event): void {
+        $player = $event->getPlayer();
+        $session = SessionFactory::get($player);
+        
+        if ($session === null) {
+            return;
+        }
+        
+        if ($session->inDuel()) {
+            $duel = $session->getDuel();
+            $duel->handleMove($event);
         }
     }
 

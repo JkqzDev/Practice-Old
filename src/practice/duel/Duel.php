@@ -7,6 +7,7 @@ namespace practice\duel;
 use pocketmine\event\block\BlockBreakEvent;
 use pocketmine\event\block\BlockPlaceEvent;
 use pocketmine\event\entity\EntityDamageEvent;
+use pocketmine\event\player\PlayerMoveEvent;
 use pocketmine\player\GameMode;
 use pocketmine\player\Player;
 use pocketmine\utils\TextFormat;
@@ -55,6 +56,7 @@ class Duel {
         protected array $blocks = []
     ) {
         $this->prepare();
+        $this->init();
     }
 
     protected function init(): void {}
@@ -141,8 +143,8 @@ class Duel {
                     ' &fKit: &b' . DuelFactory::getName($this->typeId),
                     ' &fDuration: &b' . gmdate('i:s', $this->running),
                     ' &r&r',
-                    ' &fYour ping: &b' . $player->getNetworkSession()->getPing(),
-                    ' &fTheir ping: &b' . $opponent->getNetworkSession()->getPing()
+                    ' &aYour ping: ' . $player->getNetworkSession()->getPing(),
+                    ' &cTheir ping: ' . $opponent->getNetworkSession()->getPing()
                 ];
         }
     }
@@ -195,6 +197,10 @@ class Duel {
         }
     }
     
+    public function handleMove(PlayerMoveEvent $event): void {
+        // Nothing
+    }
+    
     public function prepare(): void {
         $worldName = $this->worldName;
         $world = $this->world;
@@ -226,8 +232,8 @@ class Duel {
             $kit?->giveTo($firstPlayer);
             $kit?->giveTo($secondPlayer);
             
-            $firstPlayer->teleport(new Position($firstPosition->getX(), $firstPosition->getY(), $firstPosition->getZ(), $world));
-            $secondPlayer->teleport(new Position($secondPosition->getX(), $secondPosition->getY(), $secondPosition->getZ(), $world));
+            $firstPlayer->teleport(Position::fromObject($firstPosition->add(0.5, 0, 0.5), $world));
+            $secondPlayer->teleport(Position::fromObject($secondPosition->add(0.5, 0, 0.5), $world));
         }
     }
     
@@ -277,6 +283,13 @@ class Duel {
                 if ($this->starting <= 0) {
                     $this->status = self::RUNNING;
                     
+                    if ($firstPlayer->isImmobile()) {
+                        $firstPlayer->setImmobile(false);
+                    }
+                    
+                    if ($secondPlayer->isImmobile()) {
+                        $secondPlayer->setImmobile(false);
+                    }
                     $firstPlayer->sendMessage(TextFormat::colorize('&bMatch started.'));
                     $secondPlayer->sendMessage(TextFormat::colorize('&bMatch started.'));
                     

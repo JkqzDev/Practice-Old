@@ -7,6 +7,7 @@ namespace practice;
 use pocketmine\plugin\PluginBase;
 use practice\arena\ArenaFactory;
 use practice\arena\command\ArenaCommand;
+use practice\duel\command\DuelCommand;
 use practice\duel\DuelFactory;
 use practice\kit\KitFactory;
 use practice\session\SessionFactory;
@@ -54,7 +55,9 @@ final class Practice extends PluginBase {
     protected function registerCommands(): void {
         $commands = [
             // Arena
-            new ArenaCommand
+            new ArenaCommand,
+            // Duel
+            new DuelCommand
         ];
 
         foreach ($commands as $command) {

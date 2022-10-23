@@ -109,15 +109,22 @@ final class SetupArenaHandler {
         $player->setGamemode(GameMode::CREATIVE());
         
         $selectSpawns = BlockFactory::getInstance()->get(BlockLegacyIds::DIAMOND_ORE, 0)->asItem();
+        $selectSpawns->getNamedTag()->setString('practice_item', 'selectSpawns');
+        
         $deleteSpawns = BlockFactory::getInstance()->get(BlockLegacyIds::GOLD_ORE, 0)->asItem();
+        $deleteSpawns->getNamedTag()->setString('practice_item', 'deleteSpawns');
+        
         $save = ItemFactory::getInstance()->get(ItemIds::DYE, 10);
+        $save->getNamedTag()->setString('practice_item', 'save');
+        
         $cancel = ItemFactory::getInstance()->get(ItemIds::DYE, 1);
+        $cancel->getNamedTag()->setString('practice_item', 'cancel');
         
         $player->getInventory()->setContents([
             0 => $selectSpawns,
             1 => $deleteSpawns,
-            7 => $save,
-            8 => $cancel
+            8 => $save,
+            7 => $cancel
         ]);
 
         $player->sendMessage(TextFormat::colorize('&aNow you have setup arena mode'));
@@ -162,19 +169,21 @@ final class SetupArenaHandler {
                 $player->sendMessage(TextFormat::colorize('&cYou can\'t add a spawn in another world'));
                 return;
             }
-            $this->addSpawn($position);
+            $this->addSpawn(Position::fromObject($position->add(0, 1, 0), $position->getWorld()));
             $player->sendMessage(TextFormat::colorize('&aYou have added a new spawn'));
         } elseif ($item->getId() === BlockLegacyIds::GOLD_ORE) {
             $event->cancel();
+            
             $this->deleteSpawns();
             $player->sendMessage(TextFormat::colorize('&cYou have removed all spawns'));
         } elseif ($item->getId() === ItemIds::DYE && $item->getMeta() === 10) {
             $event->cancel();
+            
             $this->create($player);
         } elseif ($item->getId() === ItemIds::DYE && $item->getMeta() === 1) {
             $event->cancel();
-            $this->finalizeCreator($player);
             
+            $this->finalizeCreator($player);
             $player->sendMessage(TextFormat::colorize('&cArena creator was cancelled'));
         }
     }

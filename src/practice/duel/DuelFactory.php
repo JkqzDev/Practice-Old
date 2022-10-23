@@ -41,7 +41,9 @@ final class DuelFactory {
         }
         $className = self::getClass($duelType);
         $duelName = self::getName($duelType);
-        $worldData = WorldFactory::getRandom(strtolower($duelName));
+
+        $newName = explode(' ', $duelName);
+        $worldData = WorldFactory::getRandom(strtolower(implode('', $newName)));
 
         if ($worldData === null) {
             return;
