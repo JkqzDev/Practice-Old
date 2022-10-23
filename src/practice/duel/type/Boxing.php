@@ -17,10 +17,12 @@ class Boxing extends Duel {
     
     public function handleDamage(EntityDamageEvent $event): void {
         parent::handleDamage($event);
+        $player = $event->getEntity();
         
         if ($event->isCancelled()) {
             return;
         }
+        $player->setHealth(20);
         
         if ($event instanceof EntityDamageByEntityEvent) {
             $damager = $event->getDamager();
@@ -101,19 +103,4 @@ class Boxing extends Duel {
         }
         return parent::scoreboard($player);
     }
-    
-    /*public function update(): void {
-        parent::update();
-        
-        if ($this->status === self::RUNNING) {
-            $firstSession = $this->firstSession;
-            $secondSession = $this->secondSession;
-        
-            if ($this->firstHit >= 100) {
-                $this->finish($secondSession->getPlayer());
-            } elseif ($this->secondHit >= 100) {
-                $this->finish($firstSession->getPlayer());
-            }
-        }
-    }*/
 }

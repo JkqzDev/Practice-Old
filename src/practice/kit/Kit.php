@@ -117,6 +117,10 @@ final class Kit {
         foreach ($inventoryContents as $slot => $it) {
             $item = ItemFactory::getInstance()->get(intval($it['id']), intval($it['meta']), intval($it['count'] ?? 1));
             
+            if (isset($it['unbreakable']) && $item instanceof Durable) {
+                $item->setUnbreakable(boolval($it['unbreakable']));
+            }
+            
             if (isset($it['enchantments'])) {
                 foreach ($it['enchantments'] as $enchantId => $enchantLevel) {
                     $enchant = EnchantmentIdMap::getInstance()->fromId(intval($enchantId));

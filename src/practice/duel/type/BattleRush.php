@@ -44,19 +44,22 @@ class BattleRush extends Duel {
             floatval($firstPortal->getX()),
             floatval($firstPortal->getY()),
             floatval($firstPortal->getZ()),
-            floatval($firstPortal->getX() + 1),
+            floatval($firstPortal->getX()),
             floatval($firstPortal->getY()),
-            floatval($firstPortal->getZ() + 1)
+            floatval($firstPortal->getZ()),
         );
+        $this->firstPortal->expand(8.0, 30.0, 8.0);
         
         $this->secondPortal = new AxisAlignedBB(
             floatval($secondPortal->getX()),
             floatval($secondPortal->getY()),
             floatval($secondPortal->getZ()),
-            floatval($secondPortal->getX() + 1),
-            floatval($secondPortal->getY()),
-            floatval($secondPortal->getZ() + 1)
+            floatval($secondPortal->getX()),
+            floatval($secondPortal->getY(),
+            floatval($secondPortal->getZ()),
         );
+        $this->secondPortal->expand(8.0, 30.0, 8.0);
+        
     }
     
     private function addPoint(bool $firstPlayer = true): void {
@@ -68,9 +71,6 @@ class BattleRush extends Duel {
         $firstPlayer = $this->firstSession->getPlayer();
         $secondPlayer = $this->secondSession->getPlayer();
 
-        if ($firstPlayer === null && $secondPlayer === null) {
-            return;
-        }
         $this->starting = 5;
         $this->mode = self::STARTING_BATTLE;
 
@@ -92,7 +92,7 @@ class BattleRush extends Duel {
         $firstPlayer->setImmobile(true);
         $secondPlayer->setImmobile(true);
 
-        $title = ($firstPlayer ? '&9' . $firstPlayer->getName() : '&c' . $secondPlayer->getName()) . '&escored!';
+        $title = ($firstPlayer ? '&9' . $firstPlayer->getName() : '&c' . $secondPlayer->getName()) . ' &escored!';
         $subTitle = '&9' . $this->firstPoints . ' &7- &c' . $this->secondPoints;
 
         $firstPlayer->sendTitle(TextFormat::colorize($title), TextFormat::colorize($subTitle));
@@ -130,7 +130,7 @@ class BattleRush extends Duel {
             
             foreach ($inventoryContents as $slot => $item) {
                 if ($item->getId() === ItemIds::WOOL) {
-                    $inventoryContents[$slot] = ItemFactory::getInstance()->get($item->getId(), $firstPlayer ? 11 : 13, $item->getCount());
+                    $inventoryContents[$slot] = ItemFactory::getInstance()->get($item->getId(), $firstPlayer ? 11 : 14, $item->getCount());
                 }
             }
             $player->getArmorInventory()->setContents($armorContents);
@@ -150,9 +150,9 @@ class BattleRush extends Duel {
         $secondPosition = $worldData->getSecondPosition();
         
         if ($firstPlayer) {
-            $player->teleport(Position::fromObject($firstPosition, $this->world));
+            $player->teleport(Position::fromObject($firstPosition->add(0.5, 0, 0.5), $this->world));
         } else {
-            $player->teleport(Position::fromObject($secondPosition, $this->world));
+            $player->teleport(Position::fromObject($secondPosition->add(0.5, 0, 0.5), $this->world));
         }
     }
 
@@ -176,10 +176,8 @@ class BattleRush extends Duel {
             $event->cancel();
             return;
         }
-        $firstPortal = clone $this->firstPortal;
-        $firstPortal->expand(5.0, 10.0, 5.0);
-        $secondPortal = clone $this->secondPortal;
-        $secondPortal->expand(5.0, 10.0, 5.0);
+        $firstPortal = $this->firstPortal;
+        $secondPortal = $this->secondPortal;
 
         if ($firstPortal->isVectorInside($block->getPosition()) || $secondPortal->isVectorInside($block->getPosition())) {
             $event->cancel();
@@ -218,14 +216,22 @@ class BattleRush extends Duel {
         $opponentPortal = $isFirst ? $this->secondPortal : $this->firstPortal;
 
         if ($ownPortal->isVectorInside($player->getPosition())) {
-            $this->teleportPlayer($player, $isFirst);
-            $this->giveKit($player, $isFirst);
-            return;
+            $block = $player->getWorld()->getBlock($player->getPosition());
+            
+            if ($block->getId() === 119) {
+                $this->teleportPlayer($player, $isFirst);
+                $this->giveKit($player, $isFirst);
+                return;
+            }
         }
 
         if ($opponentPortal->isVectorInside($player->getPosition())) {
-            $this->addPoint($isFirst);
-            return;
+            $block = $player->getWorld()->getBlock($player->getPosition());
+            
+            if ($block->getId() === 119) {
+                $this->addPoint($isFirst);
+                return;
+            }
         }
     }
     
@@ -255,6 +261,9 @@ class BattleRush extends Duel {
             
             $this->teleportPlayer($firstPlayer);
             $this->teleportPlayer($secondPlayer, false);
+            
+            $firstPlayer->setImmobile(true);
+            $secondPlayer->setImmobile(true);
         }
     }
 
@@ -265,8 +274,8 @@ class BattleRush extends Duel {
 
             if ($this->isSpectator($player)) {
                 return [
-                    ' &9[B] &9' . str_repeat('●', $firstPoints) . ' &7' . str_repeat('●', 3 - $firstPoints),
-                    ' &c[R] &c' . str_repeat('●', $secondPoints) . ' &7' . str_repeat('●', 3 - $secondPoints),
+                    ' &9[B] &9' . str_repeat('█', $firstPoints) . ' &7' . str_repeat('█', 3 - $firstPoints),
+                    ' &c[R] &c' . str_repeat('█', $secondPoints) . ' &7' . str_repeat('█', 3 - $secondPoints),
                     ' &r ',
                     ' &fDuration: &b' . gmdate('i:s', $this->running)
                 ];
@@ -274,8 +283,8 @@ class BattleRush extends Duel {
             $opponent = $this->getOpponent($player);
 
             return [
-                ' &9[B] &9' . str_repeat('●', $firstPoints) . ' &7' . str_repeat('●', 3 - $firstPoints),
-                ' &c[R] &c' . str_repeat('●', $secondPoints) . ' &7' . str_repeat('●', 3 - $secondPoints),
+                ' &9[B] &9' . str_repeat('█', $firstPoints) . ' &7' . str_repeat('█', 3 - $firstPoints),
+                ' &c[R] &c' . str_repeat('█', $secondPoints) . ' &7' . str_repeat('█', 3 - $secondPoints),
                 ' &r ',
                 ' &fDuration: &b' . gmdate('i:s', $this->running),
                 ' &r&r ',

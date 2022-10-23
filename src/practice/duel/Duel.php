@@ -232,8 +232,8 @@ class Duel {
             $kit?->giveTo($firstPlayer);
             $kit?->giveTo($secondPlayer);
             
-            $firstPlayer->teleport(Position::fromObject($firstPosition, $world));
-            $secondPlayer->teleport(Position::fromObject($secondPosition, $world));
+            $firstPlayer->teleport(Position::fromObject($firstPosition->add(0.5, 0, 0.5), $world));
+            $secondPlayer->teleport(Position::fromObject($secondPosition->add(0.5, 0, 0.5), $world));
         }
     }
     
