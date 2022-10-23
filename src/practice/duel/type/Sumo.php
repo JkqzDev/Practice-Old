@@ -5,9 +5,25 @@ declare(strict_types=1);
 namespace practice\duel\type;
 
 use pocketmine\block\Water;
+use pocketmine\event\entity\EntityDamageEvent;
+use pocketmine\player\Player;
 use practice\duel\Duel;
 
 class Sumo extends Duel {
+
+    public function handleDamage(EntityDamageEvent $event): void {
+        $player = $event->getEntity();
+        
+        if (!$player instanceof Player) {
+            return;
+        }
+        
+        if (!$this->isRunning()) {
+            $event->cancel();
+            return;
+        }
+        $player->setHealth($player->getMaxHealth());
+    }
     
     public function update(): void {
         parent::update();

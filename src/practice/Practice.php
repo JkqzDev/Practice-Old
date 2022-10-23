@@ -4,11 +4,26 @@ declare(strict_types=1);
 
 namespace practice;
 
+use pocketmine\data\bedrock\EntityLegacyIds;
+use pocketmine\data\bedrock\PotionTypeIdMap;
+use pocketmine\data\bedrock\PotionTypeIds;
+use pocketmine\data\SavedDataLoadingException;
+use pocketmine\entity\EntityDataHelper;
+use pocketmine\entity\EntityFactory;
+use pocketmine\item\ItemFactory;
+use pocketmine\item\PotionType;
+use pocketmine\nbt\tag\CompoundTag;
 use pocketmine\plugin\PluginBase;
+use pocketmine\world\World;
 use practice\arena\ArenaFactory;
 use practice\arena\command\ArenaCommand;
 use practice\duel\command\DuelCommand;
 use practice\duel\DuelFactory;
+use practice\entity\EnderPearl;
+use practice\entity\SplashPotion;
+use practice\item\EnderPearlItem;
+use practice\item\GoldenHeadItem;
+use practice\item\SplashPotionItem;
 use practice\kit\KitFactory;
 use practice\session\SessionFactory;
 use practice\world\WorldFactory;
@@ -32,6 +47,8 @@ final class Practice extends PluginBase {
         DuelFactory::task();
         SessionFactory::task();
         
+        $this->registerEntities();
+        $this->registerItems();
         $this->registerHandlers();
         $this->registerCommands();
         $this->unregisterCommands();
@@ -48,6 +65,31 @@ final class Practice extends PluginBase {
 
     static public function getInstance(): Practice {
         return self::$instance;
+    }
+
+    protected function registerEntities(): void {
+        EntityFactory::getInstance()->register(EnderPearl::class, function (World $world, CompoundTag $nbt): EnderPearl {
+			return new EnderPearl(EntityDataHelper::parseLocation($nbt, $world), null, $nbt);
+		}, ['ThrownEnderpearl', 'minecraft:ender_pearl'], EntityLegacyIds::ENDER_PEARL);
+
+		EntityFactory::getInstance()->register(SplashPotion::class, function (World $world, CompoundTag $nbt): SplashPotion {
+			$potionType = PotionTypeIdMap::getInstance()->fromId($nbt->getShort('PotionId', PotionTypeIds::WATER));
+
+			if ($potionType === null) {
+				throw new SavedDataLoadingException;
+			}
+			return new SplashPotion(EntityDataHelper::parseLocation($nbt, $world), null, $potionType, $nbt);
+
+		}, ['ThrownPotion', 'minecraft:potion', 'thrownpotion'], EntityLegacyIds::SPLASH_POTION);
+    }
+
+    protected function registerItems(): void {
+        ItemFactory::getInstance()->register(new EnderPearlItem, true);
+        ItemFactory::getInstance()->register(new GoldenHeadItem, true);
+
+        foreach (PotionType::getAll() as $potionType) {
+            ItemFactory::getInstance()->register(new SplashPotionItem($potionType), true);
+        }
     }
     
     protected function registerHandlers(): void {

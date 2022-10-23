@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace practice\duel\type;
 
-use pocketmine\block\VanillaBlocks;
 use pocketmine\color\Color;
 use pocketmine\event\block\BlockBreakEvent;
 use pocketmine\event\block\BlockPlaceEvent;
@@ -206,7 +205,7 @@ class Bridge extends Duel {
         if ($ownPortal->isVectorInside($player->getPosition())) {
             $block = $player->getWorld()->getBlock($player->getPosition());
             
-            if ($block->getId() === 119) {
+            if ($block->getId() === ItemIds::END_PORTAL) {
                 $this->teleportPlayer($player, $isFirst);
                 $this->giveKit($player, $isFirst);
                 return;
@@ -216,7 +215,7 @@ class Bridge extends Duel {
         if ($opponentPortal->isVectorInside($player->getPosition())) {
             $block = $player->getWorld()->getBlock($player->getPosition());
             
-            if ($block->getId() === 119) {
+            if ($block->getId() === ItemIds::END_PORTAL) {
                 $this->addPoint($isFirst);
                 return;
             }
@@ -229,7 +228,7 @@ class Bridge extends Duel {
         $firstSession = $this->firstSession;
         $secondSession = $this->secondSession;
         
-        $world->setTime(World::TIME_MIDNIGHT);
+        $world->setTime(World::TIME_FULL);
         $world->stopTime();
 
         $firstPlayer = $firstSession->getPlayer();

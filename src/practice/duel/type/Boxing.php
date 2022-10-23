@@ -22,7 +22,7 @@ class Boxing extends Duel {
         if ($event->isCancelled()) {
             return;
         }
-        $player->setHealth(20);
+        $player->setHealth($player->getMaxHealth());
         
         if ($event instanceof EntityDamageByEntityEvent) {
             $damager = $event->getDamager();
@@ -57,7 +57,6 @@ class Boxing extends Duel {
     public function scoreboard(Player $player): array {
         if ($this->status === self::RUNNING) {
             $firstSession = $this->firstSession;
-            $secondSession = $this->secondSession;
             
             if ($this->isSpectator($player)) {
                 return [

@@ -223,7 +223,7 @@ class BattleRush extends Duel {
         if ($ownPortal->isVectorInside($player->getPosition())) {
             $block = $player->getWorld()->getBlock($player->getPosition());
             
-            if ($block->getId() === 119) {
+            if ($block->getId() === ItemIds::END_PORTAL) {
                 $this->teleportPlayer($player, $isFirst);
                 $this->giveKit($player, $isFirst);
                 return;
@@ -233,7 +233,7 @@ class BattleRush extends Duel {
         if ($opponentPortal->isVectorInside($player->getPosition())) {
             $block = $player->getWorld()->getBlock($player->getPosition());
             
-            if ($block->getId() === 119) {
+            if ($block->getId() === ItemIds::END_PORTAL) {
                 $this->addPoint($isFirst);
                 return;
             }

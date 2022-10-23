@@ -41,7 +41,7 @@ final class Session {
         private string $uuid,
         private string $xuid,
         private string $name,
-        private int $enderpearl = 0,
+        private ?float $enderpearl = null,
         private ?Arena $arena = null,
         private ?PlayerQueue $queue = null,
         private ?Duel $duel = null,
@@ -57,6 +57,10 @@ final class Session {
     
     public function getName(): string {
         return $this->name;
+    }
+
+    public function getEnderpearl(): ?float {
+        return $this->enderpearl;
     }
     
     public function getPlayer(): ?Player {
@@ -102,6 +106,10 @@ final class Session {
     public function setName(string $name): void {
         $this->name = $name;
     }
+
+    public function setEnderpearl(?float $time): void {
+        $this->enderpearl = $time;
+    }
     
     public function setArena(?Arena $arena): void {
         $this->arena = $arena;
@@ -121,6 +129,24 @@ final class Session {
     
     public function update(): void {
         $this->scoreboard->update();
+
+        $enderpearl = $this->enderpearl;
+
+        if ($enderpearl !== null) {
+            $time = round($enderpearl - microtime(true), 2);
+
+            if ($time >= 0.00) {
+                $times = explode('.', (string) $time);
+
+                $xp = $times[0];
+                $progress = 0 . '.' . ($times[1] ?? 0.00);
+
+                $this->getPlayer()?->getXpManager()->setXpAndProgressNoEvent(intval($xp), floatval($progress));
+            } else {
+                $this->enderpearl = null;
+                $this->getPlayer()?->getXpManager()->setXpAndProgressNoEvent(0, 0.00);
+            }
+        }
     }
     
     public function join(): void {
