@@ -29,7 +29,7 @@ class SplashPotionItem extends SplashPotion {
 	}
 
     protected function createEntity(Location $location, Player $thrower): Throwable {
-		return new EntitySplashPotion($location, $thrower, $this->potionType);
+		return new EntitySplashPotion($location, $thrower, $this->type);
 	}
 
 	public function onClickAir(Player $player, Vector3 $directionVector): ItemUseResult {
