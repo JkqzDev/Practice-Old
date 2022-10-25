@@ -32,7 +32,7 @@ final class Practice extends PluginBase {
 
     public const IS_DEVELOPING = false;
 
-    static private Practice $instance;
+    static private self $instance;
     
     protected function onLoad(): void {
         self::$instance = $this;
@@ -63,16 +63,16 @@ final class Practice extends PluginBase {
         DuelFactory::disable();
     }
 
-    static public function getInstance(): Practice {
+    public static function getInstance(): self {
         return self::$instance;
     }
 
     protected function registerEntities(): void {
-        EntityFactory::getInstance()->register(EnderPearl::class, function (World $world, CompoundTag $nbt): EnderPearl {
+        EntityFactory::getInstance()->register(EnderPearl::class, static function (World $world, CompoundTag $nbt): EnderPearl {
 			return new EnderPearl(EntityDataHelper::parseLocation($nbt, $world), null, $nbt);
 		}, ['ThrownEnderpearl', 'minecraft:ender_pearl'], EntityLegacyIds::ENDER_PEARL);
 
-		EntityFactory::getInstance()->register(SplashPotion::class, function (World $world, CompoundTag $nbt): SplashPotion {
+		EntityFactory::getInstance()->register(SplashPotion::class, static function (World $world, CompoundTag $nbt): SplashPotion {
 			$potionType = PotionTypeIdMap::getInstance()->fromId($nbt->getShort('PotionId', PotionTypeIds::WATER));
 
 			if ($potionType === null) {
