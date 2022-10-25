@@ -20,5 +20,5 @@ final class PartyFactory {
     }
     
     static public function remove(): void {
-    )
+    }
 }
