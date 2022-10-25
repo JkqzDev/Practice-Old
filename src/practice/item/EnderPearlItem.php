@@ -39,7 +39,7 @@ class EnderPearlItem extends EnderPearl {
         $countdown = $session->getEnderpearl();
 
         if ($countdown !== null && $countdown > microtime(true)) {
-            $player->sendMessage(TextFormat::colorize('&cYou have cooldown enderpearl'));
+            $player->sendMessage(TextFormat::colorize('&cYou have enderpearl cooldown'));
             return ItemUseResult::FAIL();
         }
         $result = parent::onClickAir($player, $directionVector);

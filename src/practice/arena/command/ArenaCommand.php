@@ -36,6 +36,11 @@ final class ArenaCommand extends Command {
                     $sender->sendMessage(TextFormat::colorize('&cYou have combat tag'));
                     return;
                 }
+                
+                if ($session->getEnderpearl() !== null) {
+                    $sender->sendMessage(TextFormat::colorize('&cYou have enderpearl cooldown'));
+                    return;
+                }
                 $arena->quit($sender);
             }
             return;

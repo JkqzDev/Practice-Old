@@ -4,12 +4,14 @@ declare(strict_types=1);
 
 namespace practice\session;
 
+use pocketmine\entity\Attribute;
 use pocketmine\player\GameMode;
 use pocketmine\player\Player;
 use pocketmine\Server;
 use pocketmine\utils\TextFormat;
 use practice\arena\Arena;
 use practice\duel\Duel;
+use practice\duel\DuelFactory;
 use practice\duel\queue\QueueFactory;
 use practice\duel\queue\PlayerQueue;
 use practice\item\arena\JoinArenaItem;
@@ -17,6 +19,7 @@ use practice\item\duel\DuelSpectateItem;
 use practice\item\duel\queue\RankedQueueItem;
 use practice\item\duel\queue\UnrankedQueueItem;
 use practice\item\player\PlayerProfileItem;
+use practice\kit\Kit;
 use practice\party\Party;
 use practice\Practice;
 use practice\session\data\PlayerData;
@@ -36,6 +39,9 @@ final class Session {
     static public function create(string $uuid, string $xuid, string $name): self {
         return new self($uuid, $xuid, $name);
     }
+    
+    public bool $initialKnockbackMotion = false;
+    public bool $cancelKnockbackMotion = false;
     
     public function __construct(
         private string $uuid,
@@ -101,6 +107,19 @@ final class Session {
 
     public function inLobby(): bool {
         return !$this->inArena() && !$this->inDuel();
+    }
+    
+    public function getCurrentKit(): string {
+        $kitName = 'None';
+        
+        if ($this->arena !== null) {
+            $arena = $this->arena;
+            $kitName = $arena->getKit();
+        } elseif ($this->duel !== null) {
+            $duel = $this->duel;
+            $kitName = strtolower(DuelFactory::getName($duel->getTypeId()));
+        }
+        return $kitName;
     }
     
     public function setName(string $name): void {
@@ -218,5 +237,43 @@ final class Session {
             4 => new DuelSpectateItem,
             8 => new PlayerProfileItem
         ]);
+    }
+    
+    public function knockback(Player $damager, Kit $kit): void {
+        $player = $this->getPlayer();
+        
+        if ($player === null) {
+            return;
+        }
+        // By Zodiax
+        
+        $horizontalKnockback = $kit->getHorizontalKnockback();
+        $verticalKnockback = $kit->getVerticalKnockback();
+        
+        $x = $player->getPosition()->getX() - $damager->getPosition()->getX();
+        $z = $player->getPosition()->getZ() - $damager->getPosition()->getZ();
+        $f = sqrt($x * $x + $z * $z);
+		
+        if ($f <= 0) {
+            return;
+        }
+        
+        if (mt_rand() / mt_getrandmax() > $player->getAttributeMap()->get(Attribute::KNOCKBACK_RESISTANCE)?->getValue()) {
+            $f = 1 / $f;
+			
+            $motion = clone $player->getMotion();
+            $motion->x /= 2;
+            $motion->y /= 2;
+            $motion->z /= 2;
+            $motion->x += $x * $f * $horizontalKnockback;
+            $motion->y += $verticalKnockback;
+            $motion->z += $z * $f * $horizontalKnockback;
+			
+            if ($motion->y > $verticalKnockback) {
+                $motion->y = $verticalKnockback;
+            }
+            $this->initialKnockbackMotion = true;
+            $player->setMotion($motion);
+		}
     }
 }

@@ -8,3 +8,5 @@ permissions:
     default: op
   duel.command:
     default: op
+  kit.command:
+    default: op

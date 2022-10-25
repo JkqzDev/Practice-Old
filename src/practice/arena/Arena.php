@@ -37,6 +37,10 @@ final class Arena {
     public function getName(): string {
         return $this->name;
     }
+    
+    public function getKit(): string {
+        return $this->kit;
+    }
 
     public function getPlayers(): array {
         return $this->players;

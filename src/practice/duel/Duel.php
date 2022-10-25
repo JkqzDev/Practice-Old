@@ -331,6 +331,8 @@ class Duel {
                         $s_spectator->setDuel(null);
                         $s_spectator->giveLobyyItems();
                         
+                        $spectator->setGamemode(GameMode::SURVIVAL());
+                        $spectator->getInventory()->clearAll();
                         $spectator->teleport($spectator->getServer()->getWorldManager()->getDefaultWorld()->getSpawnLocation());
                     }
                     $this->delete();

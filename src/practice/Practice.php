@@ -24,6 +24,7 @@ use practice\entity\SplashPotion;
 use practice\item\EnderPearlItem;
 use practice\item\GoldenHeadItem;
 use practice\item\SplashPotionItem;
+use practice\kit\command\KitCommand;
 use practice\kit\KitFactory;
 use practice\session\SessionFactory;
 use practice\world\WorldFactory;
@@ -101,7 +102,9 @@ final class Practice extends PluginBase {
             // Arena
             new ArenaCommand,
             // Duel
-            new DuelCommand
+            new DuelCommand,
+            // Kit
+            new KitCommand
         ];
 
         foreach ($commands as $command) {
