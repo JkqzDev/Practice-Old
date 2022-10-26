@@ -7,7 +7,9 @@ namespace practice;
 use pocketmine\event\block\BlockBreakEvent;
 use pocketmine\event\block\BlockPlaceEvent;
 use pocketmine\event\block\LeavesDecayEvent;
+use pocketmine\event\entity\EntityDamageByEntityEvent;
 use pocketmine\event\entity\EntityDamageEvent;
+use pocketmine\event\entity\EntityMotionEvent;
 use pocketmine\event\entity\EntityRegainHealthEvent;
 use pocketmine\event\inventory\InventoryTransactionEvent;
 use pocketmine\event\Listener;
@@ -22,6 +24,7 @@ use pocketmine\network\mcpe\protocol\LevelSoundEventPacket;
 use pocketmine\network\mcpe\protocol\types\LevelSoundEvent;
 use pocketmine\player\Player;
 use pocketmine\utils\TextFormat;
+use practice\kit\KitFactory;
 use practice\session\SessionFactory;
 
 final class EventHandler implements Listener {
@@ -104,6 +107,41 @@ final class EventHandler implements Listener {
         } elseif ($session->inArena()) {
             $arena = $session->getArena();
             $arena->handleDamage($event);
+        }
+        
+        if ($event instanceof EntityDamageByEntityEvent) {
+           $damager = $event->getDamager();
+           $kit = KitFactory::get($session->getCurrentKit());
+           
+           if ($damager instanceof Player && $kit !== null) {
+               $event->setKnockback(0.0);
+               $event->setAttackCooldown($kit->getAttackCooldown());
+               
+               $session->knockback($damager, $kit);
+           }
+       }
+    }
+    
+    public function handleMotion(EntityMotionEvent $event): void {
+        $player = $event->getEntity();
+
+        if (!$player instanceof Player) {
+            return;
+        }
+        $session = SessionFactory::get($player);
+
+        if ($session === null) {
+            return;
+        }
+        
+        // By Zodiax
+
+        if ($session->initialKnockbackMotion) {
+            $session->initialKnockbackMotion = false;
+            $session->cancelKnockbackMotion = true;
+        } elseif ($session->cancelKnockbackMotion) {
+            $session->cancelKnockbackMotion = false;
+            $event->cancel();
         }
     }
     

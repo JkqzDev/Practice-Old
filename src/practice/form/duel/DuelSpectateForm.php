@@ -56,6 +56,8 @@ final class DuelSpectateForm extends SimpleForm {
                         if ($session === null) {
                             return;
                         }
+                        $match->addSpectator($player);
+                        
                         $session->setDuel($match);
         
                         $player->getInventory()->clearAll();
@@ -91,6 +93,8 @@ final class DuelSpectateForm extends SimpleForm {
                         if ($session === null) {
                             return;
                         }
+                        $match->addSpectator($player);
+                        
                         $session->setDuel($match);
         
                         $player->getInventory()->clearAll();

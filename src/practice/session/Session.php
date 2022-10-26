@@ -4,12 +4,14 @@ declare(strict_types=1);
 
 namespace practice\session;
 
+use pocketmine\entity\Attribute;
 use pocketmine\player\GameMode;
 use pocketmine\player\Player;
 use pocketmine\Server;
 use pocketmine\utils\TextFormat;
 use practice\arena\Arena;
 use practice\duel\Duel;
+use practice\duel\DuelFactory;
 use practice\duel\queue\QueueFactory;
 use practice\duel\queue\PlayerQueue;
 use practice\item\arena\JoinArenaItem;
@@ -17,6 +19,7 @@ use practice\item\duel\DuelSpectateItem;
 use practice\item\duel\queue\RankedQueueItem;
 use practice\item\duel\queue\UnrankedQueueItem;
 use practice\item\player\PlayerProfileItem;
+use practice\kit\Kit;
 use practice\party\Party;
 use practice\Practice;
 use practice\session\data\PlayerData;
@@ -37,11 +40,14 @@ final class Session {
         return new self($uuid, $xuid, $name);
     }
     
+    public bool $initialKnockbackMotion = false;
+    public bool $cancelKnockbackMotion = false;
+    
     public function __construct(
         private string $uuid,
         private string $xuid,
         private string $name,
-        private int $enderpearl = 0,
+        private ?float $enderpearl = null,
         private ?Arena $arena = null,
         private ?PlayerQueue $queue = null,
         private ?Duel $duel = null,
@@ -57,6 +63,10 @@ final class Session {
     
     public function getName(): string {
         return $this->name;
+    }
+
+    public function getEnderpearl(): ?float {
+        return $this->enderpearl;
     }
     
     public function getPlayer(): ?Player {
@@ -99,8 +109,25 @@ final class Session {
         return !$this->inArena() && !$this->inDuel();
     }
     
+    public function getCurrentKit(): string {
+        $kitName = 'None';
+        
+        if ($this->arena !== null) {
+            $arena = $this->arena;
+            $kitName = $arena->getKit();
+        } elseif ($this->duel !== null) {
+            $duel = $this->duel;
+            $kitName = strtolower(DuelFactory::getName($duel->getTypeId()));
+        }
+        return $kitName;
+    }
+    
     public function setName(string $name): void {
         $this->name = $name;
+    }
+
+    public function setEnderpearl(?float $time): void {
+        $this->enderpearl = $time;
     }
     
     public function setArena(?Arena $arena): void {
@@ -121,6 +148,24 @@ final class Session {
     
     public function update(): void {
         $this->scoreboard->update();
+
+        $enderpearl = $this->enderpearl;
+
+        if ($enderpearl !== null) {
+            $time = round($enderpearl - microtime(true), 2);
+
+            if ($time >= 0.00) {
+                $times = explode('.', (string) $time);
+
+                $xp = $times[0];
+                $progress = 0 . '.' . ($times[1] ?? 0.00);
+
+                $this->getPlayer()?->getXpManager()->setXpAndProgressNoEvent(intval($xp), floatval($progress));
+            } else {
+                $this->enderpearl = null;
+                $this->getPlayer()?->getXpManager()->setXpAndProgressNoEvent(0, 0.00);
+            }
+        }
     }
     
     public function join(): void {
@@ -192,5 +237,60 @@ final class Session {
             4 => new DuelSpectateItem,
             8 => new PlayerProfileItem
         ]);
+    }
+    
+    public function knockback(Player $damager, Kit $kit): void {
+        $player = $this->getPlayer();
+        
+        if ($player === null) {
+            return;
+        }
+        // By Zodiax
+        
+        $horizontalKnockback = $kit->getHorizontalKnockback();
+        $verticalKnockback = $kit->getVerticalKnockback();
+        $maxHeight = $kit->getMaxHeight();
+        $canRevert = $kit->canRevert();
+        
+        if (!$player->isOnGround() && $maxHeight > 0.0) {
+            [$max, $min] = $this->clamp($player->getPosition()->getY(), $damager->getPosition()->getY());
+            
+            if ($max - $min >= $maxHeight) {
+                $verticalKnockback *= 0.75;
+                
+                if ($canRevert) {
+                    $verticalKnockback *= -1;
+                }
+            }
+        }
+        $x = $player->getPosition()->getX() - $damager->getPosition()->getX();
+        $z = $player->getPosition()->getZ() - $damager->getPosition()->getZ();
+        $f = sqrt($x * $x + $z * $z);
+		
+        if ($f <= 0) {
+            return;
+        }
+        
+        if (mt_rand() / mt_getrandmax() > $player->getAttributeMap()->get(Attribute::KNOCKBACK_RESISTANCE)?->getValue()) {
+            $f = 1 / $f;
+			
+            $motion = clone $player->getMotion();
+            $motion->x /= 2;
+            $motion->y /= 2;
+            $motion->z /= 2;
+            $motion->x += $x * $f * $horizontalKnockback;
+            $motion->y += $verticalKnockback;
+            $motion->z += $z * $f * $horizontalKnockback;
+			
+            if ($motion->y > $verticalKnockback) {
+                $motion->y = $verticalKnockback;
+            }
+            $this->initialKnockbackMotion = true;
+            $player->setMotion($motion);
+        }
+    }
+    
+    private function clamp(float $first, float $second): array {
+        return $first > $second ? [$first, $second] : [$second, $first];
     }
 }

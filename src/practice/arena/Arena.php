@@ -16,6 +16,8 @@ use pocketmine\world\Position;
 use pocketmine\world\World;
 use practice\kit\KitFactory;
 use practice\session\SessionFactory;
+use practice\session\setting\gameplay\AutoRespawn;
+use practice\session\setting\Setting;
 
 final class Arena {
 
@@ -28,12 +30,16 @@ final class Arena {
         private array $combats = [],
         private array $blocks = []
     ) {
-        $world->setTime(World::TIME_MIDNIGHT);
+        $world->setTime(World::TIME_NOON);
         $world->startTime();
     }
 
     public function getName(): string {
         return $this->name;
+    }
+    
+    public function getKit(): string {
+        return $this->kit;
     }
 
     public function getPlayers(): array {
@@ -133,6 +139,12 @@ final class Arena {
                     Server::getInstance()->broadcastMessage(TextFormat::colorize('&a' . $damager->getName() . ' &2[' . $damager->getKills() . '] &7killed &c' . $player->getName() . ' &4[' . $session->getKills() . ']'));
                 }
                 unset($this->combats[$player->getName()]);
+            }
+            $autoRespawn = $session->getSetting(Setting::AUTO_RESPAWN);
+
+            if ($autoRespawn instanceof AutoRespawn && $autoRespawn->isEnabled()) {
+                $this->join($player);
+                return;
             }
             $this->quit($player);
         }

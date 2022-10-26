@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace practice\duel\type;
 
+use pocketmine\event\player\PlayerMoveEvent;
 use pocketmine\player\Player;
 use practice\duel\Duel;
 
@@ -17,7 +18,7 @@ class FinalUHC extends Duel {
         $this->z = $this->world->getSafeSpawn()->getFloorZ();
     }
     
-    public function insideBorder(Player $player): bool {
+    private function insideBorder(Player $player): bool {
         $position = $player->getPosition();
         
         if ($position->getFloorX() > ($this->x + $this->size) || $position->getFloorX() < ($this->x - $this->size) ||
@@ -27,7 +28,7 @@ class FinalUHC extends Duel {
         return true;
     }
     
-    public function teleportPlayer(Player $player): void {
+    private function teleportPlayer(Player $player): void {
         $position = $player->getPosition();
         
         $outsideX = ($position->getFloorX() < $this->x ? $position->getFloorX() <= ($this->x - $this->size) : $position->getFloorX() >= ($this->x + $this->size));
@@ -39,5 +40,17 @@ class FinalUHC extends Duel {
         $newPosition->y = $this->world->getHighestBlockAt($newPosition->getFloorX(), $newPosition->getFloorZ());
         
         $player->teleport($newPosition->add(0, 1, 0));
+    }
+    
+    public function handleMove(PlayerMoveEvent $event): void {
+        $player = $event->getPlayer();
+        $from = $event->getFrom();
+        $to = $event->getTo();
+        
+        if (!$from->equals($to)) {
+            if (!$this->insideBorder($player)) {
+                $this->teleportPlayer($player);
+            }
+        }
     }
 }

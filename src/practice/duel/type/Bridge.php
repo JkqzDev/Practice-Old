@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace practice\duel\type;
 
-use pocketmine\block\VanillaBlocks;
 use pocketmine\color\Color;
 use pocketmine\event\block\BlockBreakEvent;
 use pocketmine\event\block\BlockPlaceEvent;
@@ -123,7 +122,7 @@ class Bridge extends Duel {
             }
             
             foreach ($inventoryContents as $slot => $item) {
-                if ($item->getId() === ItemIds::WOOL) {
+                if ($item->getId() === ItemIds::TERRACOTTA) {
                     $inventoryContents[$slot] = ItemFactory::getInstance()->get($item->getId(), $firstPlayer ? 11 : 14, $item->getCount());
                 }
             }
@@ -206,7 +205,7 @@ class Bridge extends Duel {
         if ($ownPortal->isVectorInside($player->getPosition())) {
             $block = $player->getWorld()->getBlock($player->getPosition());
             
-            if ($block->getId() === 119) {
+            if ($block->getId() === ItemIds::END_PORTAL) {
                 $this->teleportPlayer($player, $isFirst);
                 $this->giveKit($player, $isFirst);
                 return;
@@ -216,7 +215,7 @@ class Bridge extends Duel {
         if ($opponentPortal->isVectorInside($player->getPosition())) {
             $block = $player->getWorld()->getBlock($player->getPosition());
             
-            if ($block->getId() === 119) {
+            if ($block->getId() === ItemIds::END_PORTAL) {
                 $this->addPoint($isFirst);
                 return;
             }
@@ -229,7 +228,7 @@ class Bridge extends Duel {
         $firstSession = $this->firstSession;
         $secondSession = $this->secondSession;
         
-        $world->setTime(World::TIME_MIDNIGHT);
+        $world->setTime(World::TIME_FULL);
         $world->stopTime();
 
         $firstPlayer = $firstSession->getPlayer();
@@ -262,8 +261,8 @@ class Bridge extends Duel {
 
             if ($this->isSpectator($player)) {
                 return [
-                    ' &9[B] &9' . str_repeat('█', $firstPoints) . ' &7' . str_repeat('█', 5 - $firstPoints),
-                    ' &c[R] &c' . str_repeat('█', $secondPoints) . ' &7' . str_repeat('█', 5 - $secondPoints),
+                    ' &9[B] &9' . str_repeat('█', $firstPoints) . '&7' . str_repeat('█', 5 - $firstPoints),
+                    ' &c[R] &c' . str_repeat('█', $secondPoints) . '&7' . str_repeat('█', 5 - $secondPoints),
                     ' &r ',
                     ' &fDuration: &b' . gmdate('i:s', $this->running)
                 ];
@@ -271,8 +270,8 @@ class Bridge extends Duel {
             $opponent = $this->getOpponent($player);
 
             return [
-                ' &9[B] &9' . str_repeat('█', $firstPoints) . ' &7' . str_repeat('█', 5 - $firstPoints),
-                ' &c[R] &c' . str_repeat('█', $secondPoints) . ' &7' . str_repeat('█', 5 - $secondPoints),
+                ' &9[B] &9' . str_repeat('█', $firstPoints) . '&7' . str_repeat('█', 5 - $firstPoints),
+                ' &c[R] &c' . str_repeat('█', $secondPoints) . '&7' . str_repeat('█', 5 - $secondPoints),
                 ' &r ',
                 ' &fDuration: &b' . gmdate('i:s', $this->running),
                 ' &r&r ',

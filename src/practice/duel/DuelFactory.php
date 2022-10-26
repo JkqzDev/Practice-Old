@@ -94,6 +94,12 @@ final class DuelFactory {
         }), 20);
     }
     
+    static public function disable(): void {
+        foreach (self::getAll() as $duel) {
+            $duel->delete();
+        }
+    }
+    
     static private function getClass(int $type): string {
         return match($type) {
             Duel::TYPE_NODEBUFF => Nodebuff::class,

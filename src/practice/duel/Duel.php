@@ -208,7 +208,7 @@ class Duel {
         $firstSession = $this->firstSession;
         $secondSession = $this->secondSession;
         
-        $world->setTime(World::TIME_MIDNIGHT);
+        $world->setTime(World::TIME_FULL);
         $world->stopTime();
         
         $kit = KitFactory::get(strtolower(DuelFactory::getName($this->typeId)));
@@ -331,6 +331,8 @@ class Duel {
                         $s_spectator->setDuel(null);
                         $s_spectator->giveLobyyItems();
                         
+                        $spectator->setGamemode(GameMode::SURVIVAL());
+                        $spectator->getInventory()->clearAll();
                         $spectator->teleport($spectator->getServer()->getWorldManager()->getDefaultWorld()->getSpawnLocation());
                     }
                     $this->delete();

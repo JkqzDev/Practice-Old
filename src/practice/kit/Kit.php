@@ -16,8 +16,10 @@ final class Kit {
 
     public function __construct(
         private int $attackCooldown,
+        private float $maxHeight,
         private float $horizontalKnockback,
         private float $verticalKnockback,
+        private bool $canRevert,
         private array $armorContents,
         private array $inventoryContents,
         private array $effects
@@ -27,12 +29,20 @@ final class Kit {
         return $this->attackCooldown;
     }
     
+    public function getMaxHeight(): float {
+        return $this->maxHeight;
+    }
+    
     public function getHorizontalKnockback(): float {
         return $this->horizontalKnockback;
     }
     
     public function getVerticalKnockback(): float {
         return $this->verticalKnockback;
+    }
+    
+    public function canRevert(): bool {
+        return $this->canRevert;
     }
     
     public function getArmorContents(): array {
@@ -51,12 +61,20 @@ final class Kit {
         $this->attackCooldown = $attackCooldown;
     }
     
+    public function setMaxHeight(float $maxHeight): void {
+        $this->maxHeight = $maxHeight;
+    }
+    
     public function setHorizontalKnockback(float $horizontalKnockback): void {
         $this->horizontalKnockback = $horizontalKnockback;
     }
     
     public function setVerticalKnockback(float $verticalKnockback): void {
         $this->verticalKnockback = $verticalKnockback;
+    }
+    
+    public function setCanRevert(bool $revert): void {
+        $this->canRevert = $revert;
     }
     
     public function giveTo(Player $player): void {
@@ -76,16 +94,20 @@ final class Kit {
     public function serializeData(): array {
         return [
             'attackCooldown' => $this->attackCooldown,
+            'maxHeight' => $this->maxHeight,
             'horizontalKnockback' => $this->horizontalKnockback,
-            'verticalKnockback' => $this->verticalKnockback
+            'verticalKnockback' => $this->verticalKnockback,
+            'canRevert' => $this->canRevert
         ];
     }
     
     static public function deserializeData(array $data): array {
         $storage = [
             'attackCooldown' => intval($data['attackCooldown'] ?? 10),
+            'maxHeight' => floatval($data['maxHeight'] ?? 0.0),
             'horizontalKnockback' => floatval($data['horizontalKnockback'] ?? 0.4),
             'verticalKnockback' => floatval($data['verticalKnockback'] ?? 0.4),
+            'canRevert' => boolval($data['canRevert'] ?? false),
             'armorContents' => [],
             'inventoryContents' => [],
             'effects' => []

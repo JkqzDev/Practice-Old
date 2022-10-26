@@ -15,4 +15,10 @@ final class PartyFactory {
     static public function getParty(string $name): ?Party {
         return self::$parties[$name] ?? null;
     }
+    
+    static public function create(): void {
+    }
+    
+    static public function remove(): void {
+    }
 }
