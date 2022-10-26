@@ -82,7 +82,7 @@ final class WorldFactory {
         @mkdir($plugin->getDataFolder() . 'storage');
         
         $config = new Config($plugin->getDataFolder() . 'storage' . DIRECTORY_SEPARATOR . 'worlds.json', Config::JSON);
-        $worlds = [];
+        $worlds = $config->getAll();
         
         foreach (self::getAll() as $name => $world) {
             $worlds[$name] = $world->serializeData();

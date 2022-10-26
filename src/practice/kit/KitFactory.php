@@ -37,7 +37,7 @@ final class KitFactory {
     static public function saveAll(): void {
         $plugin = Practice::getInstance();
         $config = new Config($plugin->getDataFolder() . 'kits.yml', Config::YAML);
-        $kits = $config->getAll();
+        $kits = [];
         
         foreach ($config->getAll() as $name => $data) {
             $kit = self::get($name);
