@@ -249,7 +249,20 @@ final class Session {
         
         $horizontalKnockback = $kit->getHorizontalKnockback();
         $verticalKnockback = $kit->getVerticalKnockback();
+        $maxHeight = $kit->getMaxHeight();
+        $canRevert = $kit->canRevert();
         
+        if (!$player->isOnGround() && $maxHeight > 0.0) {
+            [$max, $min] = $this->clamp($player->getPosition()->getY(), $damager->getPosition()->getY());
+            
+            if ($max - $min >= $maxHeight) {
+                $verticalKnockback *= 0.75;
+                
+                if ($canRevert) {
+                    $verticalKnockback *= -1;
+                }
+            }
+        }
         $x = $player->getPosition()->getX() - $damager->getPosition()->getX();
         $z = $player->getPosition()->getZ() - $damager->getPosition()->getZ();
         $f = sqrt($x * $x + $z * $z);
@@ -274,6 +287,10 @@ final class Session {
             }
             $this->initialKnockbackMotion = true;
             $player->setMotion($motion);
-		}
+        }
+    }
+    
+    private function clamp(float $first, float $second): array {
+        return $first > $second ? [$first, $second] : [$second, $first];
     }
 }

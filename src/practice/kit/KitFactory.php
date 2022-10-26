@@ -19,8 +19,8 @@ final class KitFactory {
         return self::$kits[$name] ?? null;
     }
     
-    static public function create(string $name, int $attackCooldown, float $horizontalKnockback, float $verticalKnockback, array $armorContents = [], array $inventoryContents = [], array $effects = []): void {
-        self::$kits[$name] = new Kit($attackCooldown, $horizontalKnockback, $verticalKnockback, $armorContents, $inventoryContents, $effects);
+    static public function create(string $name, int $attackCooldown, float $maxHeight, float $horizontalKnockback, float $verticalKnockback, bool $canRevert, array $armorContents = [], array $inventoryContents = [], array $effects = []): void {
+        self::$kits[$name] = new Kit($attackCooldown, $maxHeight, $horizontalKnockback, $verticalKnockback, $canRevert, $armorContents, $inventoryContents, $effects);
     }
 
     static public function loadAll(): void {
@@ -30,14 +30,14 @@ final class KitFactory {
         foreach ($config->getAll() as $name => $data) {
             $kitData = Kit::deserializeData($data);
             
-            self::create($name, $kitData['attackCooldown'], $kitData['horizontalKnockback'], $kitData['verticalKnockback'], $kitData['armorContents'], $kitData['inventoryContents'], $kitData['effects']);
+            self::create($name, $kitData['attackCooldown'], $kitData['maxHeight'], $kitData['horizontalKnockback'], $kitData['verticalKnockback'], $kitData['canRevert'], $kitData['armorContents'], $kitData['inventoryContents'], $kitData['effects']);
         }
     }
     
     static public function saveAll(): void {
         $plugin = Practice::getInstance();
         $config = new Config($plugin->getDataFolder() . 'kits.yml', Config::YAML);
-        $kits = [];
+        $kits = $config->getAll();
         
         foreach ($config->getAll() as $name => $data) {
             $kit = self::get($name);
@@ -46,8 +46,10 @@ final class KitFactory {
                 $kitData = $kit->serializeData();
                 
                 $data['attackCooldown'] = $kitData['attackCooldown'];
+                $data['maxHeight'] = $kitData['maxHeight'];
                 $data['horizontalKnockback'] = $kitData['horizontalKnockback'];
                 $data['verticalKnockback'] = $kitData['verticalKnockback'];
+                $data['canRevert'] = $kitData['canRevert'];
             }
             $kits[$name] = $data;
         }
