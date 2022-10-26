@@ -94,18 +94,6 @@ final class EventHandler implements Listener {
             $event->cancel();
             return;
        }
-       
-       if ($event instanceof EntityDamageByEntityEvent) {
-           $damager = $event->getDamager();
-           $kit = KitFactory::get($session->getCurrentKit());
-           
-           if ($damager instanceof Player && $kit !== null) {
-               $event->setKnockback(0.0);
-               $event->setAttackCooldown($kit->getAttackCooldown());
-               
-               $session->knockback($damager, $kit);
-           }
-       }
 
         if ($session->inLobby()) {
             $event->cancel();
@@ -120,6 +108,18 @@ final class EventHandler implements Listener {
             $arena = $session->getArena();
             $arena->handleDamage($event);
         }
+        
+        if ($event instanceof EntityDamageByEntityEvent) {
+           $damager = $event->getDamager();
+           $kit = KitFactory::get($session->getCurrentKit());
+           
+           if ($damager instanceof Player && $kit !== null) {
+               $event->setKnockback(0.0);
+               $event->setAttackCooldown($kit->getAttackCooldown());
+               
+               $session->knockback($damager, $kit);
+           }
+       }
     }
     
     public function handleMotion(EntityMotionEvent $event): void {
