@@ -67,7 +67,6 @@ final class WorldFactory {
             self::create($world->getFolderName(), ['no debuff'], $world->getSpawnLocation(), $world->getSpawnLocation(), null, null, true);
         }
         @mkdir($plugin->getDataFolder() . 'storage');
-        
         $config = new Config($plugin->getDataFolder() . 'storage' . DIRECTORY_SEPARATOR . 'worlds.json', Config::JSON);
         
         foreach ($config->getAll() as $name => $data) {
@@ -84,7 +83,7 @@ final class WorldFactory {
         $config = new Config($plugin->getDataFolder() . 'storage' . DIRECTORY_SEPARATOR . 'worlds.json', Config::JSON);
         $worlds = $config->getAll();
         
-        foreach (self::getAll() as $name => $world) {
+        foreach ($worlds as $name => $world) {
             $worlds[$name] = $world->serializeData();
         }
         $config->setAll($worlds);

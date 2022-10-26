@@ -8,6 +8,7 @@ trait HandlerTrait {
     
     private ?SetupArenaHandler $setupArenaHandler = null;
     private ?SetupDuelHandler $setupDuelHandler = null;
+    private ?SetupEventHandler $setupEventHandler = null;
     
     public function getSetupArenaHandler(): ?SetupArenaHandler {
         return $this->setupArenaHandler;
@@ -15,6 +16,10 @@ trait HandlerTrait {
     
     public function getSetupDuelHandler(): ?SetupDuelHandler {
         return $this->setupDuelHandler;
+    }
+
+    public function getSetupEventHandler(): ?SetupEventHandler {
+        return $this->setupEventHandler;
     }
     
     public function startSetupArenaHandler(): void {
@@ -25,11 +30,19 @@ trait HandlerTrait {
         $this->setupDuelHandler = new SetupDuelHandler;
     }
 
+    public function startSetupEventHandler(): void {
+        $this->setupEventHandler = new SetupEventHandler;
+    }
+
     public function stopSetupArenaHandler(): void {
         $this->setupArenaHandler = null;
     }
 
     public function stopSetupDuelHandler(): void {
         $this->setupDuelHandler = null;
+    }
+
+    public function stopSetupEventHandler(): void {
+        $this->setupEventHandler = null;
     }
 }

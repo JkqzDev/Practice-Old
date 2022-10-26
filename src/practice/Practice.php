@@ -21,6 +21,7 @@ use practice\duel\command\DuelCommand;
 use practice\duel\DuelFactory;
 use practice\entity\EnderPearl;
 use practice\entity\SplashPotion;
+use practice\event\EventFactory;
 use practice\item\EnderPearlItem;
 use practice\item\GoldenHeadItem;
 use practice\item\SplashPotionItem;
@@ -47,6 +48,7 @@ final class Practice extends PluginBase {
         $this->unregisterCommands();
         
         ArenaFactory::loadAll();
+        EventFactory::loadAll();
         KitFactory::loadAll();
         SessionFactory::loadAll();
         WorldFactory::loadAll();
@@ -57,6 +59,7 @@ final class Practice extends PluginBase {
     
     protected function onDisable(): void {
         ArenaFactory::saveAll();
+        EventFactory::saveAll();
         KitFactory::saveAll();
         SessionFactory::saveAll();
         WorldFactory::saveAll();
@@ -70,18 +73,17 @@ final class Practice extends PluginBase {
 
     protected function registerEntities(): void {
         EntityFactory::getInstance()->register(EnderPearl::class, static function (World $world, CompoundTag $nbt): EnderPearl {
-			return new EnderPearl(EntityDataHelper::parseLocation($nbt, $world), null, $nbt);
-		}, ['ThrownEnderpearl', 'minecraft:ender_pearl'], EntityLegacyIds::ENDER_PEARL);
+            return new EnderPearl(EntityDataHelper::parseLocation($nbt, $world), null, $nbt);
+        }, ['ThrownEnderpearl', 'minecraft:ender_pearl'], EntityLegacyIds::ENDER_PEARL);
 
-		EntityFactory::getInstance()->register(SplashPotion::class, static function (World $world, CompoundTag $nbt): SplashPotion {
-			$potionType = PotionTypeIdMap::getInstance()->fromId($nbt->getShort('PotionId', PotionTypeIds::WATER));
+        EntityFactory::getInstance()->register(SplashPotion::class, static function (World $world, CompoundTag $nbt): SplashPotion {
+            $potionType = PotionTypeIdMap::getInstance()->fromId($nbt->getShort('PotionId', PotionTypeIds::WATER));
 
-			if ($potionType === null) {
-				throw new SavedDataLoadingException;
-			}
-			return new SplashPotion(EntityDataHelper::parseLocation($nbt, $world), null, $potionType, $nbt);
-
-		}, ['ThrownPotion', 'minecraft:potion', 'thrownpotion'], EntityLegacyIds::SPLASH_POTION);
+            if ($potionType === null) {
+                throw new SavedDataLoadingException;
+            }
+            return new SplashPotion(EntityDataHelper::parseLocation($nbt, $world), null, $potionType, $nbt);
+        }, ['ThrownPotion', 'minecraft:potion', 'thrownpotion'], EntityLegacyIds::SPLASH_POTION);
     }
 
     protected function registerItems(): void {

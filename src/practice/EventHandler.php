@@ -109,6 +109,10 @@ final class EventHandler implements Listener {
             $arena->handleDamage($event);
         }
         
+        if ($event->isCancelled()) {
+            return;
+        }
+        
         if ($event instanceof EntityDamageByEntityEvent) {
            $damager = $event->getDamager();
            $kit = KitFactory::get($session->getCurrentKit());

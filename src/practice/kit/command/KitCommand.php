@@ -31,13 +31,16 @@ final class KitCommand extends Command {
         if ($sender->hasPermission('kit.command')) {
             if ($subCommand === 'edit') {
                 if (!isset($args[1])) {
+                    $sender->sendMessage(TextFormat::colorize('&cUse /kit edit [kitName]'));
                     return;
                 }
-                $kitName = $args[1];
-                $kit = KitFactory::get($kitName);
-                
+                $name = $args;
+                unset($name[0], $name[1]);
+
+                $kit = KitFactory::get(strtolower(implode(' ', $name)));
+
                 if ($kit === null) {
-                    $sender->sendMessage(TextFormat::colorize('&cKit not exists.'));
+                    $sender->sendMessage(TextFormat::colorize('&cKit no exists.'));
                     return;
                 }
                 $form = new KitForm($kit);

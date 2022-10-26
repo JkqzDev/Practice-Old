@@ -25,14 +25,14 @@ class SplashPotionItem extends SplashPotion {
     }
 
     public function getThrowForce(): float {
-		return 0.5;
-	}
+        return 0.5;
+    }
 
     protected function createEntity(Location $location, Player $thrower): Throwable {
-		return new EntitySplashPotion($location, $thrower, $this->type);
-	}
+        return new EntitySplashPotion($location, $thrower, $this->type);
+    }
 
-	public function onClickAir(Player $player, Vector3 $directionVector): ItemUseResult {
-		return parent::onClickAir($player, $directionVector);
-	}
+    public function onClickAir(Player $player, Vector3 $directionVector): ItemUseResult {
+        return parent::onClickAir($player, $directionVector);
+    }
 }

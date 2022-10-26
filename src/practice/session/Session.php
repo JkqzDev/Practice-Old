@@ -222,6 +222,7 @@ final class Session {
 
         $this->stopSetupArenaHandler();
         $this->stopSetupDuelHandler();
+        $this->stopSetupEventHandler();
     }
 
     public function giveLobyyItems(): void {
@@ -281,7 +282,7 @@ final class Session {
             $motion->x += $x * $f * $horizontalKnockback;
             $motion->y += $verticalKnockback;
             $motion->z += $z * $f * $horizontalKnockback;
-			
+
             if ($motion->y > $verticalKnockback) {
                 $motion->y = $verticalKnockback;
             }

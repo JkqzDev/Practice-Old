@@ -57,7 +57,7 @@ final class ArenaFactory {
         $config = new Config($plugin->getDataFolder() . 'storage' . DIRECTORY_SEPARATOR . 'arenas.json', Config::JSON);
         $arenas = $config->getAll();
         
-        foreach (self::getAll() as $name => $arena) {
+        foreach ($arenas as $name => $arena) {
             $arenas[$name] = $arena->serializeData();
         }
         $config->setAll($arenas);

@@ -55,15 +55,15 @@ class EnderPearl extends ProjectileEnderPearl {
         $owner->getServer()->broadcastPackets($owner->getViewers(), [MoveActorAbsolutePacket::create($owner->getId(), $owner->getOffsetPosition($location = $owner->getLocation()), $location->pitch, $location->yaw, $location->yaw, (MoveActorAbsolutePacket::FLAG_TELEPORT | ($owner->onGround ? MoveActorAbsolutePacket::FLAG_GROUND : 0)))]);
         
         $this->getWorld()->addParticle($owner->getPosition(), new EndermanTeleportParticle);
-		$this->getWorld()->addSound($owner->getPosition(), new EndermanTeleportSound);
+        $this->getWorld()->addSound($owner->getPosition(), new EndermanTeleportSound);
     }
 
     public function calculateInterceptWithBlock(Block $block, Vector3 $start, Vector3 $end): ?RayTraceResult {
-		if ($block->getId() === BlockLegacyIds::INVISIBLE_BEDROCK) {
-			return null;
-		}
-		return parent::calculateInterceptWithBlock($block, $start, $end);
-	}
+        if ($block->getId() === BlockLegacyIds::INVISIBLE_BEDROCK) {
+            return null;
+        }
+        return parent::calculateInterceptWithBlock($block, $start, $end);
+    }
 
     public function entityBaseTick(int $tickDiff = 1): bool {
         if ($this->isCollided) {
