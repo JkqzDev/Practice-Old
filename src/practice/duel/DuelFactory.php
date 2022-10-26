@@ -85,21 +85,7 @@ final class DuelFactory {
             default => 'None'
         };
     }
-    
-    static public function task(): void {
-        Practice::getInstance()->getScheduler()->scheduleRepeatingTask(new ClosureTask(function (): void {
-            foreach (self::getAll() as $duel) {
-                $duel->update();
-            }
-        }), 20);
-    }
-    
-    static public function disable(): void {
-        foreach (self::getAll() as $duel) {
-            $duel->delete();
-        }
-    }
-    
+
     static private function getClass(int $type): string {
         return match($type) {
             Duel::TYPE_NODEBUFF => Nodebuff::class,
@@ -115,5 +101,19 @@ final class DuelFactory {
             Duel::TYPE_SUMO => Sumo::class,
             default => Nodebuff::class
         };
+    }
+    
+    static public function task(): void {
+        Practice::getInstance()->getScheduler()->scheduleRepeatingTask(new ClosureTask(function (): void {
+            foreach (self::getAll() as $duel) {
+                $duel->update();
+            }
+        }), 20);
+    }
+    
+    static public function disable(): void {
+        foreach (self::getAll() as $duel) {
+            $duel->delete();
+        }
     }
 }
