@@ -6,5 +6,4 @@ namespace cosmicpe\form\entries;
 
 use JsonSerializable;
 
-interface FormEntry extends JsonSerializable{
-}
+interface FormEntry extends JsonSerializable { }

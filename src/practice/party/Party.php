@@ -10,10 +10,14 @@ final class Party {
 
     public function __construct(
         private Player $owner,
-        private bool $open = true,
-        private array $members = []
+        private bool   $open = true,
+        private array  $members = []
     ) {
         $this->addMemeber($owner);
+    }
+
+    public function addMemeber(Player $player): void {
+        $this->members[spl_object_hash($player)] = $player;
     }
 
     public function getOwner(): Player {
@@ -34,9 +38,5 @@ final class Party {
 
     public function isMember(Player $player): bool {
         return isset($this->members[spl_object_hash($player)]);
-    }
-
-    public function addMemeber(Player $player): void {
-        $this->members[spl_object_hash($player)] = $player;
     }
 }

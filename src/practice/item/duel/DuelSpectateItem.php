@@ -5,12 +5,12 @@ declare(strict_types=1);
 namespace practice\item\duel;
 
 use pocketmine\item\ItemIds;
-use pocketmine\item\ItemUseResult;
 use pocketmine\math\Vector3;
 use pocketmine\player\Player;
-use practice\form\duel\DuelSpectateForm;
 use practice\item\PracticeItem;
+use pocketmine\item\ItemUseResult;
 use practice\session\SessionFactory;
+use practice\form\duel\DuelSpectateForm;
 
 class DuelSpectateItem extends PracticeItem {
 
@@ -20,11 +20,11 @@ class DuelSpectateItem extends PracticeItem {
 
     public function onClickAir(Player $player, Vector3 $directionVector): ItemUseResult {
         $session = SessionFactory::get($player);
-        
+
         if ($session === null) {
             return ItemUseResult::FAIL();
         }
-        
+
         if (!$session->inLobby()) {
             return ItemUseResult::FAIL();
         }

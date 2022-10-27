@@ -5,13 +5,12 @@ declare(strict_types=1);
 namespace practice\item\duel\queue;
 
 use pocketmine\item\ItemIds;
-use pocketmine\player\Player;
 use pocketmine\math\Vector3;
-use pocketmine\item\ItemUseResult;
-use practice\duel\queue\QueueFactory;
+use pocketmine\player\Player;
 use practice\item\PracticeItem;
-use practice\Practice;
+use pocketmine\item\ItemUseResult;
 use practice\session\SessionFactory;
+use practice\duel\queue\QueueFactory;
 
 class LeaveQueueItem extends PracticeItem {
 
@@ -29,7 +28,7 @@ class LeaveQueueItem extends PracticeItem {
 
         if ($session->inQueue()) {
             $session->setQueue(null);
-            
+
             QueueFactory::remove($player);
         }
         return ItemUseResult::SUCCESS();

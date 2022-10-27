@@ -4,30 +4,30 @@ declare(strict_types=1);
 
 namespace practice\session;
 
-use pocketmine\entity\Attribute;
-use pocketmine\player\GameMode;
-use pocketmine\player\Player;
+use practice\kit\Kit;
 use pocketmine\Server;
-use pocketmine\utils\TextFormat;
-use practice\arena\Arena;
+use practice\Practice;
 use practice\duel\Duel;
+use practice\arena\Arena;
+use practice\party\Party;
+use pocketmine\player\Player;
 use practice\duel\DuelFactory;
-use practice\duel\queue\QueueFactory;
+use pocketmine\player\GameMode;
+use pocketmine\entity\Attribute;
+use pocketmine\utils\TextFormat;
 use practice\duel\queue\PlayerQueue;
+use practice\duel\queue\QueueFactory;
+use practice\session\data\PlayerData;
+use practice\session\setting\Setting;
 use practice\item\arena\JoinArenaItem;
 use practice\item\duel\DuelSpectateItem;
+use practice\session\handler\HandlerTrait;
+use practice\session\setting\SettingTrait;
+use practice\item\player\PlayerProfileItem;
 use practice\item\duel\queue\RankedQueueItem;
 use practice\item\duel\queue\UnrankedQueueItem;
-use practice\item\player\PlayerProfileItem;
-use practice\kit\Kit;
-use practice\party\Party;
-use practice\Practice;
-use practice\session\data\PlayerData;
-use practice\session\handler\HandlerTrait;
-use practice\session\setting\Setting;
-use practice\session\setting\SettingTrait;
-use practice\session\scoreboard\ScoreboardBuilder;
 use practice\session\scoreboard\ScoreboardTrait;
+use practice\session\scoreboard\ScoreboardBuilder;
 use practice\session\setting\display\DisplaySetting;
 
 final class Session {
@@ -35,72 +35,44 @@ final class Session {
     use HandlerTrait;
     use SettingTrait;
     use ScoreboardTrait;
-    
-    static public function create(string $uuid, string $xuid, string $name): self {
-        return new self($uuid, $xuid, $name);
-    }
-    
+
     public bool $initialKnockbackMotion = false;
     public bool $cancelKnockbackMotion = false;
-    
+
     public function __construct(
-        private string $uuid,
-        private string $xuid,
-        private string $name,
-        private ?float $enderpearl = null,
-        private ?Arena $arena = null,
+        private string       $uuid,
+        private string       $xuid,
+        private string       $name,
+        private ?float       $enderpearl = null,
+        private ?Arena       $arena = null,
         private ?PlayerQueue $queue = null,
-        private ?Duel $duel = null,
-        private ?Party $party = null
+        private ?Duel        $duel = null,
+        private ?Party       $party = null
     ) {
         $this->setSettings(Setting::create());
         $this->setScoreboard(new ScoreboardBuilder($this, '&l&bHSM &r&7[South]&r'));
     }
-    
+
+    public static function create(string $uuid, string $xuid, string $name): self {
+        return new self($uuid, $xuid, $name);
+    }
+
     public function getXuid(): string {
         return $this->xuid;
-    }
-    
-    public function getName(): string {
-        return $this->name;
     }
 
     public function getEnderpearl(): ?float {
         return $this->enderpearl;
     }
-    
-    public function getPlayer(): ?Player {
-        return Server::getInstance()->getPlayerByRawUUID($this->uuid);
-    }
-    
-    public function getArena(): ?Arena {
-        return $this->arena;
-    }
 
     public function getQueue(): ?PlayerQueue {
         return $this->queue;
     }
-    
-    public function getDuel(): ?Duel {
-        return $this->duel;
-    }
-    
+
     public function getParty(): ?Party {
         return $this->party;
     }
-    
-    public function inArena(): bool {
-        return $this->arena !== null;
-    }
-    
-    public function inQueue(): bool {
-        return $this->queue !== null;
-    }
-    
-    public function inDuel(): bool {
-        return $this->duel !== null;
-    }
-    
+
     public function inParty(): bool {
         return $this->party !== null;
     }
@@ -108,10 +80,18 @@ final class Session {
     public function inLobby(): bool {
         return !$this->inArena() && !$this->inDuel();
     }
-    
+
+    public function inArena(): bool {
+        return $this->arena !== null;
+    }
+
+    public function inDuel(): bool {
+        return $this->duel !== null;
+    }
+
     public function getCurrentKit(): string {
         $kitName = 'None';
-        
+
         if ($this->arena !== null) {
             $arena = $this->arena;
             $kitName = $arena->getKit();
@@ -121,7 +101,11 @@ final class Session {
         }
         return $kitName;
     }
-    
+
+    public function getName(): string {
+        return $this->name;
+    }
+
     public function setName(string $name): void {
         $this->name = $name;
     }
@@ -129,23 +113,23 @@ final class Session {
     public function setEnderpearl(?float $time): void {
         $this->enderpearl = $time;
     }
-    
+
     public function setArena(?Arena $arena): void {
         $this->arena = $arena;
     }
-    
+
     public function setQueue(?PlayerQueue $queue): void {
         $this->queue = $queue;
     }
-    
+
     public function setDuel(?Duel $duel): void {
         $this->duel = $duel;
     }
-    
+
     public function setParty(?Party $party): void {
         $this->party = $party;
     }
-    
+
     public function update(): void {
         $this->scoreboard->update();
 
@@ -155,7 +139,7 @@ final class Session {
             $time = round($enderpearl - microtime(true), 2);
 
             if ($time >= 0.00) {
-                $times = explode('.', (string) $time);
+                $times = explode('.', (string)$time);
 
                 $xp = $times[0];
                 $progress = 0 . '.' . ($times[1] ?? 0.00);
@@ -167,7 +151,11 @@ final class Session {
             }
         }
     }
-    
+
+    public function getPlayer(): ?Player {
+        return Server::getInstance()->getPlayerByRawUUID($this->uuid);
+    }
+
     public function join(): void {
         $player = $this->getPlayer();
 
@@ -180,7 +168,7 @@ final class Session {
             $this->scoreboard->spawn();
         }
         $player->setGamemode(GameMode::SURVIVAL());
-        
+
         $player->getInventory()->clearAll();
         $player->getArmorInventory()->clearAll();
         $player->getCursorInventory()->clearAll();
@@ -192,20 +180,35 @@ final class Session {
 
         $player->teleport($player->getServer()->getWorldManager()->getDefaultWorld()->getSpawnLocation());
         $player->setNameTag(TextFormat::colorize('&7' . $player->getName()));
-        
+
         if (Practice::IS_DEVELOPING) {
             QueueFactory::create($player);
         }
     }
 
+    public function giveLobyyItems(): void {
+        $player = $this->getPlayer();
+
+        if ($player === null) {
+            return;
+        }
+        $player->getInventory()->setContents([
+            0 => new RankedQueueItem,
+            1 => new UnrankedQueueItem,
+            2 => new JoinArenaItem,
+            4 => new DuelSpectateItem,
+            8 => new PlayerProfileItem
+        ]);
+    }
+
     public function quit(): void {
         $player = $this->getPlayer();
-        
+
         if ($this->inQueue()) {
             QueueFactory::remove($player);
         } elseif ($this->inDuel()) {
             $duel = $this->getDuel();
-            
+
             if ($duel->isPlayer($player)) {
                 $duel->finish($player);
             } else {
@@ -224,40 +227,42 @@ final class Session {
         $this->stopSetupDuelHandler();
     }
 
-    public function giveLobyyItems(): void {
-        $player = $this->getPlayer();
-        
-        if ($player === null) {
-            return;
-        }
-        $player->getInventory()->setContents([
-            0 => new RankedQueueItem,
-            1 => new UnrankedQueueItem,
-            2 => new JoinArenaItem,
-            4 => new DuelSpectateItem,
-            8 => new PlayerProfileItem
-        ]);
+    public function inQueue(): bool {
+        return $this->queue !== null;
     }
-    
+
+    public function getDuel(): Duel {
+        /** @var Duel $duel */
+        $duel = $this->duel;
+        return $duel;
+    }
+
+    /**
+     * @phpstan-return Duel
+     */
+    public function getArena(): Arena {
+        return $this->arena;
+    }
+
     public function knockback(Player $damager, Kit $kit): void {
         $player = $this->getPlayer();
-        
+
         if ($player === null) {
             return;
         }
         // By Zodiax
-        
+
         $horizontalKnockback = $kit->getHorizontalKnockback();
         $verticalKnockback = $kit->getVerticalKnockback();
         $maxHeight = $kit->getMaxHeight();
         $canRevert = $kit->canRevert();
-        
+
         if (!$player->isOnGround() && $maxHeight > 0.0) {
             [$max, $min] = $this->clamp($player->getPosition()->getY(), $damager->getPosition()->getY());
-            
+
             if ($max - $min >= $maxHeight) {
                 $verticalKnockback *= 0.75;
-                
+
                 if ($canRevert) {
                     $verticalKnockback *= -1;
                 }
@@ -266,14 +271,14 @@ final class Session {
         $x = $player->getPosition()->getX() - $damager->getPosition()->getX();
         $z = $player->getPosition()->getZ() - $damager->getPosition()->getZ();
         $f = sqrt($x * $x + $z * $z);
-		
+
         if ($f <= 0) {
             return;
         }
-        
+
         if (mt_rand() / mt_getrandmax() > $player->getAttributeMap()->get(Attribute::KNOCKBACK_RESISTANCE)?->getValue()) {
             $f = 1 / $f;
-			
+
             $motion = clone $player->getMotion();
             $motion->x /= 2;
             $motion->y /= 2;
@@ -281,7 +286,7 @@ final class Session {
             $motion->x += $x * $f * $horizontalKnockback;
             $motion->y += $verticalKnockback;
             $motion->z += $z * $f * $horizontalKnockback;
-			
+
             if ($motion->y > $verticalKnockback) {
                 $motion->y = $verticalKnockback;
             }
@@ -289,7 +294,7 @@ final class Session {
             $player->setMotion($motion);
         }
     }
-    
+
     private function clamp(float $first, float $second): array {
         return $first > $second ? [$first, $second] : [$second, $first];
     }

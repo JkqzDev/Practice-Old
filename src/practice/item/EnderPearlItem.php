@@ -4,17 +4,17 @@ declare(strict_types=1);
 
 namespace practice\item;
 
-use pocketmine\entity\Location;
-use pocketmine\entity\projectile\Throwable;
-use pocketmine\item\EnderPearl;
-use pocketmine\item\ItemIdentifier;
 use pocketmine\item\ItemIds;
 use pocketmine\math\Vector3;
-use pocketmine\item\ItemUseResult;
 use pocketmine\player\Player;
+use pocketmine\entity\Location;
+use pocketmine\item\EnderPearl;
 use pocketmine\utils\TextFormat;
-use practice\entity\EnderPearl as EntityEnderPearl;
+use pocketmine\item\ItemUseResult;
+use pocketmine\item\ItemIdentifier;
 use practice\session\SessionFactory;
+use pocketmine\entity\projectile\Throwable;
+use practice\entity\EnderPearl as EntityEnderPearl;
 
 class EnderPearlItem extends EnderPearl {
 
@@ -24,10 +24,6 @@ class EnderPearlItem extends EnderPearl {
 
     public function getThrowForce(): float {
         return 2.35;
-    }
-
-    protected function createEntity(Location $location, Player $thrower): Throwable {
-        return new EntityEnderPearl($location, $thrower);
     }
 
     public function onClickAir(Player $player, Vector3 $directionVector): ItemUseResult {
@@ -48,5 +44,9 @@ class EnderPearlItem extends EnderPearl {
             $session->setEnderpearl(microtime(true) + 15.0);
         }
         return $result;
+    }
+
+    protected function createEntity(Location $location, Player $thrower): Throwable {
+        return new EntityEnderPearl($location, $thrower);
     }
 }

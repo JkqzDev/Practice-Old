@@ -13,14 +13,24 @@ final class WorldDeleteAsync extends AsyncTask {
         private string $directory
     ) {}
 
+    public function onRun(): void {
+        $world = $this->world;
+        $directory = $this->directory;
+        $path = $directory . DIRECTORY_SEPARATOR . $world;
+
+        $this->deleteSource($path);
+    }
+
     private function deleteSource(string $source): void {
         if (!is_dir($source)) {
             return;
         }
 
-        if (substr($source, strlen($source) - 1, 1) !== '/') {
+        if ($source[strlen($source) - 1] !== '/') {
             $source .= '/';
         }
+
+        /** @var array $files */
         $files = glob($source . '*', GLOB_MARK);
 
         foreach ($files as $file) {
@@ -31,13 +41,5 @@ final class WorldDeleteAsync extends AsyncTask {
             }
         }
         rmdir($source);
-    }
-
-    public function onRun(): void {
-        $world = $this->world;
-        $directory = $this->directory;
-        $path = $directory . DIRECTORY_SEPARATOR . $world;
-
-        $this->deleteSource($path);
     }
 }
