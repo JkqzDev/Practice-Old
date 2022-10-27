@@ -25,13 +25,21 @@ final class ArenaFactory {
 
     public static function loadAll(): void {
         if (Practice::IS_DEVELOPING) {
+            /** @phpstan-ignore-next-line */
             self::create('No debuff (test)', 'no_debuff', Practice::getInstance()->getServer()->getWorldManager()->getDefaultWorld(), [Practice::getInstance()->getServer()->getWorldManager()->getDefaultWorld()->getSpawnLocation()->asPosition()]);
         }
         $plugin = Practice::getInstance();
-        @mkdir($plugin->getDataFolder() . 'storage');
+        $path = $plugin->getDataFolder() . 'storage/';
+        if (!is_dir($path)) {
+            mkdir($path);
+        }
 
         $config = new Config($plugin->getDataFolder() . 'storage' . DIRECTORY_SEPARATOR . 'arenas.json', Config::JSON);
 
+        /**
+         * @var string $name
+         * @var array $data
+         */
         foreach ($config->getAll() as $name => $data) {
             $d_data = Arena::deserializeData($data);
 
@@ -52,7 +60,10 @@ final class ArenaFactory {
 
     public static function saveAll(): void {
         $plugin = Practice::getInstance();
-        @mkdir($plugin->getDataFolder() . 'storage');
+        $path = $plugin->getDataFolder() . 'storage';
+        if (!is_dir($path)) {
+            mkdir($path);
+        }
 
         $config = new Config($plugin->getDataFolder() . 'storage' . DIRECTORY_SEPARATOR . 'arenas.json', Config::JSON);
         $arenas = $config->getAll();
@@ -61,6 +72,10 @@ final class ArenaFactory {
             $arenas[$name] = $arena->serializeData();
         }
         $config->setAll($arenas);
-        $config->save();
+        try {
+            $config->save();
+        } catch (\Exception $exception) {
+            $plugin->getLogger()->error('Failed to save arenas: ' . $exception->getMessage());
+        }
     }
 }

@@ -11,6 +11,7 @@ use pocketmine\utils\TextFormat;
 use practice\world\WorldFactory;
 use practice\session\SessionFactory;
 use cosmicpe\form\entries\custom\InputEntry;
+use practice\session\handler\SetupDuelHandler;
 
 final class SetupDuelForm extends CustomForm {
 
@@ -66,7 +67,7 @@ final class SetupDuelForm extends CustomForm {
             $array = explode(', ', $value);
 
             foreach ($array as $name) {
-                if (in_array(strtolower($name), $this->duels)) {
+                if (in_array(strtolower($name), $this->duels, true)) {
                     $modes[] = strtolower($name);
 
                     if (strtolower($name) === 'bridge' || strtolower($name) === 'battlerush') {
@@ -81,6 +82,7 @@ final class SetupDuelForm extends CustomForm {
             }
             $session->startSetupDuelHandler();
 
+            /** @var SetupDuelHandler $setupDuel */
             $setupDuel = $session->getSetupDuelHandler();
             $setupDuel->setName($this->name);
             $setupDuel->setModes($modes);

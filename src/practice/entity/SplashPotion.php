@@ -1,8 +1,4 @@
 <?php
-
-// Splash Potion by Wqrro
-// Thanks Wqrro
-
 declare(strict_types=1);
 
 namespace practice\entity;
@@ -63,7 +59,7 @@ class SplashPotion extends ProjectileSplashPotion {
             $colors = [];
             foreach ($effects as $effect) {
                 $level = $effect->getEffectLevel();
-                for ($j = 0; $j < $level; ++$j) {
+                for ($j = 0; $j < $level; $j++) {
                     $colors[] = $effect->getColor();
                 }
             }

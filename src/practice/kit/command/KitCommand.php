@@ -18,16 +18,14 @@ final class KitCommand extends Command {
     }
 
     public function execute(CommandSender $sender, string $commandLabel, array $args): void {
-        if (!$sender instanceof Player) {
+        if (!$sender instanceof Player || !isset($args[0])) {
+            // Refit
             return;
         }
 
-        if (!isset($args[0])) {
-            // Rekit
-            return;
-        }
         $subCommand = strtolower($args[0]);
 
+        /** TODO: CAN BE MERGED */
         if ($sender->hasPermission('kit.command')) {
             if ($subCommand === 'edit') {
                 if (!isset($args[1])) {

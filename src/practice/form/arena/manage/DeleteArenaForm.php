@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace practice\form\arena\manage;
 
+use practice\arena\Arena;
 use cosmicpe\form\CustomForm;
 use pocketmine\player\Player;
 use pocketmine\utils\TextFormat;
@@ -17,11 +18,12 @@ final class DeleteArenaForm extends CustomForm {
 
         $nameEntry = new InputEntry('Arena name', 'Nodebuff');
 
-        $this->addEntry($nameEntry, function(Player $player, InputEntry $entry, string $value): void {
+        $this->addEntry($nameEntry, static function(Player $player, InputEntry $entry, string $value): void {
             if (ArenaFactory::get($value) === null) {
                 $player->sendMessage(TextFormat::colorize('&cArena not exists!'));
                 return;
             }
+            /** @var Arena $arena */
             $arena = ArenaFactory::get($value);
 
             foreach ($arena->getPlayers() as $target) {

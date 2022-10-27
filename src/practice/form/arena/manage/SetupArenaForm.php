@@ -11,6 +11,7 @@ use pocketmine\utils\TextFormat;
 use practice\arena\ArenaFactory;
 use practice\session\SessionFactory;
 use cosmicpe\form\entries\custom\InputEntry;
+use practice\session\handler\SetupArenaHandler;
 
 final class SetupArenaForm extends CustomForm {
 
@@ -55,6 +56,7 @@ final class SetupArenaForm extends CustomForm {
             }
             $session->startSetupArenaHandler();
 
+            /** @var SetupArenaHandler $setupArena */
             $setupArena = $session->getSetupArenaHandler();
             $setupArena->setWorld($value);
             $setupArena->setKit($this->kit);

@@ -5,8 +5,10 @@ declare(strict_types=1);
 namespace practice\session\handler;
 
 use pocketmine\Server;
+use practice\world\World;
 use pocketmine\item\ItemIds;
 use pocketmine\player\Player;
+use practice\session\Session;
 use pocketmine\world\Position;
 use pocketmine\player\GameMode;
 use pocketmine\item\ItemFactory;
@@ -47,7 +49,12 @@ final class SetupDuelHandler {
         if ($this->name === '') {
             return;
         }
+
         $world = $server->getWorldManager()->getWorldByName($this->name);
+
+        if (!isset($world)) {
+            return;
+        }
 
         $player->getArmorInventory()->clearAll();
         $player->getInventory()->clearAll();
@@ -229,6 +236,7 @@ final class SetupDuelHandler {
     }
 
     public function finalizeCreator(Player $player): void {
+        /** @var Session $session */
         $session = SessionFactory::get($player);
 
         $player->getArmorInventory()->clearAll();
@@ -236,7 +244,7 @@ final class SetupDuelHandler {
         $player->getCursorInventory()->clearAll();
         $player->getOffHandInventory()->clearAll();
 
-        $player->teleport(Server::getInstance()->getWorldManager()->getDefaultWorld()->getSpawnLocation());
+        $player->teleport(Server::getInstance()->getWorldManager()->getDefaultWorld()?->getSpawnLocation());
         $player->setGamemode(GameMode::SURVIVAL());
 
         $session->giveLobyyItems();

@@ -25,13 +25,13 @@ final class Kit {
         private array $effects
     ) {}
 
-    static public function deserializeData(array $data): array {
+    public static function deserializeData(array $data): array {
         $storage = [
-            'attackCooldown' => intval($data['attackCooldown'] ?? 10),
-            'maxHeight' => floatval($data['maxHeight'] ?? 0.0),
-            'horizontalKnockback' => floatval($data['horizontalKnockback'] ?? 0.4),
-            'verticalKnockback' => floatval($data['verticalKnockback'] ?? 0.4),
-            'canRevert' => boolval($data['canRevert'] ?? false),
+            'attackCooldown' => (int)($data['attackCooldown'] ?? 10),
+            'maxHeight' => (float)($data['maxHeight'] ?? 0.0),
+            'horizontalKnockback' => (float)($data['horizontalKnockback'] ?? 0.4),
+            'verticalKnockback' => (float)($data['verticalKnockback'] ?? 0.4),
+            'canRevert' => (bool)($data['canRevert'] ?? false),
             'armorContents' => [],
             'inventoryContents' => [],
             'effects' => []
@@ -42,18 +42,18 @@ final class Kit {
         $effects = $data['effects'] ?? [];
 
         foreach ($armorContents as $slot => $armor) {
-            $item = ItemFactory::getInstance()->get(intval($armor['id']), intval($armor['meta']));
+            $item = ItemFactory::getInstance()->get((int)$armor['id'], (int)$armor['meta']);
 
             if (isset($armor['unbreakable']) && $item instanceof Durable) {
-                $item->setUnbreakable(boolval($armor['unbreakable']));
+                $item->setUnbreakable((bool)$armor['unbreakable']);
             }
 
             if (isset($armor['enchantments'])) {
                 foreach ($armor['enchantments'] as $enchantId => $enchantLevel) {
-                    $enchant = EnchantmentIdMap::getInstance()->fromId(intval($enchantId));
+                    $enchant = EnchantmentIdMap::getInstance()->fromId((int)$enchantId);
 
                     if ($enchant !== null) {
-                        $item->addEnchantment(new EnchantmentInstance($enchant, intval($enchantLevel)));
+                        $item->addEnchantment(new EnchantmentInstance($enchant, (int)$enchantLevel));
                     }
                 }
             }
@@ -61,18 +61,18 @@ final class Kit {
         }
 
         foreach ($inventoryContents as $slot => $it) {
-            $item = ItemFactory::getInstance()->get(intval($it['id']), intval($it['meta']), intval($it['count'] ?? 1));
+            $item = ItemFactory::getInstance()->get((int)$it['id'], (int)$it['meta'], (int)($it['count'] ?? 1));
 
             if (isset($it['unbreakable']) && $item instanceof Durable) {
-                $item->setUnbreakable(boolval($it['unbreakable']));
+                $item->setUnbreakable((bool)$it['unbreakable']);
             }
 
             if (isset($it['enchantments'])) {
                 foreach ($it['enchantments'] as $enchantId => $enchantLevel) {
-                    $enchant = EnchantmentIdMap::getInstance()->fromId(intval($enchantId));
+                    $enchant = EnchantmentIdMap::getInstance()->fromId((int)$enchantId);
 
                     if ($enchant !== null) {
-                        $item->addEnchantment(new EnchantmentInstance($enchant, intval($enchantLevel)));
+                        $item->addEnchantment(new EnchantmentInstance($enchant, (int)$enchantLevel));
                     }
                 }
             }
@@ -80,10 +80,10 @@ final class Kit {
         }
 
         foreach ($effects as $id => $eff) {
-            $effect = EffectIdMap::getInstance()->fromId(intval($id));
+            $effect = EffectIdMap::getInstance()->fromId((int)$id);
 
             if ($effect !== null) {
-                $storage['effects'][intval($id)] = new EffectInstance($effect, intval($eff['duration']), intval($eff['amplifier']), false);
+                $storage['effects'][(int)$id] = new EffectInstance($effect, (int)$eff['duration'], (int)$eff['amplifier'], false);
             }
         }
         return $storage;

@@ -5,8 +5,8 @@ declare(strict_types=1);
 namespace practice\duel\type;
 
 use practice\duel\Duel;
+use practice\world\World;
 use pocketmine\color\Color;
-use pocketmine\world\World;
 use pocketmine\item\ItemIds;
 use practice\kit\KitFactory;
 use pocketmine\player\Player;
@@ -18,7 +18,6 @@ use pocketmine\utils\TextFormat;
 use practice\world\WorldFactory;
 use pocketmine\math\AxisAlignedBB;
 use pocketmine\block\VanillaBlocks;
-use pocketmine\event\block\BlockBreakEvent;
 use pocketmine\event\block\BlockPlaceEvent;
 use pocketmine\event\player\PlayerMoveEvent;
 use pocketmine\event\entity\EntityDamageEvent;
@@ -60,7 +59,7 @@ class BattleRush extends Duel {
             $event->cancel();
             return;
         }
-        $this->blocks[$position->__toString()] = $block;
+        $this->blocks[(string)$position] = $block;
     }
 
     public function handleDamage(EntityDamageEvent $event): void {
@@ -126,6 +125,7 @@ class BattleRush extends Duel {
 
     private function teleportPlayer(Player $player, bool $firstPlayer = true): void {
         $worldName = $this->worldName;
+        /** @var World $worldData */
         $worldData = WorldFactory::get($worldName);
         $firstPosition = $worldData->getFirstPosition();
         $secondPosition = $worldData->getSecondPosition();
@@ -164,13 +164,17 @@ class BattleRush extends Duel {
         }
     }
 
-    private function addPoint(bool $firstPlayer = true): void {
-        if ($firstPlayer) {
+    private function addPoint(bool $isFirstPlayer = true): void {
+        if ($isFirstPlayer) {
             $this->firstPoints++;
         } else {
             $this->secondPoints++;
         }
+
+        /** @var Player $firstPlayer */
         $firstPlayer = $this->firstSession->getPlayer();
+
+        /** @var Player $secondPlayer */
         $secondPlayer = $this->secondSession->getPlayer();
 
         $this->starting = 5;
@@ -194,7 +198,7 @@ class BattleRush extends Duel {
         $firstPlayer->setImmobile(true);
         $secondPlayer->setImmobile(true);
 
-        $title = ($firstPlayer ? '&9' . $firstPlayer->getName() : '&c' . $secondPlayer->getName()) . ' &escored!';
+        $title = ($isFirstPlayer ? '&9' . $firstPlayer->getName() : '&c' . $secondPlayer->getName()) . ' &escored!';
         $subTitle = '&9' . $this->firstPoints . ' &7- &c' . $this->secondPoints;
 
         $firstPlayer->sendTitle(TextFormat::colorize($title), TextFormat::colorize($subTitle));
@@ -212,7 +216,7 @@ class BattleRush extends Duel {
         $firstSession = $this->firstSession;
         $secondSession = $this->secondSession;
 
-        $world->setTime(World::TIME_MIDNIGHT);
+        $world->setTime($this->world::TIME_MIDNIGHT);
         $world->stopTime();
 
         $firstPlayer = $firstSession->getPlayer();
@@ -251,6 +255,7 @@ class BattleRush extends Duel {
                     ' &fDuration: &b' . gmdate('i:s', $this->running)
                 ];
             }
+            /** @var Player $opponent */
             $opponent = $this->getOpponent($player);
 
             return [
@@ -270,7 +275,10 @@ class BattleRush extends Duel {
         parent::update();
 
         if ($this->status === self::RUNNING) {
+            /** @var Player $firstPlayer */
             $firstPlayer = $this->firstSession->getPlayer();
+
+            /** @var Player $secondPlayer */
             $secondPlayer = $this->secondSession->getPlayer();
 
             if ($this->mode === self::STARTING_BATTLE) {
@@ -302,28 +310,33 @@ class BattleRush extends Duel {
 
     protected function init(): void {
         $worldName = $this->worldName;
+
+        /** @var World $worldData */
         $worldData = WorldFactory::get($worldName);
 
+        /** @var Position $firstPortal */
         $firstPortal = $worldData->getFirstPortal();
+
+        /** @var Position $secondPortal */
         $secondPortal = $worldData->getSecondPortal();
 
         $this->firstPortal = new AxisAlignedBB(
-            floatval($firstPortal->getX()),
-            floatval($firstPortal->getY()),
-            floatval($firstPortal->getZ()),
-            floatval($firstPortal->getX()),
-            floatval($firstPortal->getY()),
-            floatval($firstPortal->getZ())
+            (float)$firstPortal->getX(),
+            (float)$firstPortal->getY(),
+            (float)$firstPortal->getZ(),
+            (float)$firstPortal->getX(),
+            (float)$firstPortal->getY(),
+            (float)$firstPortal->getZ()
         );
         $this->firstPortal->expand(8.0, 30.0, 8.0);
 
         $this->secondPortal = new AxisAlignedBB(
-            floatval($secondPortal->getX()),
-            floatval($secondPortal->getY()),
-            floatval($secondPortal->getZ()),
-            floatval($secondPortal->getX()),
-            floatval($secondPortal->getY()),
-            floatval($secondPortal->getZ())
+            (float)$secondPortal->getX(),
+            (float)$secondPortal->getY(),
+            (float)$secondPortal->getZ(),
+            (float)$secondPortal->getX(),
+            (float)$secondPortal->getY(),
+            (float)$secondPortal->getZ()
         );
         $this->secondPortal->expand(8.0, 30.0, 8.0);
 

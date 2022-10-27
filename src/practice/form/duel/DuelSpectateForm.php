@@ -22,7 +22,7 @@ final class DuelSpectateForm extends SimpleForm {
             static function(Duel $duel): bool {
                 return !$duel->isRanked() && !$duel->isEnded();
             });
-        $rankedMatches = array_filter(DuelFactory::getAll(), function(Duel $duel): bool {
+        $rankedMatches = array_filter(DuelFactory::getAll(), static function(Duel $duel): bool {
             return $duel->isRanked() && !$duel->isEnded();
         });
 
@@ -38,6 +38,9 @@ final class DuelSpectateForm extends SimpleForm {
         });
     }
 
+    /**
+     * TODO: CHECK THIS FUNCTION
+     */
     private function firstPage(Player $player, array $matches): void {
         $simpleForm = new class($player, $matches) extends SimpleForm {
 
@@ -48,7 +51,7 @@ final class DuelSpectateForm extends SimpleForm {
                     assert($match instanceof Duel);
                     $button = new Button(TextFormat::colorize('&f' . $match->getFirstSession()->getName() . ' vs ' . $match->getSecondSession()->getName() . PHP_EOL . '&7Gamemode: ' . DuelFactory::getName($match->getTypeId())));
 
-                    $this->addButton($button, function(Player $player, int $button_index) use ($match): void {
+                    $this->addButton($button, static function(Player $player, int $button_index) use ($match): void {
                         if ($match->isEnded()) {
                             return;
                         }
@@ -75,6 +78,9 @@ final class DuelSpectateForm extends SimpleForm {
         $player->sendForm($simpleForm);
     }
 
+    /**
+     * TODO: CHECK THIS FUNCTION
+     */
     private function secondPage(Player $player, array $matches): void {
         $simpleForm = new class($player, $matches) extends SimpleForm {
 
@@ -85,7 +91,7 @@ final class DuelSpectateForm extends SimpleForm {
                     assert($match instanceof Duel);
                     $button = new Button(TextFormat::colorize('&f' . $match->getFirstSession()->getName() . ' vs ' . $match->getSecondSession()->getName() . PHP_EOL . '&7Gamemode: ' . DuelFactory::getName($match->getTypeId())));
 
-                    $this->addButton($button, function(Player $player, int $button_index) use ($match): void {
+                    $this->addButton($button, static function(Player $player, int $button_index) use ($match): void {
                         if ($match->isEnded()) {
                             return;
                         }

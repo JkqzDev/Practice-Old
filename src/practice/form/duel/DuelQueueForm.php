@@ -31,14 +31,16 @@ final class DuelQueueForm extends SimpleForm {
         parent::__construct(TextFormat::colorize($ranked ? '&bRanked duels' : '&9Unranked duels'));
 
         foreach ($this->types as $type => $typeId) {
-            $this->addButton(new Button(TextFormat::colorize('&7' . $type)), function(Player $player, int $button_index) use ($typeId, $ranked): void {
-                $queue = QueueFactory::get($player);
+            $this->addButton(new Button(TextFormat::colorize('&7' . $type)),
+                static function(Player $player, int $button_index) use ($typeId, $ranked): void {
+                    $queue = QueueFactory::get($player);
 
-                if ($queue !== null) {
-                    return;
+                    if ($queue !== null) {
+                        return;
+                    }
+                    QueueFactory::create($player, $typeId, $ranked);
                 }
-                QueueFactory::create($player, $typeId, $ranked);
-            });
+            );
         }
     }
 }

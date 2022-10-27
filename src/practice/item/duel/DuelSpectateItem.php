@@ -21,11 +21,7 @@ class DuelSpectateItem extends PracticeItem {
     public function onClickAir(Player $player, Vector3 $directionVector): ItemUseResult {
         $session = SessionFactory::get($player);
 
-        if ($session === null) {
-            return ItemUseResult::FAIL();
-        }
-
-        if (!$session->inLobby()) {
+        if ($session === null || !$session->inLobby()) {
             return ItemUseResult::FAIL();
         }
         $form = new DuelSpectateForm;

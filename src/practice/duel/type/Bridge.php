@@ -32,17 +32,6 @@ class Bridge extends Duel {
     private int $firstPoints = 0, $secondPoints = 0;
     private AxisAlignedBB $firstPortal, $secondPortal;
 
-    public function handleBreak(BlockBreakEvent $event): void {
-        $block = $event->getBlock();
-
-        if (!isset($this->blocks[$block->getPosition()->__toString()])) {
-            $event->cancel();
-            return;
-        }
-
-        unset($this->blocks[$block->getPosition()->__toString()]);
-    }
-
     public function handlePlace(BlockPlaceEvent $event): void {
         $block = $event->getBlock();
 
@@ -53,7 +42,7 @@ class Bridge extends Duel {
             $event->cancel();
             return;
         }
-        $this->blocks[$block->getPosition()->__toString()] = $block;
+        $this->blocks[(string)$block->getPosition()] = $block;
     }
 
     public function handleDamage(EntityDamageEvent $event): void {
@@ -64,7 +53,7 @@ class Bridge extends Duel {
         }
         $finalHealth = $player->getHealth() - $event->getFinalDamage();
 
-        if (!$this->isRunning() || $this->mode === self::STARTING_BATTLE) {
+        if ($this->mode === self::STARTING_BATTLE || !$this->isRunning()) {
             $event->cancel();
             return;
         }
@@ -119,7 +108,10 @@ class Bridge extends Duel {
 
     private function teleportPlayer(Player $player, bool $firstPlayer = true): void {
         $worldName = $this->worldName;
+
+        /** @var \practice\world\World $worldData */
         $worldData = WorldFactory::get($worldName);
+
         $firstPosition = $worldData->getFirstPosition();
         $secondPosition = $worldData->getSecondPosition();
 
@@ -157,13 +149,16 @@ class Bridge extends Duel {
         }
     }
 
-    private function addPoint(bool $firstPlayer = true): void {
-        if ($firstPlayer) {
+    private function addPoint(bool $isFirstPlayer = true): void {
+        if ($isFirstPlayer) {
             $this->firstPoints++;
         } else {
             $this->secondPoints++;
         }
+        /** @var Player $firstPlayer */
         $firstPlayer = $this->firstSession->getPlayer();
+
+        /** @var Player $secondPlayer */
         $secondPlayer = $this->secondSession->getPlayer();
 
         $this->starting = 5;
@@ -187,7 +182,7 @@ class Bridge extends Duel {
         $firstPlayer->setImmobile(true);
         $secondPlayer->setImmobile(true);
 
-        $title = ($firstPlayer ? '&9' . $firstPlayer->getName() : '&c' . $secondPlayer->getName()) . ' &escored!';
+        $title = ($isFirstPlayer ? '&9' . $firstPlayer->getName() : '&c' . $secondPlayer->getName()) . ' &escored!';
         $subTitle = '&9' . $this->firstPoints . ' &7- &c' . $this->secondPoints;
 
         $firstPlayer->sendTitle(TextFormat::colorize($title), TextFormat::colorize($subTitle));
@@ -239,6 +234,7 @@ class Bridge extends Duel {
                     ' &fDuration: &b' . gmdate('i:s', $this->running)
                 ];
             }
+            /** @var Player $opponent */
             $opponent = $this->getOpponent($player);
 
             return [
@@ -258,7 +254,10 @@ class Bridge extends Duel {
         parent::update();
 
         if ($this->status === self::RUNNING) {
+            /** @var Player $firstPlayer */
             $firstPlayer = $this->firstSession->getPlayer();
+
+            /** @var Player $secondPlayer */
             $secondPlayer = $this->secondSession->getPlayer();
 
             if ($this->mode === self::STARTING_BATTLE) {
@@ -290,28 +289,33 @@ class Bridge extends Duel {
 
     protected function init(): void {
         $worldName = $this->worldName;
+
+        /** @var \practice\world\World $worldData */
         $worldData = WorldFactory::get($worldName);
 
+        /** @var Position $firstPortal */
         $firstPortal = $worldData->getFirstPortal();
+
+        /** @var Position $secondPortal */
         $secondPortal = $worldData->getSecondPortal();
 
         $this->firstPortal = new AxisAlignedBB(
-            floatval($firstPortal->getX()),
-            floatval($firstPortal->getY()),
-            floatval($firstPortal->getZ()),
-            floatval($firstPortal->getX()),
-            floatval($firstPortal->getY()),
-            floatval($firstPortal->getZ())
+            (float)$firstPortal->getX(),
+            (float)$firstPortal->getY(),
+            (float)$firstPortal->getZ(),
+            (float)$firstPortal->getX(),
+            (float)$firstPortal->getY(),
+            (float)$firstPortal->getZ()
         );
         $this->firstPortal->expand(8.0, 30.0, 8.0);
 
         $this->secondPortal = new AxisAlignedBB(
-            floatval($secondPortal->getX()),
-            floatval($secondPortal->getY()),
-            floatval($secondPortal->getZ()),
-            floatval($secondPortal->getX()),
-            floatval($secondPortal->getY()),
-            floatval($secondPortal->getZ())
+            (float)$secondPortal->getX(),
+            (float)$secondPortal->getY(),
+            (float)$secondPortal->getZ(),
+            (float)$secondPortal->getX(),
+            (float)$secondPortal->getY(),
+            (float)$secondPortal->getZ()
         );
         $this->secondPortal->expand(8.0, 30.0, 8.0);
     }

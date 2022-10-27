@@ -23,31 +23,37 @@ final class KitForm extends CustomForm {
 
         // Possible hight limiter
 
-        $this->addEntry($horizontalKnockback, function(Player $player, InputEntry $entry, string $value) use ($kit): void {
+        $this->addEntry($horizontalKnockback,
+            static function(Player $player, InputEntry $entry, string $value) use ($kit): void {
+                if (!is_numeric($value)) {
+                    return;
+                }
+                $kit->setHorizontalKnockback((float)$value);
+            }
+        );
+
+        $this->addEntry($verticalKnockback, static function(Player $player, InputEntry $entry, string $value) use ($kit): void {
             if (!is_numeric($value)) {
                 return;
             }
-            $kit->setHorizontalKnockback(floatval($value));
+            $kit->setVerticalKnockback((float)$value);
         });
-        $this->addEntry($verticalKnockback, function(Player $player, InputEntry $entry, string $value) use ($kit): void {
+
+        $this->addEntry($maxHeight, static function(Player $player, InputEntry $entry, string $value) use ($kit): void {
             if (!is_numeric($value)) {
                 return;
             }
-            $kit->setVerticalKnockback(floatval($value));
+            $kit->setMaxHeight((float)$value);
         });
-        $this->addEntry($maxHeight, function(Player $player, InputEntry $entry, string $value) use ($kit): void {
+
+        $this->addEntry($attackCooldown, static function(Player $player, InputEntry $entry, string $value) use ($kit): void {
             if (!is_numeric($value)) {
                 return;
             }
-            $kit->setMaxHeight(floatval($value));
+            $kit->setAttackCooldown((int)$value);
         });
-        $this->addEntry($attackCooldown, function(Player $player, InputEntry $entry, string $value) use ($kit): void {
-            if (!is_numeric($value)) {
-                return;
-            }
-            $kit->setAttackCooldown(intval($value));
-        });
-        $this->addEntry($canRevert, function(Player $player, ToggleEntry $entry, bool $value) use ($kit): void {
+
+        $this->addEntry($canRevert, static function(Player $player, ToggleEntry $entry, bool $value) use ($kit): void {
             $kit->setCanRevert($value);
         });
     }

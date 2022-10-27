@@ -19,19 +19,17 @@ final class ArenaForm extends SimpleForm {
         parent::__construct(TextFormat::colorize('&eArenas FFA'));
 
         foreach (ArenaFactory::getAll() as $arena) {
-            $this->addButton(new Button(TextFormat::colorize('&7' . $arena->getName() . PHP_EOL . '&f' . count($arena->getPlayers()))), function(Player $player, int $button_index) use ($arena): void {
-                $session = SessionFactory::get($player);
+            $this->addButton(new Button(TextFormat::colorize('&7' . $arena->getName() . PHP_EOL . '&f' . count($arena->getPlayers()))),
+                static function(Player $player, int $button_index) use ($arena): void {
+                    $session = SessionFactory::get($player);
 
-                if ($session === null) {
-                    return;
+                    if ($session === null || !$session->inLobby()) {
+                        return;
+                    }
+                    $session->setArena($arena);
+                    $arena->join($player);
                 }
-
-                if (!$session->inLobby()) {
-                    return;
-                }
-                $session->setArena($arena);
-                $arena->join($player);
-            });
+            );
         }
     }
 }

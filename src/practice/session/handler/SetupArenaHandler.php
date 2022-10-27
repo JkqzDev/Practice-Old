@@ -7,6 +7,7 @@ namespace practice\session\handler;
 use pocketmine\Server;
 use pocketmine\item\ItemIds;
 use pocketmine\player\Player;
+use practice\session\Session;
 use pocketmine\world\Position;
 use pocketmine\player\GameMode;
 use pocketmine\item\ItemFactory;
@@ -49,6 +50,10 @@ final class SetupArenaHandler {
             return;
         }
         $world = $server->getWorldManager()->getWorldByName($this->world);
+
+        if (!isset($world)) {
+            return;
+        }
 
         $player->getArmorInventory()->clearAll();
         $player->getInventory()->clearAll();
@@ -125,7 +130,7 @@ final class SetupArenaHandler {
     }
 
     private function existSpawn(Position $position): bool {
-        return isset($this->spawns[$position->__toString()]);
+        return isset($this->spawns[(string)$position]);
     }
 
     public function getWorld(): ?string {
@@ -133,7 +138,7 @@ final class SetupArenaHandler {
     }
 
     private function addSpawn(Position $position): void {
-        $this->spawns[$position->__toString()] = $position;
+        $this->spawns[(string)$position] = $position;
     }
 
     private function deleteSpawns(): void {
@@ -149,6 +154,11 @@ final class SetupArenaHandler {
             return;
         }
         $world = $server->getWorldManager()->getWorldByName($this->world);
+
+        if ($world === null) {
+            $player->sendMessage(TextFormat::colorize('&cWorld is null'));
+            return;
+        }
 
         if ($this->kit === null) {
             $player->sendMessage(TextFormat::colorize('&cKit is null'));
@@ -174,6 +184,7 @@ final class SetupArenaHandler {
     }
 
     public function finalizeCreator(Player $player): void {
+        /** @var Session $session */
         $session = SessionFactory::get($player);
 
         $player->getArmorInventory()->clearAll();
@@ -181,7 +192,7 @@ final class SetupArenaHandler {
         $player->getCursorInventory()->clearAll();
         $player->getOffHandInventory()->clearAll();
 
-        $player->teleport(Server::getInstance()->getWorldManager()->getDefaultWorld()->getSpawnLocation());
+        $player->teleport(Server::getInstance()->getWorldManager()->getDefaultWorld()?->getSpawnLocation());
         $player->setGamemode(GameMode::SURVIVAL());
 
         $session->giveLobyyItems();

@@ -19,7 +19,7 @@ class Setting {
         protected mixed  $value
     ) {}
 
-    static public function create(): array {
+    public static function create(): array {
         return [
             self::SCOREBOARD => new Scoreboard,
             self::CPS_COUNTER => new CPSCounter,

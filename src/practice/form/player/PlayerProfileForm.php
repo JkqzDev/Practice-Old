@@ -55,14 +55,14 @@ class PlayerProfileForm extends SimpleForm {
                     if ($setting instanceof DisplaySetting) {
                         $toggle = new ToggleEntry($setting->getName(), $setting->isEnabled());
 
-                        $this->addEntry($toggle, function(Player $player, ToggleEntry $entry, bool $value) use ($session, $setting): void {
+                        $this->addEntry($toggle, static function(Player $player, ToggleEntry $entry, bool $value) use ($setting, $session): void {
                             $setting->setEnabled($value);
                             $setting->execute($session);
                         });
                     } elseif ($setting instanceof GameplaySetting) {
                         $toggle = new ToggleEntry($setting->getName(), $setting->isEnabled());
 
-                        $this->addEntry($toggle, function(Player $player, ToggleEntry $entry, bool $value) use ($setting): void {
+                        $this->addEntry($toggle, static function(Player $player, ToggleEntry $entry, bool $value) use ($setting): void {
                             $setting->setEnabled($value);
                         });
                     }

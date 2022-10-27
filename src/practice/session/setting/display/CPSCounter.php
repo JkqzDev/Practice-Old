@@ -25,12 +25,12 @@ class CPSCounter extends DisplaySetting {
     }
 
     public function getCPS(float $deltaTime = 1.0, int $roundPrecision = 1): float {
-        if (empty($this->clicks)) {
+        if (!isset($this->clicks)) {
             return 0.0;
         }
         $now = microtime(true);
 
-        return round(count(array_filter($this->clicks, static function(float $time) use ($deltaTime, $now): bool {
+        return round(count(array_filter($this->clicks, static function(float $time) use ($now, $deltaTime): bool {
                 return ($now - $time) <= $deltaTime;
             })) / $deltaTime, $roundPrecision);
     }

@@ -9,6 +9,7 @@ use practice\session\Session;
 use practice\duel\DuelFactory;
 use pocketmine\utils\TextFormat;
 use practice\session\SessionFactory;
+use practice\duel\queue\PlayerQueue;
 use pocketmine\network\mcpe\protocol\SetScorePacket;
 use pocketmine\network\mcpe\protocol\RemoveObjectivePacket;
 use pocketmine\network\mcpe\protocol\types\ScorePacketEntry;
@@ -53,13 +54,14 @@ class ScoreboardBuilder {
         ];
 
         if ($session->inLobby()) {
-            $playing = array_filter(SessionFactory::getAll(), function(Session $target): bool {
+            $playing = array_filter(SessionFactory::getAll(), static function(Session $target): bool {
                 return !$target->inLobby() && $target->getPlayer() !== null;
             });
             $lines[] = ' &fOnline: &b' . count($plugin->getServer()->getOnlinePlayers());
             $lines[] = ' &fPlaying: &b' . count($playing);
 
             if ($session->inQueue()) {
+                /** @var PlayerQueue $queue */
                 $queue = $session->getQueue();
 
                 $lines[] = '&7&r&r&r';

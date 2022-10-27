@@ -71,6 +71,7 @@ class Duel {
 
         $kit = KitFactory::get(strtolower(DuelFactory::getName($this->typeId)));
 
+        /** @var \practice\world\World $worldData */
         $worldData = WorldFactory::get($worldName);
         $firstPosition = $worldData->getFirstPosition();
         $secondPosition = $worldData->getSecondPosition();
@@ -151,6 +152,7 @@ class Duel {
                         ' &fSpectators: &b' . count($this->spectators)
                     ];
                 }
+                /** @var Player $opponent */
                 $opponent = $this->getOpponent($player);
 
                 return [
@@ -172,13 +174,9 @@ class Duel {
         $secondSession = $this->secondSession;
 
         if ($firstSession->getXuid() === $player->getXuid()) {
-            $opponent = $secondSession->getPlayer();
-
-            return $opponent;
+            return $secondSession->getPlayer();
         }
-        $opponent = $firstSession->getPlayer();
-
-        return $opponent;
+        return $firstSession->getPlayer();
     }
 
     public function addSpectator(Player $player): void {
@@ -197,17 +195,17 @@ class Duel {
     public function handleBreak(BlockBreakEvent $event): void {
         $block = $event->getBlock();
 
-        if (!isset($this->blocks[$block->getPosition()->__toString()])) {
+        if (!isset($this->blocks[(string)$block->getPosition()])) {
             $event->cancel();
             return;
         }
-        unset($this->blocks[$block->getPosition()->__toString()]);
+        unset($this->blocks[(string)$block->getPosition()]);
     }
 
     public function handlePlace(BlockPlaceEvent $event): void {
         $block = $event->getBlock();
 
-        $this->blocks[$block->getPosition()->__toString()] = $block;
+        $this->blocks[(string)$block->getPosition()] = $block;
     }
 
     public function handleDamage(EntityDamageEvent $event): void {
@@ -247,16 +245,19 @@ class Duel {
         }
         $loser->sendTitle(TextFormat::colorize('&l&cDEFEAT!&r'), TextFormat::colorize('&a' . $this->winner . '&7 won the fight!'));
 
+        /** @var Player $firstPlayer */
         $firstPlayer = $firstSession->getPlayer();
+
+        /** @var Player $secondPlayer */
         $secondPlayer = $secondSession->getPlayer();
 
-        $firstPlayer?->getArmorInventory()->clearAll();
-        $firstPlayer?->getInventory()->clearAll();
-        $secondPlayer?->getArmorInventory()->clearAll();
-        $secondPlayer?->getInventory()->clearAll();
+        $firstPlayer->getArmorInventory()->clearAll();
+        $firstPlayer->getInventory()->clearAll();
+        $secondPlayer->getArmorInventory()->clearAll();
+        $secondPlayer->getInventory()->clearAll();
 
-        $firstPlayer?->setHealth($firstPlayer->getMaxHealth());
-        $secondPlayer?->setHealth($secondPlayer->getMaxHealth());
+        $firstPlayer->setHealth($firstPlayer->getMaxHealth());
+        $secondPlayer->setHealth($secondPlayer->getMaxHealth());
 
         $this->status = self::RESTARTING;
     }
@@ -266,7 +267,10 @@ class Duel {
     }
 
     public function update(): void {
+        /** @var Player $firstPlayer */
         $firstPlayer = $this->firstSession->getPlayer();
+
+        /** @var Player $secondPlayer */
         $secondPlayer = $this->secondSession->getPlayer();
 
         switch ($this->status) {
@@ -318,6 +322,7 @@ class Duel {
                     $secondSession->setDuel(null);
 
                     foreach ($this->spectators as $spectator) {
+                        /** @var Session $s_spectator */
                         $s_spectator = SessionFactory::get($spectator);
                         $s_spectator->setDuel(null);
                         $s_spectator->giveLobyyItems();

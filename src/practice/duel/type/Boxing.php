@@ -68,6 +68,7 @@ class Boxing extends Duel {
                     ' &fHits: &a' . $this->firstHit . ' &7| &c' . $this->secondHit
                 ];
             }
+            /** @var Player $opponent */
             $opponent = $this->getOpponent($player);
             $isFirst = $firstSession->getName() === $player->getName();
 

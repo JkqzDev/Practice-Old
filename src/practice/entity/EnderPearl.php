@@ -1,8 +1,4 @@
 <?php
-
-// Ender pearl by Wqrro
-// Thanks Wqrro
-
 declare(strict_types=1);
 
 namespace practice\entity;
@@ -48,25 +44,27 @@ class EnderPearl extends ProjectileEnderPearl {
     protected function onHit(ProjectileHitEvent $event): void {
         $owner = $this->getOwningEntity();
 
-        if (!$owner instanceof Player) {
+        if (!$owner instanceof Player || !$owner->isAlive() || $owner->getWorld()->getId() !== $this->getWorld()->getId()) {
             return;
         }
 
-        if (!$owner->isAlive()) {
-            return;
-        }
-
-        if ($owner->getWorld()->getId() !== $this->getWorld()->getId()) {
-            // Fuck dylan :/
-            return;
-        }
         $this->getWorld()->addParticle($owner->getPosition(), new EndermanTeleportParticle);
         $this->getWorld()->addSound($owner->getPosition(), new EndermanTeleportSound);
 
         $vector = $event->getRayTraceResult()->getHitVector();
 
         $owner->teleport($vector);
-        $owner->getServer()->broadcastPackets($owner->getViewers(), [MoveActorAbsolutePacket::create($owner->getId(), $owner->getOffsetPosition($location = $owner->getLocation()), $location->pitch, $location->yaw, $location->yaw, (MoveActorAbsolutePacket::FLAG_TELEPORT | ($owner->onGround ? MoveActorAbsolutePacket::FLAG_GROUND : 0)))]);
+        $owner->getServer()->broadcastPackets(
+            $owner->getViewers(),
+            [
+                MoveActorAbsolutePacket::create($owner->getId(),
+                    $owner->getOffsetPosition($location = $owner->getLocation()),
+                    $location->pitch,
+                    $location->yaw,
+                    $location->yaw,
+                    (MoveActorAbsolutePacket::FLAG_TELEPORT | ($owner->onGround ? MoveActorAbsolutePacket::FLAG_GROUND : 0)))
+            ]
+        );
 
         $this->getWorld()->addParticle($owner->getPosition(), new EndermanTeleportParticle);
         $this->getWorld()->addSound($owner->getPosition(), new EndermanTeleportSound);

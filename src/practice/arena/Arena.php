@@ -8,6 +8,7 @@ use pocketmine\Server;
 use pocketmine\world\World;
 use practice\kit\KitFactory;
 use pocketmine\player\Player;
+use practice\session\Session;
 use pocketmine\world\Position;
 use pocketmine\player\GameMode;
 use pocketmine\utils\TextFormat;
@@ -79,17 +80,17 @@ final class Arena {
     public function handleBreak(BlockBreakEvent $event): void {
         $block = $event->getBlock();
 
-        if (!isset($this->blocks[$block->getPosition()->__toString()])) {
+        if (!isset($this->blocks[(string)$block->getPosition()])) {
             $event->cancel();
             return;
         }
-        unset($this->blocks[$block->getPosition()->__toString()]);
+        unset($this->blocks[(string)$block->getPosition()]);
     }
 
     public function handlePlace(BlockPlaceEvent $event): void {
         $block = $event->getBlock();
 
-        $this->blocks[$block->getPosition()->__toString()] = $block;
+        $this->blocks[(string)$block->getPosition()] = $block;
     }
 
     public function handleDamage(EntityDamageEvent $event): void {
@@ -136,6 +137,7 @@ final class Arena {
                 $combat = $this->combats[$player->getName()];
 
                 if ($combat['time'] >= time()) {
+                    /** @var Session $damager */
                     $damager = SessionFactory::get($combat['player']);
                     $damager->addKill();
                     $damager->addKillstreak();
@@ -204,21 +206,20 @@ final class Arena {
         $session->giveLobyyItems();
         $session->setArena(null);
 
-        if ($withCombat) {
-            if (isset($this->combats[$player->getName()])) {
-                $combat = $this->combats[$player->getName()];
+        if ($withCombat && isset($this->combats[$player->getName()])) {
+            $combat = $this->combats[$player->getName()];
 
-                if ($combat['time'] >= time()) {
-                    $damager = SessionFactory::get($combat['player']);
-                    $damager->addKill();
-                    $damager->addKillstreak();
+            if ($combat['time'] >= time()) {
+                /** @var Session $damager */
+                $damager = SessionFactory::get($combat['player']);
+                $damager->addKill();
+                $damager->addKillstreak();
 
-                    unset($this->combats[$damager->getName()]);
+                unset($this->combats[$damager->getName()]);
 
-                    Server::getInstance()->broadcastMessage(TextFormat::colorize('&a' . $damager->getName() . ' &2[' . $damager->getKills() . '] &7killed &c' . $player->getName() . ' &4[' . $session->getKills() . ']'));
-                }
-                unset($this->combats[$player->getName()]);
+                Server::getInstance()->broadcastMessage(TextFormat::colorize('&a' . $damager->getName() . ' &2[' . $damager->getKills() . '] &7killed &c' . $player->getName() . ' &4[' . $session->getKills() . ']'));
             }
+            unset($this->combats[$player->getName()]);
         }
     }
 

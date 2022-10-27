@@ -25,7 +25,15 @@ final class DuelFactory {
 
     static private array $duels = [];
 
-    static public function create(Session $first, Session $second, int $duelType, bool $ranked): void {
+    public static function getAll(): array {
+        return self::$duels;
+    }
+
+    public static function get(int $id): ?Duel {
+        return self::$duels[$id] ?? null;
+    }
+
+    public static function create(Session $first, Session $second, int $duelType, bool $ranked): void {
         $id = 0;
 
         while (self::get($id) !== null || is_dir(Practice::getInstance()->getServer()->getDataPath() . 'worlds' . DIRECTORY_SEPARATOR . 'duel-' . $id)) {
@@ -43,7 +51,8 @@ final class DuelFactory {
         $worldData->copyWorld(
             'duel-' . $id,
             Practice::getInstance()->getServer()->getDataPath() . 'worlds',
-            function(World $world) use ($id, $worldData, $className, $first, $second, $duelType, $ranked): void {
+            // SORT BY USAGE - zOmArRD
+            static function(World $world) use ($className, $id, $duelType, $worldData, $ranked, $first, $second): void {
                 $duel = new $className($id, $duelType, $worldData->getName(), $ranked, $first, $second, $world);
 
                 $first->setDuel($duel);
@@ -54,28 +63,14 @@ final class DuelFactory {
         );
     }
 
-    static public function get(int $id): ?Duel {
-        return self::$duels[$id] ?? null;
+    public static function remove(int $id): void {
+        if (self::get($id) === null) {
+            return;
+        }
+        unset(self::$duels[$id]);
     }
 
-    static private function getClass(int $type): string {
-        return match ($type) {
-            Duel::TYPE_NODEBUFF => Nodebuff::class,
-            Duel::TYPE_BATTLERUSH => BattleRush::class,
-            Duel::TYPE_BOXING => Boxing::class,
-            Duel::TYPE_BRIDGE => Bridge::class,
-            Duel::TYPE_BUILDUHC => BuildUHC::class,
-            Duel::TYPE_CAVEUHC => CaveUHC::class,
-            Duel::TYPE_COMBO => Combo::class,
-            Duel::TYPE_FINALUHC => FinalUHC::class,
-            Duel::TYPE_FIST => Fist::class,
-            Duel::TYPE_GAPPLE => Gapple::class,
-            Duel::TYPE_SUMO => Sumo::class,
-            default => Nodebuff::class
-        };
-    }
-
-    static public function getName(int $type): string {
+    public static function getName(int $type): string {
         return match ($type) {
             Duel::TYPE_NODEBUFF => 'No Debuff',
             Duel::TYPE_BATTLERUSH => 'Battle Rush',
@@ -92,26 +87,31 @@ final class DuelFactory {
         };
     }
 
-    static public function remove(int $id): void {
-        if (self::get($id) === null) {
-            return;
-        }
-        unset(self::$duels[$id]);
+    private static function getClass(int $type): string {
+        return match ($type) {
+            Duel::TYPE_BATTLERUSH => BattleRush::class,
+            Duel::TYPE_BOXING => Boxing::class,
+            Duel::TYPE_BRIDGE => Bridge::class,
+            Duel::TYPE_BUILDUHC => BuildUHC::class,
+            Duel::TYPE_CAVEUHC => CaveUHC::class,
+            Duel::TYPE_COMBO => Combo::class,
+            Duel::TYPE_FINALUHC => FinalUHC::class,
+            Duel::TYPE_FIST => Fist::class,
+            Duel::TYPE_GAPPLE => Gapple::class,
+            Duel::TYPE_SUMO => Sumo::class,
+            default => Nodebuff::class
+        };
     }
 
-    static public function task(): void {
-        Practice::getInstance()->getScheduler()->scheduleRepeatingTask(new ClosureTask(function(): void {
+    public static function task(): void {
+        Practice::getInstance()->getScheduler()->scheduleRepeatingTask(new ClosureTask(static function(): void {
             foreach (self::getAll() as $duel) {
                 $duel->update();
             }
         }), 20);
     }
 
-    static public function getAll(): array {
-        return self::$duels;
-    }
-
-    static public function disable(): void {
+    public static function disable(): void {
         foreach (self::getAll() as $duel) {
             $duel->delete();
         }

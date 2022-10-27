@@ -144,7 +144,7 @@ final class Session {
                 $xp = $times[0];
                 $progress = 0 . '.' . ($times[1] ?? 0.00);
 
-                $this->getPlayer()?->getXpManager()->setXpAndProgressNoEvent(intval($xp), floatval($progress));
+                $this->getPlayer()?->getXpManager()->setXpAndProgressNoEvent((int)$xp, (float)$progress);
             } else {
                 $this->enderpearl = null;
                 $this->getPlayer()?->getXpManager()->setXpAndProgressNoEvent(0, 0.00);
@@ -178,7 +178,7 @@ final class Session {
 
         $this->giveLobyyItems();
 
-        $player->teleport($player->getServer()->getWorldManager()->getDefaultWorld()->getSpawnLocation());
+        $player->teleport($player->getServer()->getWorldManager()->getDefaultWorld()?->getSpawnLocation());
         $player->setNameTag(TextFormat::colorize('&7' . $player->getName()));
 
         if (Practice::IS_DEVELOPING) {
@@ -202,6 +202,7 @@ final class Session {
     }
 
     public function quit(): void {
+        /** @var Player $player */
         $player = $this->getPlayer();
 
         if ($this->inQueue()) {
@@ -237,9 +238,7 @@ final class Session {
         return $duel;
     }
 
-    /**
-     * @phpstan-return Duel
-     */
+
     public function getArena(): Arena {
         return $this->arena;
     }
@@ -250,14 +249,13 @@ final class Session {
         if ($player === null) {
             return;
         }
-        // By Zodiax
 
         $horizontalKnockback = $kit->getHorizontalKnockback();
         $verticalKnockback = $kit->getVerticalKnockback();
         $maxHeight = $kit->getMaxHeight();
         $canRevert = $kit->canRevert();
 
-        if (!$player->isOnGround() && $maxHeight > 0.0) {
+        if ($maxHeight > 0.0 && !$player->isOnGround()) {
             [$max, $min] = $this->clamp($player->getPosition()->getY(), $damager->getPosition()->getY());
 
             if ($max - $min >= $maxHeight) {
@@ -296,6 +294,9 @@ final class Session {
     }
 
     private function clamp(float $first, float $second): array {
-        return $first > $second ? [$first, $second] : [$second, $first];
+        if ($first > $second) {
+            return [$first, $second];
+        }
+        return [$second, $first];
     }
 }

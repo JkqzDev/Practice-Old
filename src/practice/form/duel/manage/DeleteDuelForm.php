@@ -17,7 +17,7 @@ final class DeleteDuelForm extends CustomForm {
 
         $nameEntry = new InputEntry('World name', 'world');
 
-        $this->addEntry($nameEntry, function(Player $player, InputEntry $entry, string $value): void {
+        $this->addEntry($nameEntry, static function(Player $player, InputEntry $entry, string $value): void {
             if (WorldFactory::get($value) === null) {
                 $player->sendMessage(TextFormat::colorize('&cWorld duel not exists!'));
                 return;
