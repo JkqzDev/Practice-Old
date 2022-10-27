@@ -8,18 +8,18 @@ use practice\session\Session;
 use practice\session\setting\Setting;
 
 abstract class DisplaySetting extends Setting {
-    
+
     public function __construct(string $name, bool $value = true) {
         parent::__construct($name, $value);
     }
-    
+
     public function isEnabled(): bool {
         return $this->value;
     }
-    
+
     public function setEnabled(bool $value): void {
         $this->value = $value;
     }
-    
+
     abstract public function execute(Session $session): void;
 }

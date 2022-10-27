@@ -4,12 +4,12 @@ declare(strict_types=1);
 
 namespace practice\form\duel;
 
-use cosmicpe\form\entries\simple\Button;
-use cosmicpe\form\SimpleForm;
-use pocketmine\player\Player;
-use pocketmine\utils\TextFormat;
 use practice\duel\Duel;
+use pocketmine\player\Player;
+use cosmicpe\form\SimpleForm;
+use pocketmine\utils\TextFormat;
 use practice\duel\queue\QueueFactory;
+use cosmicpe\form\entries\simple\Button;
 
 final class DuelQueueForm extends SimpleForm {
 
@@ -31,7 +31,7 @@ final class DuelQueueForm extends SimpleForm {
         parent::__construct(TextFormat::colorize($ranked ? '&bRanked duels' : '&9Unranked duels'));
 
         foreach ($this->types as $type => $typeId) {
-            $this->addButton(new Button(TextFormat::colorize('&7' . $type)), function (Player $player, int $button_index) use ($typeId, $ranked): void {
+            $this->addButton(new Button(TextFormat::colorize('&7' . $type)), function(Player $player, int $button_index) use ($typeId, $ranked): void {
                 $queue = QueueFactory::get($player);
 
                 if ($queue !== null) {

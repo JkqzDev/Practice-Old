@@ -4,26 +4,24 @@ declare(strict_types=1);
 
 namespace cosmicpe\form\entries\simple;
 
-use cosmicpe\form\entries\FormEntry;
 use cosmicpe\form\types\Icon;
+use cosmicpe\form\entries\FormEntry;
 
-final class Button implements FormEntry{
+final class Button implements FormEntry {
 
-	/** @var string */
-	private $title;
+    private string $title;
 
-	/** @var Icon|null */
-	private $icon;
+    private ?Icon $icon;
 
-	public function __construct(string $title, ?Icon $icon = null){
-		$this->title = $title;
-		$this->icon = $icon;
-	}
+    public function __construct(string $title, ?Icon $icon = null) {
+        $this->title = $title;
+        $this->icon = $icon;
+    }
 
-	public function jsonSerialize() : array{
-		return [
-			"text" => $this->title,
-			"image" => $this->icon
-		];
-	}
+    public function jsonSerialize(): array {
+        return [
+            "text" => $this->title,
+            "image" => $this->icon
+        ];
+    }
 }

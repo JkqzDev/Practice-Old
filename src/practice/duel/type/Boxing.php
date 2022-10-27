@@ -4,37 +4,37 @@ declare(strict_types=1);
 
 namespace practice\duel\type;
 
-use pocketmine\event\entity\EntityDamageByEntityEvent;
-use pocketmine\event\entity\EntityDamageEvent;
+use practice\duel\Duel;
 use pocketmine\player\Player;
 use practice\duel\DuelFactory;
-use practice\duel\Duel;
+use pocketmine\event\entity\EntityDamageEvent;
+use pocketmine\event\entity\EntityDamageByEntityEvent;
 
 class Boxing extends Duel {
-    
+
     private int $firstHit = 0, $secondHit = 0;
     private int $firstCombo = 0, $secondCombo = 0;
-    
+
     public function handleDamage(EntityDamageEvent $event): void {
         parent::handleDamage($event);
         $player = $event->getEntity();
-        
+
         if ($event->isCancelled()) {
             return;
         }
-        $player->setHealth(20);
-        
+        $player->setHealth($player->getMaxHealth());
+
         if ($event instanceof EntityDamageByEntityEvent) {
             $damager = $event->getDamager();
-            
+
             if ($damager instanceof Player) {
                 $firstSession = $this->firstSession;
                 $secondSession = $this->secondSession;
-                
+
                 if ($firstSession->getName() === $damager->getName()) {
                     $this->firstHit++;
                     $this->firstCombo++;
-                    
+
                     $this->secondCombo = 0;
 
                     if ($this->firstHit >= 100) {
@@ -43,7 +43,7 @@ class Boxing extends Duel {
                 } else {
                     $this->secondHit++;
                     $this->secondCombo++;
-                    
+
                     $this->firstCombo = 0;
 
                     if ($this->secondHit >= 100) {
@@ -53,12 +53,11 @@ class Boxing extends Duel {
             }
         }
     }
-    
+
     public function scoreboard(Player $player): array {
         if ($this->status === self::RUNNING) {
             $firstSession = $this->firstSession;
-            $secondSession = $this->secondSession;
-            
+
             if ($this->isSpectator($player)) {
                 return [
                     ' &fKit: &b' . DuelFactory::getName($this->typeId),
@@ -71,25 +70,25 @@ class Boxing extends Duel {
             }
             $opponent = $this->getOpponent($player);
             $isFirst = $firstSession->getName() === $player->getName();
-            
+
             $playerHits = $this->firstHit;
             $playerCombo = $this->firstCombo;
-            
+
             $opponentHits = $this->secondHit;
             $opponentCombo = $this->secondCombo;
-            
+
             $hits = $this->firstHit - $this->secondHit;
-            
+
             if (!$isFirst) {
                 $hits = $this->secondHit - $this->firstHit;
-                
+
                 $playerCombo = $this->secondCombo;
                 $opponentCombo = $this->firstCombo;
-                
+
                 $playerHits = $this->secondHit;
                 $opponentHits = $this->firstHit;
             }
-            
+
             return [
                 ' &fFighting: &b' . $opponent->getName(),
                 ' &r&r&r',

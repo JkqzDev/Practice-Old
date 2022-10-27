@@ -6,5 +6,4 @@ namespace cosmicpe\form;
 
 use pocketmine\form\Form as PocketMineForm;
 
-interface Form extends PocketMineForm{
-}
+interface Form extends PocketMineForm { }

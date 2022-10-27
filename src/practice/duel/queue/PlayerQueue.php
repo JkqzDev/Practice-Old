@@ -8,16 +8,16 @@ use practice\session\Session;
 use practice\session\SessionFactory;
 
 final class PlayerQueue {
-    
+
     public function __construct(
         private string $xuid,
-        private int $duelType,
-        private bool $ranked,
-        private int $time = 0,
+        private int    $duelType,
+        private bool   $ranked,
+        private int    $time = 0,
     ) {
         $this->time = time();
     }
-    
+
     public function getXuid(): string {
         return $this->xuid;
     }
@@ -29,7 +29,7 @@ final class PlayerQueue {
     public function getDuelType(): int {
         return $this->duelType;
     }
-    
+
     public function getTime(): int {
         return time() - $this->time;
     }

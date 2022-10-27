@@ -9,45 +9,43 @@ use pocketmine\player\Player;
 use pocketmine\scheduler\ClosureTask;
 
 final class SessionFactory {
-    
+
     static private array $sessions = [];
-    
-    static public function getAll(): array {
-        return self::$sessions;
-    }
-    
-    static public function get(Player|string $player): ?Session {
-        $xuid = $player instanceof Player ? $player->getXuid() : $player;
-        
-        return self::$sessions[$xuid] ?? null;
-    }
-    
-    static public function create(Player $player): void {
+
+    public static function create(Player $player): void {
         $uuid = $player->getUniqueId()->getBytes();
         $xuid = $player->getXuid();
         $name = $player->getName();
-        
+
         self::$sessions[$xuid] = Session::create($uuid, $xuid, $name);
     }
-    
-    static public function remove(string $xuid): void {
+
+    public static function remove(string $xuid): void {
         if (self::get($xuid) === null) {
             return;
         }
         unset(self::$sessions[$xuid]);
     }
-    
-    static public function task(): void {
-        Practice::getInstance()->getScheduler()->scheduleRepeatingTask(new ClosureTask(function (): void {
+
+    public static function get(Player|string $player): ?Session {
+        $xuid = $player instanceof Player ? $player->getXuid() : $player;
+
+        return self::$sessions[$xuid] ?? null;
+    }
+
+    public static function task(): void {
+        Practice::getInstance()->getScheduler()->scheduleRepeatingTask(new ClosureTask(static function(): void {
             foreach (self::getAll() as $session) {
                 $session->update();
             }
         }), 1);
     }
-    
-    static public function loadAll(): void {
+
+    public static function getAll(): array {
+        return self::$sessions;
     }
-    
-    static public function saveAll(): void {
-    }
+
+    public static function loadAll(): void {}
+
+    public static function saveAll(): void {}
 }
