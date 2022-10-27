@@ -5,18 +5,18 @@ declare(strict_types=1);
 namespace practice\world;
 
 use Closure;
-use pocketmine\world\Position;
 use practice\Practice;
+use pocketmine\world\Position;
 use practice\world\async\WorldCopyAsync;
 
 final class World {
 
     public function __construct(
-        private string $name,
-        private Position $firstPosition,
-        private Position $secondPosition,
-        private array $modes = [],
-        bool $copy = false,
+        private string    $name,
+        private Position  $firstPosition,
+        private Position  $secondPosition,
+        private array     $modes = [],
+        bool              $copy = false,
         private ?Position $firstPortal = null,
         private ?Position $secondPortal = null
     ) {
@@ -28,6 +28,42 @@ final class World {
                 Practice::getInstance()->getDataFolder() . 'worlds'
             ));
         }
+    }
+
+    public static function deserializeData(array $data): array {
+        $storage = [
+            'modes' => $data['modes'],
+            'firstPosition' => new Position(
+                (float)$data['firstPosition']['x'],
+                (float)$data['firstPosition']['y'],
+                (float)$data['firstPosition']['z'],
+                null
+            ),
+            'secondPosition' => new Position(
+                (float)$data['secondPosition']['x'],
+                (float)$data['secondPosition']['y'],
+                (float)$data['secondPosition']['z'],
+                null
+            ),
+            'firstPortal' => null,
+            'secondPortal' => null
+        ];
+
+        if ($data['firstPortal'] !== null && $data['secondPortal'] !== null) {
+            $storage['firstPortal'] = new Position(
+                (float)$data['firstPortal']['x'],
+                (float)$data['firstPortal']['y'],
+                (float)$data['firstPortal']['z'],
+                null
+            );
+            $storage['secondPortal'] = new Position(
+                (float)$data['secondPortal']['x'],
+                (float)$data['secondPortal']['y'],
+                (float)$data['secondPortal']['z'],
+                null
+            );
+        }
+        return $storage;
     }
 
     public function getName(): string {
@@ -43,7 +79,7 @@ final class World {
     }
 
     public function isMode(string $mode): bool {
-        return in_array($mode, $this->modes);
+        return in_array($mode, $this->modes, true);
     }
 
     public function getFirstPortal(): ?Position {
@@ -63,14 +99,14 @@ final class World {
             $callback
         ));
     }
-    
+
     public function serializeData(): array {
         $firstPosition = $this->firstPosition;
         $secondPosition = $this->secondPosition;
-        
+
         $firstPortal = $this->firstPortal;
         $secondPortal = $this->secondPortal;
-        
+
         $data = [
             'modes' => $this->modes,
             'firstPosition' => [
@@ -86,7 +122,7 @@ final class World {
             'firstPortal' => null, // For bridge
             'secondPortal' => null // For bridge
         ];
-        
+
         if ($firstPortal !== null && $secondPortal !== null) {
             $data['firstPortal'] = [
                 'x' => $firstPortal->getX(),
@@ -100,41 +136,5 @@ final class World {
             ];
         }
         return $data;
-    }
-    
-    static public function deserializeData(array $data): array {
-        $storage = [
-            'modes' => $data['modes'],
-            'firstPosition' => new Position(
-                floatval($data['firstPosition']['x']),
-                floatval($data['firstPosition']['y']),
-                floatval($data['firstPosition']['z']),
-                null
-            ),
-            'secondPosition' => new Position(
-                floatval($data['secondPosition']['x']),
-                floatval($data['secondPosition']['y']),
-                floatval($data['secondPosition']['z']),
-                null
-            ),
-            'firstPortal' => null,
-            'secondPortal' => null
-        ];
-        
-        if ($data['firstPortal'] !== null && $data['secondPortal'] !== null) {
-            $storage['firstPortal'] = new Position(
-                floatval($data['firstPortal']['x']),
-                floatval($data['firstPortal']['y']),
-                floatval($data['firstPortal']['z']),
-                null
-            );
-            $storage['secondPortal'] = new Position(
-                floatval($data['secondPortal']['x']),
-                floatval($data['secondPortal']['y']),
-                floatval($data['secondPortal']['z']),
-                null
-            );
-        }
-        return $storage;
     }
 }

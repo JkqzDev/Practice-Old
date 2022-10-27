@@ -4,56 +4,52 @@ declare(strict_types=1);
 
 namespace cosmicpe\form\entries\custom;
 
-use cosmicpe\form\entries\ModifyableEntry;
 use InvalidArgumentException;
+use cosmicpe\form\entries\ModifiableEntry;
 
-final class DropdownEntry implements CustomFormEntry, ModifyableEntry{
+final class DropdownEntry implements CustomFormEntry, ModifiableEntry {
+    private string $title;
 
-	/** @var string */
-	private $title;
+    private array $options;
 
-	/** @var array */
-	private $options;
+    private int $default = 0;
 
-	/** @var int */
-	private $default = 0;
+    public function __construct(string $title, array $options) {
+        $this->title = $title;
+        $this->options = array_values($options);
+    }
 
-	public function __construct(string $title, array $options){
-		$this->title = $title;
-		$this->options = array_values($options);
-	}
+    public function getValue(): string {
+        return $this->options[$this->default];
+    }
 
-	public function getValue() : string{
-		return $this->options[$this->default];
-	}
+    public function setValue($value): void {
+        $this->setDefault($value);
+    }
 
-	public function setValue($value) : void{
-		$this->setDefault($value);
-	}
+    public function setDefault(string $default_option): void {
+        foreach ($this->options as $index => $option) {
+            if ($option === $default_option) {
+                $this->default = $index;
+                return;
+            }
+        }
 
-	public function validateUserInput($input) : void{
-		if(!is_int($input) || !isset($this->options[$input])){
-			throw new InvalidArgumentException("Failed to process invalid user input: " . $input);
-		}
-	}
+        throw new InvalidArgumentException("Option \"" . $default_option . "\" does not exist!");
+    }
 
-	public function setDefault(string $default_option) : void{
-		foreach($this->options as $index => $option){
-			if($option === $default_option){
-				$this->default = $index;
-				return;
-			}
-		}
+    public function validateUserInput(mixed $input): void {
+        if (!is_int($input) || !isset($this->options[$input])) {
+            throw new InvalidArgumentException("Failed to process invalid user input: " . $input);
+        }
+    }
 
-		throw new InvalidArgumentException("Option \"" . $default_option . "\" does not exist!");
-	}
-
-	public function jsonSerialize() : array {
-		return [
-			"type" => "dropdown",
-			"text" => $this->title,
-			"options" => $this->options,
-			"default" => $this->default
-		];
-	}
+    public function jsonSerialize(): array {
+        return [
+            "type" => "dropdown",
+            "text" => $this->title,
+            "options" => $this->options,
+            "default" => $this->default
+        ];
+    }
 }

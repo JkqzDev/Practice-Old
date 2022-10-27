@@ -7,5 +7,5 @@ namespace practice\duel\type;
 use practice\duel\Duel;
 
 class Combo extends Duel {
-    
+
 }

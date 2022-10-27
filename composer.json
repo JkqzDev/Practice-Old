@@ -1,0 +1,17 @@
+{
+  "name": "juqn/practice",
+  "description": "PracticePvP plugin for PocketMine-MP",
+  "minimum-stability": "stable",
+  "license": "proprietary",
+  "authors": [
+    {
+      "name": "zOmArRD",
+      "email": "omar@ghostlymc.live"
+    }
+  ],
+  "require-dev": {
+    "pocketmine/pocketmine-mp": ">=4.10.0",
+    "phpstan/phpstan": "^1.8.11",
+    "phpstan/phpstan-strict-rules": ">=1.4.4"
+  }
+}
