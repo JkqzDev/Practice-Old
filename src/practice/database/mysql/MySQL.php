@@ -11,7 +11,12 @@ declare(strict_types=1);
 
 namespace practice\database\mysql;
 
+use mysqli;
+use Closure;
+use mysqli_result;
 use pocketmine\Server;
+use practice\Practice;
+use mysqli_sql_exception;
 
 final class MySQL {
 
@@ -27,5 +32,38 @@ final class MySQL {
             ->setDatabase(self::$database);
 
         Server::getInstance()->getAsyncPool()->submitTask($query);
+    }
+
+    public static function run(string $query, ?Closure $closure = null): void {
+        try {
+            $result = self::mysqli()->query($query);
+
+            if (isset($closure)) {
+                if (!$result instanceof mysqli_result) {
+                    $closure();
+
+                } else {
+                    $rows = [];
+
+                    while ($row = $result->fetch_assoc()) {
+                        $rows[] = $row;
+                    }
+
+                    $closure($rows);
+                }
+            }
+        } catch (mysqli_sql_exception $exception) {
+            Practice::getInstance()->getLogger()->error('MySQL Query Error: ' . $exception->getMessage());
+        }
+    }
+
+    public static function mysqli(): mysqli {
+        return new mysqli(
+            self::$host,
+            self::$username,
+            self::$password,
+            self::$database,
+            self::$port
+        );
     }
 }

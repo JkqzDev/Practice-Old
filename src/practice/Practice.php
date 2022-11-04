@@ -66,7 +66,15 @@ final class Practice extends PluginBase {
         DuelFactory::task();
         SessionFactory::task();
 
-        MySQL::runAsync(new QueryAsync(Table::DUEL_STATS->value));
+        // NOT ASYNC
+        /**
+         * callback function are optional.
+         */
+        MySQL::run(Table::DUEL_STATS->value, static function(): void {
+            // YOUR CODE HERE
+        });
+
+        // ASYNC
         MySQL::runAsync(new QueryAsync(Table::PLAYER_SETTINGS->value));
     }
 
