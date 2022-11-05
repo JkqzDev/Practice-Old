@@ -57,9 +57,6 @@ class Duel {
         $worldName = $this->worldName;
         $world = $this->world;
 
-        $firstSession = $this->firstSession;
-        $secondSession = $this->secondSession;
-
         $world->setTime(World::TIME_FULL);
         $world->stopTime();
 
