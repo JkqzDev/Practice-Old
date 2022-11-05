@@ -9,6 +9,7 @@ use pocketmine\utils\TextFormat;
 use practice\duel\queue\QueueFactory;
 use practice\party\duel\Duel;
 use practice\party\duel\queue\PartyQueue;
+use practice\party\duel\queue\QueueFactory as PartyQueueFactory;
 use practice\session\SessionFactory;
 
 final class Party {
@@ -76,6 +77,10 @@ final class Party {
         return $this->duel !== null;
     }
 
+    public function setOwner(Player $player): void {
+        $this->owner = $player;
+    }
+
     public function addMemeber(Player $player): void {
         $session = SessionFactory::get($player);
 
@@ -137,6 +142,10 @@ final class Party {
     }
 
     public function disband(bool $announce = true): void {
+        if ($this->inQueue()) {
+            PartyQueueFactory::remove($this);
+        }
+
         foreach ($this->members as $member) {
             $this->removeMember($member);
 
@@ -144,5 +153,6 @@ final class Party {
                 $member->sendMessage(TextFormat::colorize('&cThe party has been eliminated!'));
             }
         }
+        PartyFactory::remove($this->name);
     }
 }

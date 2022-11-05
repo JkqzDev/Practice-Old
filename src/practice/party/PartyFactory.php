@@ -12,13 +12,17 @@ final class PartyFactory {
         return self::$parties;
     }
     
-    public static function getParty(string $name): ?Party {
+    public static function get(string $name): ?Party {
         return self::$parties[$name] ?? null;
     }
     
     public static function create(): void {
     }
     
-    public static function remove(): void {
+    public static function remove(string $name): void {
+        if (self::get($name) === null) {
+            return;
+        }
+        unset(self::$parties[$name]);
     }
 }
