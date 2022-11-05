@@ -120,10 +120,20 @@ final class Party {
         $this->duel = $duel;
     }
 
-    public function broadcast(string $message): void {
+    public function broadcastMessage(string $message): void {
         foreach ($this->members as $member) {
             $member->sendMessage(TextFormat::colorize($message));
         }
+    }
+
+    public function broadcastTitle(string $title, string $subTitle = ''): void {
+        foreach ($this->members as $member) {
+            $member->sendTitle($title, $subTitle);
+        }
+    }
+
+    public function giveItems(Player $player): void {
+
     }
 
     public function disband(bool $announce = true): void {

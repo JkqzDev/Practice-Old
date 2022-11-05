@@ -122,12 +122,20 @@ class Duel {
         return $this->ranked;
     }
 
+    public function isRunning(): bool {
+        return $this->status === self::RUNNING;
+    }
+
     public function isEnded(): bool {
         return $this->status === self::RESTARTING;
     }
 
     public function isPlayer(Player $player): bool {
         return $this->firstSession->getXuid() === $player->getXuid() || $this->secondSession->getXuid() === $player->getXuid();
+    }
+
+    public function isSpectator(Player $player): bool {
+        return isset($this->spectators[spl_object_hash($player)]);
     }
 
     public function scoreboard(Player $player): array {
@@ -163,10 +171,6 @@ class Duel {
                     ' &cTheir ping: ' . $opponent->getNetworkSession()->getPing()
                 ];
         }
-    }
-
-    public function isSpectator(Player $player): bool {
-        return isset($this->spectators[spl_object_hash($player)]);
     }
 
     public function getOpponent(Player $player): ?Player {
@@ -227,8 +231,8 @@ class Duel {
         }
     }
 
-    public function isRunning(): bool {
-        return $this->status === self::RUNNING;
+    public function handleMove(PlayerMoveEvent $event): void {
+        // Nothing
     }
 
     public function finish(Player $loser): void {
@@ -260,10 +264,6 @@ class Duel {
         $secondPlayer->setHealth($secondPlayer->getMaxHealth());
 
         $this->status = self::RESTARTING;
-    }
-
-    public function handleMove(PlayerMoveEvent $event): void {
-        // Nothing
     }
 
     public function update(): void {
@@ -308,9 +308,6 @@ class Duel {
                 if ($this->restarting <= 0) {
                     $firstSession = $this->firstSession;
                     $secondSession = $this->secondSession;
-
-                    $firstPlayer = $firstSession->getPlayer();
-                    $secondPlayer = $secondSession->getPlayer();
 
                     $firstPlayer?->teleport($firstPlayer->getServer()->getWorldManager()->getDefaultWorld()->getSpawnLocation());
                     $secondPlayer?->teleport($secondPlayer->getServer()->getWorldManager()->getDefaultWorld()->getSpawnLocation());
