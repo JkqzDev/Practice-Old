@@ -37,6 +37,9 @@ final class Party {
         return $this->owner;
     }
 
+    /**
+     * @return Player[]
+     */
     public function getMembers(): array {
         return $this->members;
     }
