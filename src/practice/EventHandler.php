@@ -49,6 +49,13 @@ final class EventHandler implements Listener {
         } elseif ($session->inArena()) {
             $arena = $session->getArena();
             $arena->handleBreak($event);
+        } elseif ($session->inParty()) {
+            $party = $session->getParty();
+            
+            if ($party->inDuel()) {
+                $duel = $party->getDuel();
+                $duel->handleBreak($event);
+            }
         }
     }
 
@@ -71,6 +78,13 @@ final class EventHandler implements Listener {
         } elseif ($session->inArena()) {
             $arena = $session->getArena();
             $arena->handlePlace($event);
+        } elseif ($session->inParty()) {
+            $party = $session->getParty();
+            
+            if ($party->inDuel()) {
+                $duel = $party->getDuel();
+                $duel->handlePlace($event);
+            }
         }
     }
 
@@ -110,6 +124,13 @@ final class EventHandler implements Listener {
         } elseif ($session->inArena()) {
             $arena = $session->getArena();
             $arena->handleDamage($event);
+        } elseif ($session->inParty()) {
+            $party = $session->getParty();
+            
+            if ($party->inDuel()) {
+                $duel = $party->getDuel();
+                $duel->handleDamage($event);
+            }
         }
 
         if ($event instanceof EntityDamageByEntityEvent) {
@@ -229,6 +250,13 @@ final class EventHandler implements Listener {
         if ($session->inDuel()) {
             $duel = $session->getDuel();
             $duel->handleMove($event);
+        } elseif ($session->inParty()) {
+            $party = $session->getParty();
+            
+            if ($party->inDuel()) {
+                $duel = $party->getDuel();
+                $duel->handleMove($event);
+            }
         }
     }
 

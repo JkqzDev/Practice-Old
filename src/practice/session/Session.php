@@ -26,6 +26,7 @@ use practice\session\setting\SettingTrait;
 use practice\item\player\PlayerProfileItem;
 use practice\item\duel\queue\RankedQueueItem;
 use practice\item\duel\queue\UnrankedQueueItem;
+use practice\party\duel\DuelFactory as DuelDuelFactory;
 use practice\session\scoreboard\ScoreboardTrait;
 use practice\session\scoreboard\ScoreboardBuilder;
 use practice\session\setting\display\DisplaySetting;
@@ -98,6 +99,13 @@ final class Session {
         } elseif ($this->duel !== null) {
             $duel = $this->duel;
             $kitName = strtolower(DuelFactory::getName($duel->getTypeId()));
+        } elseif ($this->party !== null) {
+            $party = $this->party;
+
+            if ($party->inDuel()) {
+                $duel = $party->getDuel();
+                $kitName = strtolower(DuelDuelFactory::getName($duel->getTypeId()));
+            }
         }
         return $kitName;
     }
