@@ -51,7 +51,6 @@ final class DuelFactory {
         $worldData->copyWorld(
             'duel-' . $id,
             Practice::getInstance()->getServer()->getDataPath() . 'worlds',
-            // SORT BY USAGE - zOmArRD
             static function(World $world) use ($className, $id, $duelType, $worldData, $ranked, $first, $second): void {
                 $duel = new $className($id, $duelType, $worldData->getName(), $ranked, $first, $second, $world);
 

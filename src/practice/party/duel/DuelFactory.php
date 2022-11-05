@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace practice\party\duel;
 
+use pocketmine\world\World;
 use practice\party\duel\type\Gapple;
 use practice\party\duel\type\Nodebuff;
 use practice\party\Party;
@@ -40,6 +41,14 @@ final class DuelFactory {
         $worldData->copyWorld(
             'party-duel-' . $id,
             Practice::getInstance()->getServer()->getDataPath() . 'worlds',
+            static function (World $world) use ($className, $id, $duelType, $worldData, $firstParty, $secondParty): void {
+                $duel = new $className($id, $duelType, $worldData->getName(), $firstParty, $secondParty, $world);
+                
+                $firstParty->setDuel($duel);
+                $secondParty->setDuel($duel);
+
+                self::$duels[$id] = $duel;
+            }
         );
     }
 

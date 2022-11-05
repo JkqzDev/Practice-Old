@@ -31,17 +31,16 @@ final class QueueFactory {
         $foundQueue = self::found($queue);
 
         if ($foundQueue !== null) {
-
             $opponent = $foundQueue->getSession();
+            
             if ($opponent === null) {
                 return;
             }
-            /** PhpStan is crazy */
             $opponentPlayer = $opponent->getPlayer();
+
             if ($opponentPlayer === null) {
                 return;
             }
-
             DuelFactory::create($session, $opponent, $duelType, $ranked);
 
             self::remove($player);

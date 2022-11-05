@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace practice\party\duel\queue;
 
+use practice\party\duel\DuelFactory;
 use practice\party\Party;
 
 final class QueueFactory {
@@ -27,7 +28,15 @@ final class QueueFactory {
         $foundQueue = self::found($queue);
 
         if ($foundQueue !== null) {
+            $partyOpponent = $foundQueue->getParty();
 
+            DuelFactory::create($party, $partyOpponent, $foundQueue->getDuelType());
+
+            self::remove($party);
+            self::remove($partyOpponent);
+
+            $party->setQueue(null);
+            $partyOpponent->setQueue(null);
         }
     }
 
