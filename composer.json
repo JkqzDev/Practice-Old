@@ -13,5 +13,8 @@
     "pocketmine/pocketmine-mp": ">=4.10.0",
     "phpstan/phpstan": "^1.8.11",
     "phpstan/phpstan-strict-rules": ">=1.4.4"
+  },
+  "require": {
+    "ext-mysqli": "*"
   }
 }

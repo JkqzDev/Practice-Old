@@ -16,6 +16,8 @@ use pocketmine\plugin\PluginBase;
 use practice\entity\SplashPotion;
 use practice\item\EnderPearlItem;
 use practice\item\GoldenHeadItem;
+use practice\database\mysql\MySQL;
+use practice\database\mysql\Table;
 use pocketmine\nbt\tag\CompoundTag;
 use practice\item\SplashPotionItem;
 use pocketmine\entity\EntityFactory;
@@ -28,6 +30,7 @@ use pocketmine\data\bedrock\PotionTypeIds;
 use pocketmine\data\bedrock\EntityLegacyIds;
 use pocketmine\data\bedrock\PotionTypeIdMap;
 use pocketmine\data\SavedDataLoadingException;
+use practice\database\mysql\queries\QueryAsync;
 
 final class Practice extends PluginBase {
 
@@ -37,6 +40,15 @@ final class Practice extends PluginBase {
 
     protected function onLoad(): void {
         self::$instance = $this;
+
+        # Cambia esto a tu gusto.
+        $this->saveDefaultConfig();
+        $data = $this->getConfig()->get('database');
+        MySQL::$host = $data['host'];
+        MySQL::$port = $data['port'];
+        MySQL::$username = $data['username'];
+        MySQL::$password = $data['password'];
+        MySQL::$database = $data['database'];
     }
 
     protected function onEnable(): void {
@@ -53,6 +65,9 @@ final class Practice extends PluginBase {
 
         DuelFactory::task();
         SessionFactory::task();
+
+        MySQL::runAsync(new QueryAsync(Table::DUEL_STATS->value));
+        MySQL::runAsync(new QueryAsync(Table::PLAYER_SETTINGS->value));
     }
 
     protected function registerEntities(): void {

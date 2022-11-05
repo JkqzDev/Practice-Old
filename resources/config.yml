@@ -1,3 +1,10 @@
 server-motd: "&cMisty Practice&7"
 server-maxplayers: 200
 server-whitelisted: false
+
+database:
+  host: localhost
+  port: 3306
+  username: root
+  password: omar
+  database: practice1
