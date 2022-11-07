@@ -70,12 +70,12 @@ final class Practice extends PluginBase {
         /**
          * callback function are optional.
          */
-        MySQL::run(Table::DUEL_STATS->value, static function(): void {
+        MySQL::run(Table::DUEL_STATS, static function(): void {
             // YOUR CODE HERE
         });
 
         // ASYNC
-        MySQL::runAsync(new QueryAsync(Table::PLAYER_SETTINGS->value));
+        MySQL::runAsync(new QueryAsync(Table::PLAYER_SETTINGS));
     }
 
     protected function registerEntities(): void {

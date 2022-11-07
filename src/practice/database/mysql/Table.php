@@ -11,8 +11,8 @@ declare(strict_types=1);
 
 namespace practice\database\mysql;
 
-enum Table: string {
-    case DUEL_STATS = "
+final class Table {
+    public const DUEL_STATS = "
 create table if not exists duel_stats
 (
     id       int auto_increment
@@ -32,7 +32,7 @@ create table if not exists duel_stats
         unique (xuid)
 );";
 
-    case PLAYER_SETTINGS = "
+    public const PLAYER_SETTINGS = "
 create table if not exists player_settings
 (
     id           int auto_increment

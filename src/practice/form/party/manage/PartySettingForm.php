@@ -23,10 +23,10 @@ final class PartySettingForm extends SimpleForm {
         $invitePlayer = new Button(TextFormat::colorize('&7Invite Player'));
 
         $this->addButton($manageMembers, function (Player $player, int $button_index) use ($party): void {
-            $this->formManageMembers($party);
+            $player->sendForm($this->formManageMembers($party));
         });
         $this->addButton($manageParty, function (Player $player, int $button_index) use ($party): void {
-            $this->formManageParty($party);
+            $player->sendForm($this->formManageParty($party));
         });
         $this->addButton($invitePlayer, function (Player $player, int $button_index): void {
 
@@ -41,7 +41,7 @@ final class PartySettingForm extends SimpleForm {
                 $players = [(string) Party::DEFAULT_PLAYERS, (string) Party::EIGHT_PLAYERS, (string) Party::TEN_PLAYERS];
 
                 $maxPlayers = new StepSliderEntry('Max Players', $players);
-                $maxPlayers->setDefault(array_search((string) $party->getMaxPlayers(), $players));
+                $maxPlayers->setDefault((string) $party->getMaxPlayers());
                 $isOpen = new ToggleEntry('Open Party', $party->isOpen());
 
                 $this->addEntry($isOpen, function (Player $player, ToggleEntry $entry, bool $value) use ($party): void {

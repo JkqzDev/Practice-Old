@@ -22,7 +22,11 @@ final class PartyForm extends SimpleForm {
         $publicParties = new Button(TextFormat::colorize('&7Public Parties'));
         $playerInvitations = new Button(TextFormat::colorize('&7Your invitations'));
 
-
+        $this->addButton($createParty, function (Player $player, int $button_index) use ($session): void {
+            $player->sendForm($this->formCreateParty($session));
+        });
+        $this->addButton($publicParties, function (Player $player, int $button_index) use ($session): void {});
+        $this->addButton($playerInvitations, function (Player $player, int $button_index) use ($session): void {});
     }
 
     private function formCreateParty(Session $session): CustomForm {
