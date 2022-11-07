@@ -7,6 +7,10 @@ namespace practice\party;
 use pocketmine\player\Player;
 use pocketmine\utils\TextFormat;
 use practice\duel\queue\QueueFactory;
+use practice\item\party\PartyDuelItem;
+use practice\item\party\PartyInformationItem;
+use practice\item\party\PartyLeaveItem;
+use practice\item\party\PartySettingItem;
 use practice\party\duel\Duel;
 use practice\party\duel\queue\PartyQueue;
 use practice\party\duel\queue\QueueFactory as PartyQueueFactory;
@@ -43,6 +47,10 @@ final class Party {
      */
     public function getMembers(): array {
         return $this->members;
+    }
+
+    public function getMaxPlayers(): int {
+        return $this->maxPlayers;
     }
 
     public function getQueue(): ?PartyQueue {
@@ -97,6 +105,7 @@ final class Party {
         $player->getArmorInventory()->clearAll();
         $player->getOffHandInventory()->clearAll();
 
+        $this->giveItems($player);
         $this->members[spl_object_hash($player)] = $player;
     }
 
@@ -115,6 +124,14 @@ final class Party {
         $session?->setParty(null);
 
         unset($this->members[spl_object_hash($player)]);
+    }
+
+    public function setMaxPlayers(int $value): void {
+        $this->maxPlayers = $value;
+    }
+
+    public function setOpen(bool $value): void {
+        $this->open = $value;
     }
 
     public function setQueue(?PartyQueue $queue): void {
@@ -138,7 +155,18 @@ final class Party {
     }
 
     public function giveItems(Player $player): void {
-
+        if (!$this->isOwner($player)) {
+            $player->getInventory()->setContents([
+                7 => new PartyInformationItem,
+                8 => new PartyLeaveItem
+            ]);
+            return;
+        }
+        $player->getInventory()->setContents([
+            0 => new PartyDuelItem,
+            7 => new PartySettingItem,
+            8 => new PartyLeaveItem
+        ]);
     }
 
     public function disband(bool $announce = true): void {

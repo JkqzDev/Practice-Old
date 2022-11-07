@@ -26,6 +26,7 @@ use practice\session\setting\SettingTrait;
 use practice\item\player\PlayerProfileItem;
 use practice\item\duel\queue\RankedQueueItem;
 use practice\item\duel\queue\UnrankedQueueItem;
+use practice\item\party\PartyItem;
 use practice\party\duel\DuelFactory as DuelDuelFactory;
 use practice\session\scoreboard\ScoreboardTrait;
 use practice\session\scoreboard\ScoreboardBuilder;
@@ -205,6 +206,7 @@ final class Session {
             1 => new UnrankedQueueItem,
             2 => new JoinArenaItem,
             4 => new DuelSpectateItem,
+            5 => new PartyItem,
             8 => new PlayerProfileItem
         ]);
     }

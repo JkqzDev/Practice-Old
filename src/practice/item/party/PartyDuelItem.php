@@ -11,10 +11,10 @@ use pocketmine\item\ItemUseResult;
 use practice\item\PracticeItem;
 use practice\session\SessionFactory;
 
-final class PartySettingForm extends PracticeItem {
+final class PartyDuelItem extends PracticeItem {
 
     public function __construct() {
-        parent::__construct('&gParty Settings', ItemIds::NETHERSTAR);
+        parent::__construct('&bParty Duel', ItemIds::DIAMOND_SWORD);
     }
 
     public function onClickAir(Player $player, Vector3 $directionVector): ItemUseResult {
