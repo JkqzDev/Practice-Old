@@ -28,19 +28,6 @@ final class DuelCommand extends Command {
             return;
         }
 
-        if (is_numeric($args[0])) {
-            $queue = QueueFactory::get($sender);
-
-            if ($queue === null) {
-                QueueFactory::create($sender, (int)$args[0]);
-                $sender->sendMessage('You have joined to queue type ' . (int)$args[0]);
-                return;
-            }
-            QueueFactory::remove($sender);
-            $sender->sendMessage('You have left to queue');
-            return;
-        }
-
         if ($sender->hasPermission('duel.command')) {
             $subCommand = strtolower($args[0]);
 

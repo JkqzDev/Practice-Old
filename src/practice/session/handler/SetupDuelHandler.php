@@ -49,45 +49,57 @@ final class SetupDuelHandler {
         if ($this->name === '') {
             return;
         }
-
         $world = $server->getWorldManager()->getWorldByName($this->name);
 
         if (!isset($world)) {
             return;
         }
-
         $player->getArmorInventory()->clearAll();
         $player->getInventory()->clearAll();
         $player->getCursorInventory()->clearAll();
         $player->getOffHandInventory()->clearAll();
 
         $player->teleport($world->getSpawnLocation());
-
         $player->setGamemode(GameMode::CREATIVE());
 
         $firstPosition = BlockFactory::getInstance()->get(BlockLegacyIds::DIAMOND_ORE, 0)->asItem();
+        $firstPosition->setCustomName(TextFormat::colorize('&gFirst Position'));
         $firstPosition->getNamedTag()->setString('practice_item', 'firstPosition');
         $secondPosition = BlockFactory::getInstance()->get(BlockLegacyIds::GOLD_ORE, 0)->asItem();
+        $secondPosition->setCustomName(TextFormat::colorize('&gSecond Position'));
         $secondPosition->getNamedTag()->setString('practice_item', 'secondPosition');
 
         $save = ItemFactory::getInstance()->get(ItemIds::DYE, 10);
+        $save->setCustomName(TextFormat::colorize('&aSave'));
         $save->getNamedTag()->setString('practice_item', 'save');
         $cancel = ItemFactory::getInstance()->get(ItemIds::DYE, 1);
+        $cancel->setCustomName(TextFormat::colorize('&cCancel'));
         $cancel->getNamedTag()->setString('practice_item', 'cancel');
 
         $firstPortal = BlockFactory::getInstance()->get(BlockLegacyIds::LAPIS_ORE, 0)->asItem();
+        $firstPortal->setCustomName(TextFormat::colorize('&2First Portal'));
         $firstPortal->getNamedTag()->setString('practice_item', 'firstPortal');
         $secondPortal = BlockFactory::getInstance()->get(BlockLegacyIds::EMERALD_ORE, 0)->asItem();
+        $secondPortal->setCustomName(TextFormat::colorize('&2Second Portal'));
         $secondPortal->getNamedTag()->setString('practice_item', 'secondPortal');
-
-        $player->getInventory()->setContents([
-            0 => $firstPosition,
-            1 => $secondPosition,
-            2 => $firstPortal,
-            3 => $secondPortal,
-            7 => $cancel,
-            8 => $save
-        ]);
+        
+        if ($this->withPortal) {
+            $player->getInventory()->setContents([
+                0 => $firstPosition,
+                1 => $secondPosition,
+                2 => $firstPortal,
+                3 => $secondPortal,
+                7 => $cancel,
+                8 => $save
+            ]);
+        } else {
+            $player->getInventory()->setContents([
+                0 => $firstPosition,
+                1 => $secondPosition,
+                7 => $cancel,
+                8 => $save
+            ]);
+        }
     }
 
     public function handleInteract(PlayerInteractEvent $event): void {
