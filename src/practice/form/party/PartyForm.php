@@ -11,6 +11,7 @@ use cosmicpe\form\entries\simple\Button;
 use cosmicpe\form\SimpleForm;
 use pocketmine\player\Player;
 use pocketmine\utils\TextFormat;
+use practice\party\Party;
 use practice\party\PartyFactory;
 use practice\session\Session;
 use practice\session\SessionFactory;
@@ -62,8 +63,11 @@ final class PartyForm extends SimpleForm {
 
             public function __construct(Session $session) {
                 parent::__construct(TextFormat::colorize('&7Parties Open'));
-                
-                foreach (PartyFactory::getAll() as $party) {
+                $parties = array_filter(PartyFactory::getAll(), function (Party $party): bool {
+                    return $party->isOpen();
+                });
+
+                foreach ($parties as $party) {
                     $button = new Button($party->getName());
 
                     $this->addButton($button, function (Player $player, int $button_index) use ($session, $party): void {
@@ -73,6 +77,11 @@ final class PartyForm extends SimpleForm {
 
                         if (PartyFactory::get($party->getName()) === null) {
                             $player->sendMessage(TextFormat::colorize('&cParty has been deleted'));
+                            return;
+                        }
+                        
+                        if (!$party->isOpen()) {
+                            $player->sendMessage(TextFormat::colorize('&cParty has been closed'));
                             return;
                         }
 
