@@ -8,14 +8,14 @@ use pocketmine\item\ItemIds;
 use pocketmine\player\Player;
 use pocketmine\math\Vector3;
 use pocketmine\item\ItemUseResult;
-use practice\form\party\manage\PartyDuelForm;
 use practice\item\PracticeItem;
+use practice\party\duel\queue\QueueFactory;
 use practice\session\SessionFactory;
 
-final class PartyDuelItem extends PracticeItem {
+final class PartyDuelLeaveItem extends PracticeItem {
 
     public function __construct() {
-        parent::__construct('&bParty Duel', ItemIds::DIAMOND_SWORD);
+        parent::__construct('&9Leave queue', ItemIds::REDSTONE);
     }
 
     public function onClickAir(Player $player, Vector3 $directionVector): ItemUseResult {
@@ -30,11 +30,10 @@ final class PartyDuelItem extends PracticeItem {
             return ItemUseResult::FAIL();
         }
         
-        if (count($party->getMembers()) < 2) {
+        if ($party->getQueue() === null) {
             return ItemUseResult::FAIL();
         }
-        $form = new PartyDuelForm;
-        $player->sendForm($form);
+        QueueFactory::remove($party);
         return ItemUseResult::SUCCESS();
     }
 }

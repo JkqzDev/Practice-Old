@@ -23,8 +23,9 @@ final class QueueFactory {
         $queue = new PartyQueue($party, $duelType);
 
         $party->setQueue($queue);
-        self::$queues[spl_object_hash($party)] = $queue;
+        $party->giveItems($party->getOwner());
 
+        self::$queues[spl_object_hash($party)] = $queue;
         $foundQueue = self::found($queue);
 
         if ($foundQueue !== null) {
@@ -45,6 +46,7 @@ final class QueueFactory {
             return;
         }
         $party->setQueue(null);
+        $party->giveItems($party->getOwner());
         unset(self::$queues[spl_object_hash($party)]);
     }
 

@@ -13,6 +13,7 @@ use pocketmine\player\Player;
 use pocketmine\utils\TextFormat;
 use practice\party\PartyFactory;
 use practice\session\Session;
+use practice\session\SessionFactory;
 
 final class PartyForm extends SimpleForm {
 
@@ -25,7 +26,9 @@ final class PartyForm extends SimpleForm {
         $this->addButton($createParty, function (Player $player, int $button_index) use ($session): void {
             $player->sendForm($this->formCreateParty($session));
         });
-        $this->addButton($publicParties, function (Player $player, int $button_index) use ($session): void {});
+        $this->addButton($publicParties, function (Player $player, int $button_index) use ($session): void {
+            $player->sendForm($this->formListParty($session));
+        });
         $this->addButton($playerInvitations, function (Player $player, int $button_index) use ($session): void {});
     }
 
@@ -50,6 +53,41 @@ final class PartyForm extends SimpleForm {
                     }
                     PartyFactory::create($session, $defaultName, $value);
                 });
+            }
+        };
+    }
+
+    private function formListParty(Session $session): SimpleForm {
+        return new class($session) extends SimpleForm {
+
+            public function __construct(Session $session) {
+                parent::__construct(TextFormat::colorize('&7Parties Open'));
+                
+                foreach (PartyFactory::getAll() as $party) {
+                    $button = new Button($party->getName());
+
+                    $this->addButton($button, function (Player $player, int $button_index) use ($session, $party): void {
+                        if ($session->getParty() !== null) {
+                            return;
+                        }
+
+                        if (PartyFactory::get($party->getName()) === null) {
+                            $player->sendMessage(TextFormat::colorize('&cParty has been deleted'));
+                            return;
+                        }
+
+                        if ($party->isFull()) {
+                            $player->sendMessage(TextFormat::colorize('&cParty is full!'));
+                            return;
+                        }
+
+                        if ($party->inDuel()) {
+                            $player->sendMessage(TextFormat::colorize('&cParty is in duel!'));
+                            return;
+                        }
+                        $party->addMemeber($player);
+                    });
+                }
             }
         };
     }

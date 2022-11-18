@@ -8,6 +8,7 @@ use pocketmine\player\Player;
 use pocketmine\utils\TextFormat;
 use practice\duel\queue\QueueFactory;
 use practice\item\party\PartyDuelItem;
+use practice\item\party\PartyDuelLeaveItem;
 use practice\item\party\PartyInformationItem;
 use practice\item\party\PartyLeaveItem;
 use practice\item\party\PartySettingItem;
@@ -107,6 +108,8 @@ final class Party {
 
         $this->giveItems($player);
         $this->members[spl_object_hash($player)] = $player;
+
+        $this->broadcastMessage('&c' . $player->getName() . ' joined!');
     }
 
     public function removeMember(Player $player): void {
@@ -159,6 +162,13 @@ final class Party {
             $player->getInventory()->setContents([
                 7 => new PartyInformationItem,
                 8 => new PartyLeaveItem
+            ]);
+            return;
+        }
+
+        if ($this->inQueue()) {
+            $player->getInventory()->setContents([
+                8 => new PartyDuelLeaveItem,
             ]);
             return;
         }

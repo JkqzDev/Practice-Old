@@ -10,6 +10,9 @@ final class PartyFactory {
     
     static private array $parties = [];
     
+    /**
+     * @return Party[]
+     */
     public static function getAll(): array {
         return self::$parties;
     }
