@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace practice\session\handler;
 
 use pocketmine\Server;
-use practice\world\World;
 use pocketmine\item\ItemIds;
 use pocketmine\player\Player;
 use practice\session\Session;
@@ -63,24 +62,24 @@ final class SetupDuelHandler {
         $player->setGamemode(GameMode::CREATIVE());
 
         $firstPosition = BlockFactory::getInstance()->get(BlockLegacyIds::DIAMOND_ORE, 0)->asItem();
-        $firstPosition->setCustomName(TextFormat::colorize('&gFirst Position'));
+        $firstPosition->setCustomName(TextFormat::colorize('&r&gFirst Position'));
         $firstPosition->getNamedTag()->setString('practice_item', 'firstPosition');
         $secondPosition = BlockFactory::getInstance()->get(BlockLegacyIds::GOLD_ORE, 0)->asItem();
-        $secondPosition->setCustomName(TextFormat::colorize('&gSecond Position'));
+        $secondPosition->setCustomName(TextFormat::colorize('&r&gSecond Position'));
         $secondPosition->getNamedTag()->setString('practice_item', 'secondPosition');
 
         $save = ItemFactory::getInstance()->get(ItemIds::DYE, 10);
-        $save->setCustomName(TextFormat::colorize('&aSave'));
+        $save->setCustomName(TextFormat::colorize('&r&aSave'));
         $save->getNamedTag()->setString('practice_item', 'save');
         $cancel = ItemFactory::getInstance()->get(ItemIds::DYE, 1);
-        $cancel->setCustomName(TextFormat::colorize('&cCancel'));
+        $cancel->setCustomName(TextFormat::colorize('&r&cCancel'));
         $cancel->getNamedTag()->setString('practice_item', 'cancel');
 
         $firstPortal = BlockFactory::getInstance()->get(BlockLegacyIds::LAPIS_ORE, 0)->asItem();
-        $firstPortal->setCustomName(TextFormat::colorize('&2First Portal'));
+        $firstPortal->setCustomName(TextFormat::colorize('&r&2First Portal'));
         $firstPortal->getNamedTag()->setString('practice_item', 'firstPortal');
         $secondPortal = BlockFactory::getInstance()->get(BlockLegacyIds::EMERALD_ORE, 0)->asItem();
-        $secondPortal->setCustomName(TextFormat::colorize('&2Second Portal'));
+        $secondPortal->setCustomName(TextFormat::colorize('&r&2Second Portal'));
         $secondPortal->getNamedTag()->setString('practice_item', 'secondPortal');
         
         if ($this->withPortal) {

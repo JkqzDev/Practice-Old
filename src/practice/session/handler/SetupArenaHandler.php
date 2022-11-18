@@ -63,19 +63,19 @@ final class SetupArenaHandler {
         $player->setGamemode(GameMode::CREATIVE());
 
         $selectSpawns = BlockFactory::getInstance()->get(BlockLegacyIds::DIAMOND_ORE, 0)->asItem();
-        $selectSpawns->setCustomName(TextFormat::colorize('&gAdd new spawn'));
+        $selectSpawns->setCustomName(TextFormat::colorize('&r&gAdd new spawn'));
         $selectSpawns->getNamedTag()->setString('practice_item', 'selectSpawns');
 
         $deleteSpawns = BlockFactory::getInstance()->get(BlockLegacyIds::GOLD_ORE, 0)->asItem();
-        $deleteSpawn->setCustomName(TextFormat::colorize('&4Delete all spawns'));
+        $deleteSpawns->setCustomName(TextFormat::colorize('&r&4Delete all spawns'));
         $deleteSpawns->getNamedTag()->setString('practice_item', 'deleteSpawns');
 
         $save = ItemFactory::getInstance()->get(ItemIds::DYE, 10);
-        $save->setCustomName(TextFormat::colorize('&aSave'));
+        $save->setCustomName(TextFormat::colorize('&r&aSave'));
         $save->getNamedTag()->setString('practice_item', 'save');
 
         $cancel = ItemFactory::getInstance()->get(ItemIds::DYE, 1);
-        $cancel->setCustomName(TextFormat::colorize('&cCancel'));
+        $cancel->setCustomName(TextFormat::colorize('&r&cCancel'));
         $cancel->getNamedTag()->setString('practice_item', 'cancel');
 
         $player->getInventory()->setContents([
