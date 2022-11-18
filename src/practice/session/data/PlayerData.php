@@ -9,6 +9,7 @@ trait PlayerData {
     private int $kills = 0;
     private int $deaths = 0;
     private int $killstreak = 0;
+    private int $elo = 1000;
 
     public function getKills(): int {
         return $this->kills;
@@ -20,6 +21,10 @@ trait PlayerData {
 
     public function getKillstreak(): int {
         return $this->killstreak;
+    }
+
+    public function getElo(): int {
+        return $this->elo;
     }
 
     public function addKill(): void {
@@ -34,7 +39,15 @@ trait PlayerData {
         $this->killstreak++;
     }
 
+    public function addElo(int $value): void {
+        $this->elo += $value;
+    }
+
     public function resetKillstreak(): void {
         $this->killstreak = 0;
+    }
+
+    public function removeElo(int $value): void {
+        $this->elo -= $value;
     }
 }

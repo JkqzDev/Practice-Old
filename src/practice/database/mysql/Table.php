@@ -12,6 +12,7 @@ declare(strict_types=1);
 namespace practice\database\mysql;
 
 final class Table {
+
     public const DUEL_STATS = "
 create table if not exists duel_stats
 (
