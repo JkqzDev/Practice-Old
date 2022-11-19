@@ -14,7 +14,7 @@ use cosmicpe\form\entries\custom\InputEntry;
 final class DeleteArenaForm extends CustomForm {
 
     public function __construct() {
-        parent::__construct(TextFormat::colorize('&bDelete Arena'));
+        parent::__construct(TextFormat::colorize('&cDelete Arena'));
 
         $nameEntry = new InputEntry('Arena name', 'Nodebuff');
 

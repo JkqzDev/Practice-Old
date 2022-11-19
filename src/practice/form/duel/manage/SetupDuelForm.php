@@ -31,7 +31,7 @@ final class SetupDuelForm extends CustomForm {
             'finaluhc'
         ]
     ) {
-        parent::__construct(TextFormat::colorize('&bDuel World Setup'));
+        parent::__construct(TextFormat::colorize('&cDuel World Setup'));
         $nameEntry = new InputEntry('World name', 'world');
         $modesEntry = new InputEntry('Duel modes', 'Nodebuff, Bridge');
 

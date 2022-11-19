@@ -14,7 +14,7 @@ use cosmicpe\form\entries\custom\ToggleEntry;
 final class KitForm extends CustomForm {
 
     public function __construct(Kit $kit) {
-        parent::__construct(TextFormat::colorize('&bKit Settings'));
+        parent::__construct(TextFormat::colorize('&cKit Settings'));
         $horizontalKnockback = new InputEntry('Horizontal Knockback', null, (string)$kit->getHorizontalKnockback());
         $verticalKnockback = new InputEntry('Vertical Knockback', null, (string)$kit->getVerticalKnockback());
         $maxHeight = new InputEntry('Max Height', null, (string)$kit->getMaxHeight());

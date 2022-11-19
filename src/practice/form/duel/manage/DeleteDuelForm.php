@@ -13,7 +13,7 @@ use cosmicpe\form\entries\custom\InputEntry;
 final class DeleteDuelForm extends CustomForm {
 
     public function __construct() {
-        parent::__construct(TextFormat::colorize('&bDelete Duel World'));
+        parent::__construct(TextFormat::colorize('&cDelete Duel World'));
 
         $nameEntry = new InputEntry('World name', 'world');
 

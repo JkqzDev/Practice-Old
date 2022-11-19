@@ -146,10 +146,10 @@ class Duel {
             default:
                 if ($this->isSpectator($player)) {
                     return [
-                        ' &fKit: &b' . DuelFactory::getName($this->typeId),
+                        ' &fKit: &c' . DuelFactory::getName($this->typeId),
                         ' &r&r',
-                        ' &fDuration: &b' . gmdate('i:s', $this->running),
-                        ' &fSpectators: &b' . count($this->spectators)
+                        ' &fDuration: &c' . gmdate('i:s', $this->running),
+                        ' &fSpectators: &c' . count($this->spectators)
                     ];
                 }
                 $opponent = $this->getOpponent($player);
@@ -158,10 +158,10 @@ class Duel {
                 });
 
                 return [
-                    ' &fKit: &b' . DuelFactory::getName($this->typeId),
-                    ' &fDuration: &b' . gmdate('i:s', $this->running),
+                    ' &fKit: &c' . DuelFactory::getName($this->typeId),
+                    ' &fDuration: &c' . gmdate('i:s', $this->running),
                     ' &r&r',
-                    ' &fPlayers: &b' . count($players)
+                    ' &fPlayers: &c' . count($players)
                 ];
         }
     }
@@ -308,7 +308,7 @@ class Duel {
                         if ($member->isOnline()) {
                             if ($member->isImmobile()) {
                                 $member->setImmobile(false);
-                                $member->sendMessage(TextFormat::colorize('&bMatch started.'));
+                                $member->sendMessage(TextFormat::colorize('&cMatch started.'));
                                 $member->sendTitle('Match Started!', TextFormat::colorize('&7The match has begun.'));
                             }
                         }
@@ -317,8 +317,8 @@ class Duel {
                 }
                 foreach ($members as $member) {
                     if ($member->isOnline()) {
-                        $member->sendMessage(TextFormat::colorize('&7The match will be starting in &b' . $this->starting . '&7..'));
-                        $member->sendTitle('Match starting', TextFormat::colorize('&7The match will be starting in &b' . $this->starting . '&7..'));
+                        $member->sendMessage(TextFormat::colorize('&7The match will be starting in &c' . $this->starting . '&7..'));
+                        $member->sendTitle('Match starting', TextFormat::colorize('&7The match will be starting in &c' . $this->starting . '&7..'));
                     }
                 }
                 $this->starting--;

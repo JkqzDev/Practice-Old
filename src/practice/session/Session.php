@@ -52,7 +52,7 @@ final class Session {
         private ?Party       $party = null
     ) {
         $this->setSettings(Setting::create());
-        $this->setScoreboard(new ScoreboardBuilder($this, '&l&bHSM &r&7[South]&r'));
+        $this->setScoreboard(new ScoreboardBuilder($this, '&l&cMisty Network&r'));
     }
 
     public static function create(string $uuid, string $xuid, string $name): self {
