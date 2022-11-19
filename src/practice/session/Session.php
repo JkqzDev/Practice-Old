@@ -301,9 +301,9 @@ final class Session {
             MySQL::runAsync($query);
         }
 
-        $scoreboardValue = $this->getSetting(Setting::SCOREBOARD)->isEnabled();
-        $autoRespawnValue = $this->getSetting(Setting::AUTO_RESPAWN)->isEnabled();
-        $cpsCounterValue = $this->getSetting(Setting::CPS_COUNTER)->isEnabled();
+        $scoreboardValue = (int) $this->getSetting(Setting::SCOREBOARD)->isEnabled();
+        $autoRespawnValue = (int) $this->getSetting(Setting::AUTO_RESPAWN)->isEnabled();
+        $cpsCounterValue = (int) $this->getSetting(Setting::CPS_COUNTER)->isEnabled();
 
         $sqlQuery = "update player_settings set name = '$name', scoreboard = '$scoreboardValue', auto_respawn = '$autoRespawnValue', cps_counter = '$cpsCounterValue' where xuid = '$xuid'";
         $query = new QueryAsync($sqlQuery);
