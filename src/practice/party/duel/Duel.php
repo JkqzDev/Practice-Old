@@ -24,6 +24,11 @@ class Duel {
 
     public const TYPE_NODEBUFF = 0;
     public const TYPE_GAPPLE = 1;
+    public const TYPE_FIST = 2;
+    public const TYPE_COMBO = 3;
+    public const TYPE_BUILDUHC = 4;
+    public const TYPE_CAVEUHC = 5;
+    public const TYPE_FINALUHC = 6;
 
     public const STARTING = 0;
     public const RUNNING = 1;
@@ -347,7 +352,7 @@ class Duel {
                         $member->getArmorInventory()->clearAll();
                         $member->teleport($member->getServer()->getWorldManager()->getDefaultWorld()->getSpawnLocation());
 
-                        $firstParty->giveItems($member);
+                        $secondParty->giveItems($member);
                     }
                     $firstParty->setDuel(null);
                     $secondParty->setDuel(null);

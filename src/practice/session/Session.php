@@ -243,7 +243,9 @@ final class Session {
         } elseif ($this->inArena()) {
             $arena = $this->getArena();
             $arena->quit($player);
-        } elseif ($this->inParty()) {
+        }
+
+        if ($this->inParty()) {
             $party = $this->getParty();
             $party->disband();
         }

@@ -6,6 +6,11 @@ namespace practice\party\duel;
 
 use pocketmine\scheduler\ClosureTask;
 use pocketmine\world\World;
+use practice\duel\type\CaveUHC;
+use practice\party\duel\type\BuildUHC;
+use practice\party\duel\type\Combo;
+use practice\party\duel\type\FinalUHC;
+use practice\party\duel\type\Fist;
 use practice\party\duel\type\Gapple;
 use practice\party\duel\type\Nodebuff;
 use practice\party\Party;
@@ -64,6 +69,11 @@ final class DuelFactory {
         return match($type) {
             Duel::TYPE_NODEBUFF => 'No Debuff',
             Duel::TYPE_GAPPLE => 'Gapple',
+            Duel::TYPE_FIST => 'Fist',
+            Duel::TYPE_COMBO => 'Combo',
+            Duel::TYPE_BUILDUHC => 'Build UHC',
+            Duel::TYPE_CAVEUHC => 'Cave UHC',
+            Duel::TYPE_FINALUHC => 'Final UHC',
             default => 'None'
         };
     }
@@ -72,6 +82,11 @@ final class DuelFactory {
         return match($type) {
             Duel::TYPE_NODEBUFF => Nodebuff::class,
             Duel::TYPE_GAPPLE => Gapple::class,
+            Duel::TYPE_FIST => Fist::class,
+            Duel::TYPE_COMBO => Combo::class,
+            Duel::TYPE_BUILDUHC => BuildUHC::class,
+            Duel::TYPE_CAVEUHC => CaveUHC::class,
+            Duel::TYPE_FINALUHC => FinalUHC::class,
             default => Nodebuff::class
         };
     }

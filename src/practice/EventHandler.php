@@ -25,8 +25,12 @@ use pocketmine\event\server\DataPacketSendEvent;
 use pocketmine\event\entity\EntityRegainHealthEvent;
 use pocketmine\event\entity\EntityDamageByEntityEvent;
 use pocketmine\event\inventory\InventoryTransactionEvent;
+use pocketmine\event\server\DataPacketReceiveEvent;
+use pocketmine\network\mcpe\protocol\AnimatePacket;
 use pocketmine\network\mcpe\protocol\LevelSoundEventPacket;
 use pocketmine\network\mcpe\protocol\types\LevelSoundEvent;
+use practice\session\setting\display\CPSCounter;
+use practice\session\setting\Setting;
 
 final class EventHandler implements Listener {
 
@@ -270,6 +274,41 @@ final class EventHandler implements Listener {
         $session->quit();
 
         $event->setQuitMessage(TextFormat::colorize('&7[&c-&7] &c' . $player->getName()));
+    }
+
+    public function handlePacketReceive(DataPacketReceiveEvent $event): void {
+        $player = $event->getOrigin()->getPlayer();
+        $packet = $event->getPacket();
+
+        if ($player === null) {
+            return;
+        }
+        $session = SessionFactory::get($player);
+
+        if ($session === null) {
+            return;
+        }
+
+        if ($packet instanceof AnimatePacket) {
+            if ($packet->action === AnimatePacket::ACTION_SWING_ARM) {
+                $event->cancel();
+                $player->getServer()->broadcastPackets($player->getViewers(), [$packet]);
+            }
+            return;
+        }
+
+        $cpsSetting = $session->getSetting(Setting::CPS_COUNTER);
+
+        if ($cpsSetting instanceof CPSCounter && $cpsSetting->isEnabled()) {
+
+            if ($packet instanceof LevelSoundEventPacket) {
+                if ($packet->sound === LevelSoundEvent::ATTACK_STRONG || $packet->sound === LevelSoundEvent::ATTACK_NODAMAGE) {
+                    $cpsSetting->addClick();
+
+                    $player->sendTip(TextFormat::colorize('&cCPS: &f' . $cpsSetting->getCPS()));
+                }
+            }
+        }
     }
 
     public function handlePacketSend(DataPacketSendEvent $event): void {

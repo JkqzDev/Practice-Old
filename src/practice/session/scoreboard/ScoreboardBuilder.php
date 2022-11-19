@@ -76,6 +76,13 @@ class ScoreboardBuilder {
             $duel = $session->getDuel();
 
             $lines = array_merge($lines, $duel->scoreboard($player));
+        } elseif ($session->inParty()) {
+            $party = $session->getParty();
+
+            if ($party->inDuel()) {
+                $duel = $party->getDuel();
+                $lines = array_merge($lines, $duel->scoreboard($player));
+            }
         }
         $lines[] = '&r&r';
         $lines[] = ' &7misty.lol';

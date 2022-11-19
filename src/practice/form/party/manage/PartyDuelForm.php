@@ -16,7 +16,12 @@ final class PartyDuelForm extends SimpleForm {
 
     private array $types = [
         'No Debuff' => Duel::TYPE_NODEBUFF,
-        'Gapple' => Duel::TYPE_GAPPLE
+        'Gapple' => Duel::TYPE_GAPPLE,
+        'Fist' => Duel::TYPE_FIST,
+        'Combo' => Duel::TYPE_COMBO,
+        'Build UHC' => Duel::TYPE_BUILDUHC,
+        'Cave UHC' => Duel::TYPE_CAVEUHC,
+        'Final UHC' => Duel::TYPE_FINALUHC
     ];
 
     public function __construct() {

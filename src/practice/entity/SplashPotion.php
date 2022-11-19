@@ -20,6 +20,7 @@ use pocketmine\world\particle\PotionSplashParticle;
 use pocketmine\event\entity\EntityRegainHealthEvent;
 use pocketmine\event\entity\ProjectileHitEntityEvent;
 use pocketmine\entity\projectile\SplashPotion as ProjectileSplashPotion;
+use practice\session\SessionFactory;
 
 class SplashPotion extends ProjectileSplashPotion {
 
@@ -29,9 +30,15 @@ class SplashPotion extends ProjectileSplashPotion {
     protected $gravity = 0.06;
     protected $drag = 0.0025;
 
+    
+
     public function __construct(Location $location, ?Entity $shootingEntity, PotionType $potionType, ?CompoundTag $nbt = null) {
         parent::__construct($location, $shootingEntity, $potionType, $nbt);
         $this->setScale(0.6);
+
+        if ($shootingEntity instanceof Player) {
+            $session = SessionFactory::get($shootingEntity);
+        }
     }
 
     public function calculateInterceptWithBlock(Block $block, Vector3 $start, Vector3 $end): ?RayTraceResult {
