@@ -20,16 +20,12 @@ final class PartySettingForm extends SimpleForm {
         parent::__construct(TextFormat::colorize('&gParty Settings'));
         $manageMembers = new Button(TextFormat::colorize('&7Manage Members'));
         $manageParty = new Button(TextFormat::colorize('&7Manage Party'));
-        $invitePlayer = new Button(TextFormat::colorize('&7Invite Player'));
 
         $this->addButton($manageMembers, function (Player $player, int $button_index) use ($party): void {
             $player->sendForm($this->formManageMembers($party));
         });
         $this->addButton($manageParty, function (Player $player, int $button_index) use ($party): void {
             $player->sendForm($this->formManageParty($party));
-        });
-        $this->addButton($invitePlayer, function (Player $player, int $button_index): void {
-
         });
     }
 
