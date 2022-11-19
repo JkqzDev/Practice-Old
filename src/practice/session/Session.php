@@ -64,6 +64,7 @@ final class Session {
                 $query = new QueryAsync($sqlQuery);
                 MySQL::runAsync($query);
             } else {
+                $rows = $rows[0];
                 $this->kills = (int) $rows['kills'];
                 $this->deaths = (int) $rows['deaths'];
                 $this->killstreak = (int) $rows['streak'];
@@ -72,18 +73,20 @@ final class Session {
         });
         MySQL::runAsync($query);
 
-        $settingsQuery = "select * from player_settings WHERE xuid = '$xuid'";
+        $settingsQuery = "select * from player_settings where xuid = '$xuid'";
         $query = new QueryAsync($settingsQuery, function (?array $rows) use ($xuid, $name): void {
             if (count($rows) === 0) {
                 $sqlQuery = "insert into player_settings(xuid, player) values('$xuid', '$name')";
                 $query = new QueryAsync($sqlQuery);
                 MySQL::runAsync($query);
             } else {
+                $rows = $rows[0];
                 $this->getSetting(Setting::SCOREBOARD)?->setEnabled((bool) $rows[Setting::SCOREBOARD]);
                 $this->getSetting(Setting::CPS_COUNTER)?->setEnabled((bool) $rows[Setting::CPS_COUNTER]);
                 $this->getSetting(Setting::AUTO_RESPAWN)?->setEnabled((bool) $rows[Setting::AUTO_RESPAWN]);
             }
         });
+        MySQL::runAsync($query);
     }
 
     public static function create(string $uuid, string $xuid, string $name): self {
@@ -287,10 +290,11 @@ final class Session {
 
         $this->stopSetupArenaHandler();
         $this->stopSetupDuelHandler();
-
+        
+        $name = $this->name;
+        $xuid = $this->xuid;
+            
         if ($this->update) {
-            $name = $this->name;
-            $xuid = $this->xuid;
             $kills = $this->kills;
             $deaths = $this->deaths;
             $streak = $this->killstreak;
@@ -300,7 +304,6 @@ final class Session {
             $query = new QueryAsync($sqlQuery);
             MySQL::runAsync($query);
         }
-
         $scoreboardValue = (int) $this->getSetting(Setting::SCOREBOARD)->isEnabled();
         $autoRespawnValue = (int) $this->getSetting(Setting::AUTO_RESPAWN)->isEnabled();
         $cpsCounterValue = (int) $this->getSetting(Setting::CPS_COUNTER)->isEnabled();
