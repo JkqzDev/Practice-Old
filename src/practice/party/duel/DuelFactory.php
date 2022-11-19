@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace practice\party\duel;
 
+use pocketmine\scheduler\ClosureTask;
 use pocketmine\world\World;
 use practice\party\duel\type\Gapple;
 use practice\party\duel\type\Nodebuff;
@@ -73,5 +74,19 @@ final class DuelFactory {
             Duel::TYPE_GAPPLE => Gapple::class,
             default => Nodebuff::class
         };
+    }
+
+    static public function task(): void {
+        Practice::getInstance()->getScheduler()->scheduleRepeatingTask(new ClosureTask(static function(): void {
+            foreach (self::getAll() as $duel) {
+                $duel->update();
+            }
+        }), 20);
+    }
+
+    static public function disable(): void {
+        foreach (self::getAll() as $duel) {
+            $duel->delete();
+        }
     }
 }

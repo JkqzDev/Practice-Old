@@ -363,7 +363,7 @@ class Duel {
     public function delete(): void {
         Practice::getInstance()->getServer()->getWorldManager()->unloadWorld($this->world);
         Practice::getInstance()->getServer()->getAsyncPool()->submitTask(new WorldDeleteAsync(
-            'duel-' . $this->id,
+            'party-duel-' . $this->id,
             Practice::getInstance()->getServer()->getDataPath() . 'worlds'
         ));
         DuelFactory::remove($this->id);

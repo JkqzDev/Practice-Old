@@ -11,8 +11,11 @@ final class Invite {
 
     public function __construct(
         private Party $party,
-        private int $duelType
-    ) {}
+        private int $duelType,
+        private int $time = 0
+    ) {
+        $this->time = time() + 2 * 60;
+    }
 
     public function getParty(): Party {
         return $this->party;
@@ -20,6 +23,10 @@ final class Invite {
 
     public function getDuelType(): int {
         return $this->duelType;
+    }
+
+    public function isExpired(): bool {
+        return $this->time < time();
     }
 
     public function exists(): bool {

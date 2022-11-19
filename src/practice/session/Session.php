@@ -80,7 +80,22 @@ final class Session {
     }
 
     public function inLobby(): bool {
-        return !$this->inArena() && !$this->inDuel();
+        if ($this->inDuel()) {
+            return false;
+        }
+
+        if ($this->inArena()) {
+            return false;
+        }
+
+        if ($this->inParty()) {
+            $party = $this->getParty();
+
+            if ($party->inDuel()) {
+                return false;
+            }
+        }
+        return true;
     }
 
     public function inArena(): bool {
@@ -250,7 +265,6 @@ final class Session {
         $duel = $this->duel;
         return $duel;
     }
-
 
     public function getArena(): Arena {
         return $this->arena;

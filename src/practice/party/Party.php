@@ -7,6 +7,7 @@ namespace practice\party;
 use pocketmine\player\Player;
 use pocketmine\utils\TextFormat;
 use practice\duel\queue\QueueFactory;
+use practice\item\party\PartyDuelInviteItem;
 use practice\item\party\PartyDuelItem;
 use practice\item\party\PartyDuelLeaveItem;
 use practice\item\party\PartyInformationItem;
@@ -182,6 +183,7 @@ final class Party {
         $player->getInventory()->setContents([
             0 => new PartyDuelItem,
             4 => new PartyInviteItem,
+            5 => new PartyDuelInviteItem,
             7 => new PartySettingItem,
             8 => new PartyLeaveItem
         ]);

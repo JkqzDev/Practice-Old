@@ -31,6 +31,7 @@ use pocketmine\data\bedrock\EntityLegacyIds;
 use pocketmine\data\bedrock\PotionTypeIdMap;
 use pocketmine\data\SavedDataLoadingException;
 use practice\database\mysql\queries\QueryAsync;
+use practice\party\duel\DuelFactory as PartyDuelFactory;
 
 final class Practice extends PluginBase {
 
@@ -61,6 +62,7 @@ final class Practice extends PluginBase {
         WorldFactory::loadAll();
 
         DuelFactory::task();
+        PartyDuelFactory::task();
         SessionFactory::task();
     }
 
@@ -71,6 +73,7 @@ final class Practice extends PluginBase {
         WorldFactory::saveAll();
 
         DuelFactory::disable();
+        PartyDuelFactory::disable();
     }
 
     protected function initMySQL(): void {
