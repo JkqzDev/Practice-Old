@@ -32,10 +32,7 @@ final class PartyLeaveItem extends PracticeItem {
         }
 
         if (!$party->isOwner($player)) {
-            $session->giveLobyyItems();
-            $session->setParty(null);
-
-            $party->broadcastMessage('&c' . $player->getName() . ' left the party');
+            $party->removeMember($player);
         } else {
             $form = new PartyDisbandForm($party);
             $player->sendForm($form);

@@ -32,7 +32,7 @@ final class Party {
         private ?PartyQueue $queue = null,
         private ?Duel $duel = null
     ) {
-        $this->addMemeber($owner);
+        $this->addMemeber($owner, false);
     }
 
     public function getName(): string {
@@ -90,7 +90,7 @@ final class Party {
         $this->owner = $player;
     }
 
-    public function addMemeber(Player $player): void {
+    public function addMemeber(Player $player, bool $announce = true): void {
         $session = SessionFactory::get($player);
 
         if ($session === null) {
@@ -109,10 +109,12 @@ final class Party {
         $this->giveItems($player);
         $this->members[spl_object_hash($player)] = $player;
 
-        $this->broadcastMessage('&c' . $player->getName() . ' joined!');
+        if ($announce) {
+            $this->broadcastMessage('&a' . $player->getName() . ' joined the party.');
+        }
     }
 
-    public function removeMember(Player $player): void {
+    public function removeMember(Player $player, bool $announce = true): void {
         if (!$this->isMember($player)) {
             return;
         }
@@ -127,6 +129,10 @@ final class Party {
         $session?->setParty(null);
 
         unset($this->members[spl_object_hash($player)]);
+
+        if ($announce) {
+            $this->broadcastMessage('&c' . $player->getName() . ' left the party.');
+        }
     }
 
     public function setMaxPlayers(int $value): void {
@@ -185,7 +191,7 @@ final class Party {
         }
 
         foreach ($this->members as $member) {
-            $this->removeMember($member);
+            $this->removeMember($member, false);
 
             if ($announce) {
                 $member->sendMessage(TextFormat::colorize('&cThe party has been eliminated!'));

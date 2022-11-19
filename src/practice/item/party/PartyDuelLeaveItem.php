@@ -15,7 +15,7 @@ use practice\session\SessionFactory;
 final class PartyDuelLeaveItem extends PracticeItem {
 
     public function __construct() {
-        parent::__construct('&9Leave queue', ItemIds::REDSTONE);
+        parent::__construct('&cLeave queue', ItemIds::REDSTONE);
     }
 
     public function onClickAir(Player $player, Vector3 $directionVector): ItemUseResult {
