@@ -8,15 +8,14 @@ use pocketmine\item\ItemIds;
 use pocketmine\player\Player;
 use pocketmine\math\Vector3;
 use pocketmine\item\ItemUseResult;
-use pocketmine\utils\TextFormat;
-use practice\form\party\manage\PartyDuelForm;
+use practice\form\party\manage\PartyInviteForm;
 use practice\item\PracticeItem;
 use practice\session\SessionFactory;
 
-final class PartyDuelItem extends PracticeItem {
+final class PartyInviteItem extends PracticeItem {
 
     public function __construct() {
-        parent::__construct('&bParty Duel', ItemIds::DIAMOND_SWORD);
+        parent::__construct('&dInvite Player', ItemIds::COMPASS);
     }
 
     public function onClickAir(Player $player, Vector3 $directionVector): ItemUseResult {
@@ -30,12 +29,7 @@ final class PartyDuelItem extends PracticeItem {
         if ($party === null) {
             return ItemUseResult::FAIL();
         }
-        
-        /*if (count($party->getMembers()) < 2) {
-            $player->sendMessage(TextFormat::colorize('&cYou cannot duel with less than two players.'));
-            return ItemUseResult::FAIL();
-        }*/
-        $form = new PartyDuelForm;
+        $form = new PartyInviteForm($party);
         $player->sendForm($form);
         return ItemUseResult::SUCCESS();
     }

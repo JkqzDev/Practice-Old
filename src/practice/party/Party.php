@@ -10,6 +10,7 @@ use practice\duel\queue\QueueFactory;
 use practice\item\party\PartyDuelItem;
 use practice\item\party\PartyDuelLeaveItem;
 use practice\item\party\PartyInformationItem;
+use practice\item\party\PartyInviteItem;
 use practice\item\party\PartyLeaveItem;
 use practice\item\party\PartySettingItem;
 use practice\party\duel\Duel;
@@ -180,6 +181,7 @@ final class Party {
         }
         $player->getInventory()->setContents([
             0 => new PartyDuelItem,
+            4 => new PartyInviteItem,
             7 => new PartySettingItem,
             8 => new PartyLeaveItem
         ]);
@@ -188,6 +190,9 @@ final class Party {
     public function disband(bool $announce = true): void {
         if ($this->inQueue()) {
             PartyQueueFactory::remove($this);
+        } elseif ($this->inDuel()) {
+            $duel = $this->getDuel();
+            $duel->finish($this);
         }
 
         foreach ($this->members as $member) {

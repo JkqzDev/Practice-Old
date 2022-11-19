@@ -153,19 +153,19 @@ class Duel {
             default:
                 if ($this->isSpectator($player)) {
                     return [
-                        ' &fKit: &b' . DuelFactory::getName($this->typeId),
-                        ' &fType: &b' . ($this->ranked ? 'Ranked' : 'Unranked'),
+                        ' &fKit: &c' . DuelFactory::getName($this->typeId),
+                        ' &fType: &c' . ($this->ranked ? 'Ranked' : 'Unranked'),
                         ' &r&r',
-                        ' &fDuration: &b' . gmdate('i:s', $this->running),
-                        ' &fSpectators: &b' . count($this->spectators)
+                        ' &fDuration: &c' . gmdate('i:s', $this->running),
+                        ' &fSpectators: &c' . count($this->spectators)
                     ];
                 }
                 /** @var Player $opponent */
                 $opponent = $this->getOpponent($player);
 
                 return [
-                    ' &fKit: &b' . DuelFactory::getName($this->typeId),
-                    ' &fDuration: &b' . gmdate('i:s', $this->running),
+                    ' &fKit: &c' . DuelFactory::getName($this->typeId),
+                    ' &fDuration: &c' . gmdate('i:s', $this->running),
                     ' &r&r',
                     ' &aYour ping: ' . $player->getNetworkSession()->getPing(),
                     ' &cTheir ping: ' . $opponent->getNetworkSession()->getPing()
@@ -285,18 +285,18 @@ class Duel {
                     if ($secondPlayer->isImmobile()) {
                         $secondPlayer->setImmobile(false);
                     }
-                    $firstPlayer->sendMessage(TextFormat::colorize('&bMatch started.'));
-                    $secondPlayer->sendMessage(TextFormat::colorize('&bMatch started.'));
+                    $firstPlayer->sendMessage(TextFormat::colorize('&cMatch started.'));
+                    $secondPlayer->sendMessage(TextFormat::colorize('&cMatch started.'));
 
                     $firstPlayer->sendTitle('Match Started!', TextFormat::colorize('&7The match has begun.'));
                     $secondPlayer->sendTitle('Match Started!', TextFormat::colorize('&7The match has begun.'));
                     return;
                 }
-                $firstPlayer->sendMessage(TextFormat::colorize('&7The match will be starting in &b' . $this->starting . '&7..'));
-                $secondPlayer->sendMessage(TextFormat::colorize('&7The match will be starting in &b' . $this->starting . '&7..'));
+                $firstPlayer->sendMessage(TextFormat::colorize('&7The match will be starting in &c' . $this->starting . '&7..'));
+                $secondPlayer->sendMessage(TextFormat::colorize('&7The match will be starting in &c' . $this->starting . '&7..'));
 
-                $firstPlayer->sendTitle('Match starting', TextFormat::colorize('&7The match will be starting in &b' . $this->starting . '&7..'));
-                $secondPlayer->sendTitle('Match starting', TextFormat::colorize('&7The match will be starting in &b' . $this->starting . '&7..'));
+                $firstPlayer->sendTitle('Match starting', TextFormat::colorize('&7The match will be starting in &c' . $this->starting . '&7..'));
+                $secondPlayer->sendTitle('Match starting', TextFormat::colorize('&7The match will be starting in &c' . $this->starting . '&7..'));
                 $this->starting--;
                 break;
 

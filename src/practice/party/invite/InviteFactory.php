@@ -16,7 +16,7 @@ final class InviteFactory {
     }
 
     static public function create(Player $player, Party $party): void {
-        self::$invites[$player->getName()][$party->getName()] = new Invite($party);
+        self::$invites[$player->getXuid()][$party->getName()] = new Invite($party);
     }
 
     static public function removeFromParty(Player $player, string $partyName): void {
