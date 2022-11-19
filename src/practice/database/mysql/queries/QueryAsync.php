@@ -1,12 +1,5 @@
 <?php
-/*
- * Created by PhpStorm.
- *
- * User: zOmArRD
- * Date: 4/11/2022
- *
- * Copyright © 2022  <omar@ghostlymc.live> - All Rights Reserved.
- */
+
 declare(strict_types=1);
 
 namespace practice\database\mysql\queries;
@@ -17,6 +10,7 @@ use mysqli_result;
 use practice\database\mysql\AsyncQuery;
 
 final class QueryAsync extends AsyncQuery {
+
     private ?string $rows = null;
 
     public function __construct(
@@ -41,7 +35,6 @@ final class QueryAsync extends AsyncQuery {
         if (!isset($this->closure)) {
             return;
         }
-
 
         if (isset($this->rows)) {
             /** @noinspection UnserializeExploitsInspection */

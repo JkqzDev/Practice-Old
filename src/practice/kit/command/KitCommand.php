@@ -10,6 +10,7 @@ use practice\form\kit\KitForm;
 use pocketmine\command\Command;
 use pocketmine\utils\TextFormat;
 use pocketmine\command\CommandSender;
+use practice\session\SessionFactory;
 
 final class KitCommand extends Command {
 
@@ -18,14 +19,31 @@ final class KitCommand extends Command {
     }
 
     public function execute(CommandSender $sender, string $commandLabel, array $args): void {
-        if (!$sender instanceof Player || !isset($args[0])) {
-            // Refit
+        if (!$sender instanceof Player) {
+            return;
+        }
+        $session = SessionFactory::get($sender);
+
+        if ($session === null) {
             return;
         }
 
-        $subCommand = strtolower($args[0]);
+        if (!isset($args[0])) {
+            if ($session->inArena()) {
+                $arena = $session->getArena();
 
-        /** TODO: CAN BE MERGED */
+                if ($arena->inCombat($sender)) {
+                    $sender->sendMessage(TextFormat::colorize('&cYou have combat tag'));
+                    return;
+                }
+                $kit = KitFactory::get($arena->getKit());
+
+                $kit?->giveTo($sender);
+            }
+            return;
+        }
+        $subCommand = strtolower($args[0]);
+        
         if ($sender->hasPermission('kit.command')) {
             if ($subCommand === 'edit') {
                 if (!isset($args[1])) {

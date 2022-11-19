@@ -31,7 +31,6 @@ final class ArenaCommand extends Command {
 
         if (!isset($args[0]) || !$sender->hasPermission('arena.command')) {
             if ($session->inArena()) {
-
                 $arena = $session->getArena();
 
                 if ($arena->inCombat($sender)) {

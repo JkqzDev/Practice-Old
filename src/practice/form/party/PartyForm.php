@@ -11,6 +11,8 @@ use cosmicpe\form\entries\simple\Button;
 use cosmicpe\form\SimpleForm;
 use pocketmine\player\Player;
 use pocketmine\utils\TextFormat;
+use practice\party\invite\Invite;
+use practice\party\invite\InviteFactory;
 use practice\party\Party;
 use practice\party\PartyFactory;
 use practice\session\Session;
@@ -30,7 +32,9 @@ final class PartyForm extends SimpleForm {
         $this->addButton($publicParties, function (Player $player, int $button_index) use ($session): void {
             $player->sendForm($this->formListParty($session));
         });
-        $this->addButton($playerInvitations, function (Player $player, int $button_index) use ($session): void {});
+        $this->addButton($playerInvitations, function (Player $player, int $button_index): void {
+            $player->sendForm($this->createPlayerInvitationsForm($player));
+        });
     }
 
     private function formCreateParty(Session $session): CustomForm {
@@ -71,7 +75,7 @@ final class PartyForm extends SimpleForm {
                     $button = new Button($party->getName());
 
                     $this->addButton($button, function (Player $player, int $button_index) use ($session, $party): void {
-                        if ($session->getParty() !== null) {
+                        if ($session->inParty()) {
                             return;
                         }
 
@@ -95,6 +99,48 @@ final class PartyForm extends SimpleForm {
                             return;
                         }
                         $party->addMemeber($player);
+                    });
+                }
+            }
+        };
+    }
+
+    private function createPlayerInvitationsForm(Player $player): SimpleForm {
+        return new class($player) extends SimpleForm {
+
+            public function __construct(Player $player) {
+                parent::__construct(TextFormat::colorize('&7Player Invitations'));
+                
+                foreach (InviteFactory::get($player) ?? [] as $invite) {
+                    assert($invite instanceof Invite);
+                    $button = new Button($invite->getParty()->getName());
+
+                    $this->addButton($button, function(Player $player, int $button_index) use ($invite): void {
+                        $session = SessionFactory::get($player);
+                        $party = $invite->getParty();
+                        if ($session === null) {
+                            InviteFactory::removeFromParty($player, $party->getName());
+                            return;
+                        }
+
+                        if ($session->inParty()) {
+                            InviteFactory::removeFromParty($player, $party->getName());
+                            return;
+                        }
+
+                        if (!$invite->exists()) {
+                            InviteFactory::remove($player, $party->getName());
+                            $player->sendMessage(TextFormat::colorize('&cParty has been deleted!'));
+                            return;
+                        }
+
+                        if (!$invite->canJoin()) {
+                            InviteFactory::remove($player, $party->getName());
+                            $player->sendMessage(TextFormat::colorize('&cYou can\'t join to the party'));
+                            return;
+                        }
+                        $party->addMemeber($player);
+                        InviteFactory::remove($player);
                     });
                 }
             }

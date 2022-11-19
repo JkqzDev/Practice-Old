@@ -38,20 +38,17 @@ final class Practice extends PluginBase {
 
     static private self $instance;
 
+    public static function getInstance(): Practice {
+        return self::$instance;
+    }
+
     protected function onLoad(): void {
         self::$instance = $this;
-
-        # Cambia esto a tu gusto.
-        $this->saveDefaultConfig();
-        $data = $this->getConfig()->get('database');
-        MySQL::$host = $data['host'];
-        MySQL::$port = $data['port'];
-        MySQL::$username = $data['username'];
-        MySQL::$password = $data['password'];
-        MySQL::$database = $data['database'];
+        $this->initMySQL();
     }
 
     protected function onEnable(): void {
+        $this->createTables();
         $this->registerEntities();
         $this->registerItems();
         $this->registerHandlers();
@@ -65,16 +62,30 @@ final class Practice extends PluginBase {
 
         DuelFactory::task();
         SessionFactory::task();
+    }
 
-        // NOT ASYNC
-        /**
-         * callback function are optional.
-         */
-        MySQL::run(Table::DUEL_STATS, static function(): void {
-            // YOUR CODE HERE
-        });
+    protected function onDisable(): void {
+        ArenaFactory::saveAll();
+        KitFactory::saveAll();
+        SessionFactory::saveAll();
+        WorldFactory::saveAll();
 
-        // ASYNC
+        DuelFactory::disable();
+    }
+
+    protected function initMySQL(): void {
+        $this->saveDefaultConfig();
+        $data = $this->getConfig()->get('database');
+        
+        MySQL::$host = $data['host'];
+        MySQL::$port = $data['port'];
+        MySQL::$username = $data['username'];
+        MySQL::$password = $data['password'];
+        MySQL::$database = $data['database'];
+    }
+
+    protected function createTables(): void {
+        MySQL::runAsync(new QueryAsync(Table::DUEL_STATS));
         MySQL::runAsync(new QueryAsync(Table::PLAYER_SETTINGS));
     }
 
@@ -92,10 +103,6 @@ final class Practice extends PluginBase {
             return new SplashPotion(EntityDataHelper::parseLocation($nbt, $world), null, $potionType, $nbt);
 
         }, ['ThrownPotion', 'minecraft:potion', 'thrownpotion'], EntityLegacyIds::SPLASH_POTION);
-    }
-
-    public static function getInstance(): self {
-        return self::$instance;
     }
 
     protected function registerItems(): void {
@@ -141,14 +148,5 @@ final class Practice extends PluginBase {
                 $this->getServer()->getCommandMap()->unregister($command);
             }
         }
-    }
-
-    protected function onDisable(): void {
-        ArenaFactory::saveAll();
-        KitFactory::saveAll();
-        SessionFactory::saveAll();
-        WorldFactory::saveAll();
-
-        DuelFactory::disable();
     }
 }

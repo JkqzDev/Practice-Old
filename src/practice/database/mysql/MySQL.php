@@ -30,7 +30,6 @@ final class MySQL {
             ->setUsername(self::$username)
             ->setPassword(self::$password)
             ->setDatabase(self::$database);
-
         Server::getInstance()->getAsyncPool()->submitTask($query);
     }
 
