@@ -11,6 +11,7 @@
 namespace practice\database\mysql\queries;
 
 use mysqli;
+use Closure;
 use mysqli_result;
 use practice\database\mysql\AsyncQuery;
 
@@ -19,9 +20,10 @@ final class SelectAsync extends AsyncQuery {
     private ?string $rows = null;
 
     public function __construct(
-        private string  $table,
-        private ?string $conditionKey,
-        private ?string $conditionValue,
+        private string   $table,
+        private ?string  $conditionKey,
+        private ?string  $conditionValue,
+        private ?Closure $closure = null
     ) {}
 
     public function query(mysqli $mysqli): void {
@@ -45,12 +47,12 @@ final class SelectAsync extends AsyncQuery {
         if (!isset($this->closure)) {
             return;
         }
-        $rows = $this->rows;
 
-        if ($rows !== null) {
-            /** @noinspection UnserializeExploitsInspection */
-            $rows = unserialize($rows);
+        if (isset($this->rows)) {
+            $this->closure->__invoke(unserialize($this->rows));
+            return;
         }
-        $this->closure->__invoke($rows);
+
+        $this->closure->__invoke([]);
     }
 }
