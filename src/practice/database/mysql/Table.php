@@ -22,7 +22,7 @@ create table if not exists duel_stats
     player   varchar(36)   not null,
     kills    int default 0 not null,
     deaths   int default 0 not null,
-    elo      int default 0 not null,
+    elo      int default 1000 not null,
     wins     int default 0 not null,
     losses   int default 0 not null,
     streak   int default 0 not null,

@@ -15,6 +15,8 @@ use practice\duel\DuelFactory;
 use pocketmine\player\GameMode;
 use pocketmine\entity\Attribute;
 use pocketmine\utils\TextFormat;
+use practice\database\mysql\MySQL;
+use practice\database\mysql\queries\QueryAsync;
 use practice\duel\queue\PlayerQueue;
 use practice\duel\queue\QueueFactory;
 use practice\session\data\PlayerData;
@@ -53,6 +55,21 @@ final class Session {
     ) {
         $this->setSettings(Setting::create());
         $this->setScoreboard(new ScoreboardBuilder($this, '&l&cMisty Network&r'));
+
+        $sqlQuery = "select * from duel_stats where xuid = '$xuid'";
+        $query = new QueryAsync($sqlQuery, function (?array $rows) use ($xuid, $name): void {
+            if (count($rows) === 0) {
+                $sqlQuery = "insert into duel_stats(xuid, player) values('$xuid', '$name')";
+                $query = new QueryAsync($sqlQuery);
+                MySQL::runAsync($query);
+            } else {
+                $this->kills = (int) $rows['kills'];
+                $this->deaths = (int) $rows['deaths'];
+                $this->killstreak = (int) $rows['streak'];
+                $this->elo = (int) $rows['elo'];
+            }
+        });
+        MySQL::runAsync($query);
     }
 
     public static function create(string $uuid, string $xuid, string $name): self {
@@ -256,6 +273,19 @@ final class Session {
 
         $this->stopSetupArenaHandler();
         $this->stopSetupDuelHandler();
+
+        if ($this->update) {
+            $name = $this->name;
+            $xuid = $this->xuid;
+            $kills = $this->kills;
+            $deaths = $this->deaths;
+            $streak = $this->killstreak;
+            $elo = $this->elo;
+
+            $sqlQuery = "update duel_stats set name = '$name', kills = '$kills', deaths = '$deaths', streak = '$streak', elo = '$elo' WHERE xuid = '$xuid'";
+            $query = new QueryAsync($sqlQuery);
+            MySQL::runAsync($query);
+        } 
     }
 
     public function inQueue(): bool {

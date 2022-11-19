@@ -38,6 +38,19 @@ class Duel {
     public const RUNNING = 1;
     public const RESTARTING = 2;
 
+    static public function calculateElo(int $loser, int $winner): array {
+        $expectedScoreA = 1 / (1 + (pow(10, ($loser - $winner) / 400)));
+        $expectedScoreB = abs(1 / (1 + (pow(10, ($winner - $loser) / 400))));
+        
+        $winnerElo = $winner + intval(32 * (1 - $expectedScoreA));
+        $loserElo = $loser + intval(32 * (0 - $expectedScoreB));
+        
+        return [
+            $winnerElo - $winner,
+            abs($loser - $loserElo)
+        ];
+    }
+
     public function __construct(
         protected int     $id,
         protected int     $typeId,
@@ -241,14 +254,31 @@ class Duel {
         $this->loser = $loser->getName();
 
         if ($loser->getName() === $firstSession->getName()) {
+            $winnerElo = $secondSession->getElo();
+            $loserElo = $firstSession->getElo();
+
             $this->winner = $secondSession->getName();
             $secondSession->getPlayer()?->sendTitle(TextFormat::colorize('&l&aWON!&r'), TextFormat::colorize('&7You won the fight!'));
         } else {
+            $winnerElo = $firstSession->getElo();
+            $loserElo = $secondSession->getElo();
+
             $this->winner = $firstSession->getName();
             $firstSession->getPlayer()?->sendTitle(TextFormat::colorize('&l&aWON!&r'), TextFormat::colorize('&7You won the fight!'));
         }
         $loser->sendTitle(TextFormat::colorize('&l&cDEFEAT!&r'), TextFormat::colorize('&a' . $this->winner . '&7 won the fight!'));
 
+        if ($this->ranked) {
+            $elos = self::calculateElo($loserElo, $winnerElo);
+
+            if ($this->loser === $firstSession->getName()) {
+                $secondSession->addElo($elos[0]);
+                $firstSession->removeElo($elos[1]);
+            } else {
+                $firstSession->addElo($elos[0]);
+                $secondSession->removeElo($elos[1]);
+            }
+        }
         /** @var Player $firstPlayer */
         $firstPlayer = $firstSession->getPlayer();
 

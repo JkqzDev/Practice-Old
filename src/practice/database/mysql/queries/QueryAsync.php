@@ -35,13 +35,18 @@ final class QueryAsync extends AsyncQuery {
         if (!isset($this->closure)) {
             return;
         }
+        $rows = $this->rows;
 
+        if ($rows !== null) {
+            $rows = unserialize($rows);
+        }
+        $this->closure->__invoke($rows);
+        /*
         if (isset($this->rows)) {
-            /** @noinspection UnserializeExploitsInspection */
             $this->closure->__invoke(unserialize($this->rows));
             return;
         }
 
-        $this->closure->__invoke();
+        $this->closure->__invoke();*/
     }
 }
