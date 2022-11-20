@@ -61,12 +61,22 @@ class ScoreboardBuilder {
             $lines[] = ' &fPlaying: &c' . count($playing);
 
             if ($session->inQueue()) {
-                /** @var PlayerQueue $queue */
                 $queue = $session->getQueue();
 
                 $lines[] = '&7&r&r&r';
                 $lines[] = $queue->isRanked() ? ' &cRanked ' . DuelFactory::getName($queue->getDuelType()) : ' &cUnranked ' . DuelFactory::getName($queue->getDuelType());
                 $lines[] = ' &fTime: &c' . gmdate('i:s', $queue->getTime());
+            } elseif ($session->inParty()) {
+                $party = $session->getParty();
+                
+                $lines[] = '&7&r&r&r';
+                $lines[] = ' &aParty Information';
+                $lines[] = ' &fLeader: &c' . $party->getOwner()->getName();
+                $lines[] = ' &fMembers: &c' . count($party->getMembers()) . '/' . $party->getMaxPlayers();
+                
+                if ($party->inQueue()) {
+                    $lines[] = ' &cIn queue';
+                }
             }
         } elseif ($session->inArena()) {
             $arena = $session->getArena();
