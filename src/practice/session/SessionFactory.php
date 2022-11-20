@@ -47,5 +47,11 @@ final class SessionFactory {
 
     public static function loadAll(): void {}
 
-    public static function saveAll(): void {}
+    public static function saveAll(): void {
+        foreach (self::getAll() as $session) {
+            if ($session->getPlayer() !== null) {
+                $session->updatePlayer();
+            }
+        }
+    }
 }

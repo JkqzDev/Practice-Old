@@ -61,7 +61,6 @@ final class Session {
         MySQL::runAsync(new SelectAsync('duel_stats', 'xuid', $this->xuid,
         function (array $rows): void {
             if (count($rows) === 0) {
-                echo "success";
                 MySQL::runAsync(new QueryAsync("INSERT INTO duel_stats (xuid, player) VALUES ('$this->xuid', '$this->name')"));
             } else {
                 $row = $rows[0];
@@ -282,7 +281,10 @@ final class Session {
 
         $this->stopSetupArenaHandler();
         $this->stopSetupDuelHandler();
-        
+        $this->updatePlayer();
+    }
+    
+    public function updatePlayer(): void {
         $name = $this->name;
         $xuid = $this->xuid;
             
