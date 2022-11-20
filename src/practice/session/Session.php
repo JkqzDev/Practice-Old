@@ -56,7 +56,7 @@ final class Session {
         private ?Party       $party = null
     ) {
         $this->setSettings(Setting::create());
-        $this->setScoreboard(new ScoreboardBuilder($this, '&l&bHSM&r'));
+        $this->setScoreboard(new ScoreboardBuilder($this, '&l&bHSM Practice&r'));
 
         MySQL::runAsync(new SelectAsync('duel_stats', 'xuid', $this->xuid,
         function (array $rows): void {
