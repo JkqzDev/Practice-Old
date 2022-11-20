@@ -53,7 +53,7 @@ class PlayerProfileForm extends SimpleForm {
                 $this->addButton($exit);
             }
         };
-        $player->sendForm($player);
+        $player->sendForm($simpleForm);
     }
 
     private function secondPage(Player $player): void {
