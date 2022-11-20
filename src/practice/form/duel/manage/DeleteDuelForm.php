@@ -13,7 +13,7 @@ use cosmicpe\form\entries\custom\InputEntry;
 final class DeleteDuelForm extends CustomForm {
 
     public function __construct() {
-        parent::__construct(TextFormat::colorize('&cDelete Duel World'));
+        parent::__construct(TextFormat::colorize('&bDelete Duel World'));
 
         $nameEntry = new InputEntry('World name', 'world');
 
@@ -23,7 +23,7 @@ final class DeleteDuelForm extends CustomForm {
                 return;
             }
             WorldFactory::remove($value);
-            $player->sendMessage(TextFormat::colorize('&cYou have successfully removed the world duel'));
+            $player->sendMessage(TextFormat::colorize('&aYou have successfully removed the world duel'));
         });
     }
 }

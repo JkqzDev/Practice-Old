@@ -14,7 +14,7 @@ use cosmicpe\form\entries\custom\InputEntry;
 final class DeleteArenaForm extends CustomForm {
 
     public function __construct() {
-        parent::__construct(TextFormat::colorize('&cDelete Arena'));
+        parent::__construct(TextFormat::colorize('&bDelete Arena'));
 
         $nameEntry = new InputEntry('Arena name', 'Nodebuff');
 
@@ -30,7 +30,7 @@ final class DeleteArenaForm extends CustomForm {
                 $arena->quit($target, false);
             }
             ArenaFactory::remove($value);
-            $player->sendMessage(TextFormat::colorize('&cYou have successfully removed the arena'));
+            $player->sendMessage(TextFormat::colorize('&aYou have successfully removed the arena'));
         });
     }
 }

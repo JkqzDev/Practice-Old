@@ -19,7 +19,7 @@ final class SetupArenaForm extends CustomForm {
         private ?string $name = null,
         private ?string $kit = null
     ) {
-        parent::__construct(TextFormat::colorize('&cArena Setup'));
+        parent::__construct(TextFormat::colorize('&bArena Setup'));
         $nameEntry = new InputEntry('Arena name', 'No Debuff');
         $kitEntry = new InputEntry('Kit name', 'nodebuff');
         $worldEntry = new InputEntry('World name', 'world');

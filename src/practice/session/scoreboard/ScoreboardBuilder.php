@@ -57,16 +57,16 @@ class ScoreboardBuilder {
             $playing = array_filter(SessionFactory::getAll(), static function(Session $target): bool {
                 return !$target->inLobby() && $target->getPlayer() !== null;
             });
-            $lines[] = ' &fOnline: &c' . count($plugin->getServer()->getOnlinePlayers());
-            $lines[] = ' &fPlaying: &c' . count($playing);
+            $lines[] = ' &fOnline: &b' . count($plugin->getServer()->getOnlinePlayers());
+            $lines[] = ' &fPlaying: &b' . count($playing);
 
             if ($session->inQueue()) {
                 /** @var PlayerQueue $queue */
                 $queue = $session->getQueue();
 
                 $lines[] = '&7&r&r&r';
-                $lines[] = $queue->isRanked() ? ' &cRanked ' . DuelFactory::getName($queue->getDuelType()) : ' &cUnranked ' . DuelFactory::getName($queue->getDuelType());
-                $lines[] = ' &fTime: &c' . gmdate('i:s', $queue->getTime());
+                $lines[] = $queue->isRanked() ? ' &bRanked ' . DuelFactory::getName($queue->getDuelType()) : ' &bUnranked ' . DuelFactory::getName($queue->getDuelType());
+                $lines[] = ' &fTime: &b' . gmdate('i:s', $queue->getTime());
             }
         } elseif ($session->inArena()) {
             $arena = $session->getArena();

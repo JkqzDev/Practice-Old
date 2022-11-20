@@ -144,7 +144,7 @@ final class Arena {
 
                     unset($this->combats[$damager->getName()]);
 
-                    Server::getInstance()->broadcastMessage(TextFormat::colorize('&a' . $damager->getName() . ' &2[' . $damager->getKills() . '] &7killed &c' . $player->getName() . ' &4[' . $session->getKills() . ']'));
+                    Server::getInstance()->broadcastMessage(TextFormat::colorize('&a' . $damager->getName() . ' &2[' . $damager->getKills() . '] &7killed &b' . $player->getName() . ' &4[' . $session->getKills() . ']'));
                 }
                 unset($this->combats[$player->getName()]);
             }
@@ -217,7 +217,7 @@ final class Arena {
 
                 unset($this->combats[$damager->getName()]);
 
-                Server::getInstance()->broadcastMessage(TextFormat::colorize('&a' . $damager->getName() . ' &2[' . $damager->getKills() . '] &7killed &c' . $player->getName() . ' &4[' . $session->getKills() . ']'));
+                Server::getInstance()->broadcastMessage(TextFormat::colorize('&a' . $damager->getName() . ' &2[' . $damager->getKills() . '] &7killed &b' . $player->getName() . ' &4[' . $session->getKills() . ']'));
             }
             unset($this->combats[$player->getName()]);
         }
@@ -243,9 +243,9 @@ final class Arena {
         }
 
         $lines = [
-            ' &fKills: &c' . $session->getKills(),
-            ' &fDeaths: &c' . $session->getDeaths(),
-            ' &fKillstreak: &c' . $session->getKillstreak()
+            ' &fKills: &b' . $session->getKills(),
+            ' &fDeaths: &b' . $session->getDeaths(),
+            ' &fKillstreak: &b' . $session->getKillstreak()
         ];
 
         if (isset($this->combats[$player->getName()])) {

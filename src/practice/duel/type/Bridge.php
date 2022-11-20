@@ -231,7 +231,7 @@ class Bridge extends Duel {
                     ' &9[B] &9' . str_repeat('█', $firstPoints) . '&7' . str_repeat('█', 5 - $firstPoints),
                     ' &c[R] &c' . str_repeat('█', $secondPoints) . '&7' . str_repeat('█', 5 - $secondPoints),
                     ' &r ',
-                    ' &fDuration: &c' . gmdate('i:s', $this->running)
+                    ' &fDuration: &b' . gmdate('i:s', $this->running)
                 ];
             }
             /** @var Player $opponent */
@@ -241,7 +241,7 @@ class Bridge extends Duel {
                 ' &9[B] &9' . str_repeat('█', $firstPoints) . '&7' . str_repeat('█', 5 - $firstPoints),
                 ' &c[R] &c' . str_repeat('█', $secondPoints) . '&7' . str_repeat('█', 5 - $secondPoints),
                 ' &r ',
-                ' &fDuration: &c' . gmdate('i:s', $this->running),
+                ' &fDuration: &b' . gmdate('i:s', $this->running),
                 ' &r&r ',
                 ' &aYour ping: ' . $player->getNetworkSession()->getPing(),
                 ' &cTheir ping: ' . $opponent->getNetworkSession()->getPing()
