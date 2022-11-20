@@ -37,9 +37,9 @@ final class Practice extends PluginBase {
 
     public const IS_DEVELOPING = false;
 
-    static private self $instance;
+    static private ?self $instance = null;
 
-    public static function getInstance(): Practice {
+    public static function getInstance(): self {
         return self::$instance;
     }
 

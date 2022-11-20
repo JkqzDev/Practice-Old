@@ -6,6 +6,7 @@ namespace practice\database\mysql;
 
 use mysqli;
 use practice\Practice;
+use pocketmine\Server;
 use mysqli_sql_exception;
 use pocketmine\scheduler\AsyncTask;
 
@@ -59,6 +60,6 @@ abstract class AsyncQuery extends AsyncTask {
 
 
     public function onError(): void {
-        Practice::getInstance()->getLogger()->error("An error occurred while executing an async query.");
+        Server::getInstance()->getLogger()->error("An error occurred while executing an async query.");
     }
 }

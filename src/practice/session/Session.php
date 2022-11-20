@@ -29,6 +29,7 @@ use practice\item\player\PlayerProfileItem;
 use practice\item\duel\queue\RankedQueueItem;
 use practice\item\duel\queue\UnrankedQueueItem;
 use practice\item\party\PartyItem;
+use practice\database\mysql\queries\SelectAsync;
 use practice\party\duel\DuelFactory as DuelDuelFactory;
 use practice\session\scoreboard\ScoreboardTrait;
 use practice\session\scoreboard\ScoreboardBuilder;
@@ -57,36 +58,31 @@ final class Session {
         $this->setSettings(Setting::create());
         $this->setScoreboard(new ScoreboardBuilder($this, '&l&cMisty Network&r'));
 
-        $statsQuery = "select * from duel_stats where xuid = '$xuid'";
-        $query = new QueryAsync($statsQuery, function (?array $rows) use ($xuid, $name): void {
+        MySQL::runAsync(new SelectAsync('duel_stats', 'xuid', $this->xuid,
+        function (array $rows): void {
             if (count($rows) === 0) {
-                $sqlQuery = "insert into duel_stats(xuid, player) values('$xuid', '$name')";
-                $query = new QueryAsync($sqlQuery);
-                MySQL::runAsync($query);
+                echo "success";
+                MySQL::runAsync(new QueryAsync("INSERT INTO duel_stats (xuid, player) VALUES ('$this->xuid', '$this->name')"));
             } else {
-                $rows = $rows[0];
-                $this->kills = (int) $rows['kills'];
-                $this->deaths = (int) $rows['deaths'];
-                $this->killstreak = (int) $rows['streak'];
-                $this->elo = (int) $rows['elo'];
+                $row = $rows[0];
+                $this->kills = (int) $row['kills'];
+                $this->deaths = (int) $row['deaths'];
+                $this->killstreak = (int) $row['streak'];
+                $this->elo = (int) $row['elo'];
             }
-        });
-        MySQL::runAsync($query);
+        }));
 
-        $settingsQuery = "select * from player_settings where xuid = '$xuid'";
-        $query = new QueryAsync($settingsQuery, function (?array $rows) use ($xuid, $name): void {
+        MySQL::runAsync(new SelectAsync('player_settings', 'xuid', $this->xuid,
+        function (array $rows): void {
             if (count($rows) === 0) {
-                $sqlQuery = "insert into player_settings(xuid, player) values('$xuid', '$name')";
-                $query = new QueryAsync($sqlQuery);
-                MySQL::runAsync($query);
+                MySQL::runAsync(new QueryAsync("INSERT INTO player_settings (xuid, player) VALUES ('$this->xuid', '$this->name')"));
             } else {
-                $rows = $rows[0];
-                $this->getSetting(Setting::SCOREBOARD)?->setEnabled((bool) $rows[Setting::SCOREBOARD]);
-                $this->getSetting(Setting::CPS_COUNTER)?->setEnabled((bool) $rows[Setting::CPS_COUNTER]);
-                $this->getSetting(Setting::AUTO_RESPAWN)?->setEnabled((bool) $rows[Setting::AUTO_RESPAWN]);
+                $row = $rows[0];
+                $this->getSetting(Setting::SCOREBOARD)?->setEnabled((bool) $row[Setting::SCOREBOARD]);
+                $this->getSetting(Setting::CPS_COUNTER)?->setEnabled((bool) $row[Setting::CPS_COUNTER]);
+                $this->getSetting(Setting::AUTO_RESPAWN)?->setEnabled((bool) $row[Setting::AUTO_RESPAWN]);
             }
-        });
-        MySQL::runAsync($query);
+        }));
     }
 
     public static function create(string $uuid, string $xuid, string $name): self {
@@ -114,11 +110,7 @@ final class Session {
     }
 
     public function inLobby(): bool {
-        if ($this->inDuel()) {
-            return false;
-        }
-
-        if ($this->inArena()) {
+        if ($this->inDuel() || $this->inArena()) {
             return false;
         }
 
@@ -300,7 +292,7 @@ final class Session {
             $streak = $this->killstreak;
             $elo = $this->elo;
 
-            $sqlQuery = "update duel_stats set name = '$name', kills = '$kills', deaths = '$deaths', streak = '$streak', elo = '$elo' where xuid = '$xuid'";
+            $sqlQuery = "update duel_stats set player = '$name', kills = '$kills', deaths = '$deaths', streak = '$streak', elo = '$elo' where xuid = '$xuid'";
             $query = new QueryAsync($sqlQuery);
             MySQL::runAsync($query);
         }
@@ -308,7 +300,7 @@ final class Session {
         $autoRespawnValue = (int) $this->getSetting(Setting::AUTO_RESPAWN)->isEnabled();
         $cpsCounterValue = (int) $this->getSetting(Setting::CPS_COUNTER)->isEnabled();
 
-        $sqlQuery = "update player_settings set name = '$name', scoreboard = '$scoreboardValue', auto_respawn = '$autoRespawnValue', cps_counter = '$cpsCounterValue' where xuid = '$xuid'";
+        $sqlQuery = "update player_settings set player = '$name', scoreboard = '$scoreboardValue', auto_respawn = '$autoRespawnValue', cps_counter = '$cpsCounterValue' where xuid = '$xuid'";
         $query = new QueryAsync($sqlQuery);
         MySQL::runAsync($query);
     }
