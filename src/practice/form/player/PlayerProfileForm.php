@@ -37,6 +37,23 @@ class PlayerProfileForm extends SimpleForm {
         if ($session === null) {
             return;
         }
+        $simpleForm = new class($session) extends SimpleForm {
+            
+            public function __construct(Session $session) {
+                $description = [
+                    '&gKills: &f' . $session->getKills(),
+                    '&gDeaths: &f' . $session->getDeaths(),
+                    '&gKill-streak: &f' . $session->getKillstreak(),
+                    '&gElo: &f' . $session->getElo(),
+                    '&r&r'
+                ];
+                parent::__construct(TextFormat::colorize('&gPlayer Stats'), TextFormat::colorize(implode(PHP_EOL, $description)));
+                $exit = new Button(TextFormat::colorize('&cExit'));
+                
+                $this->addButton($exit);
+            }
+        };
+        $player->sendForm($player);
     }
 
     private function secondPage(Player $player): void {
