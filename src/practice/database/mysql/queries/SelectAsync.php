@@ -21,8 +21,8 @@ final class SelectAsync extends AsyncQuery {
 
     public function __construct(
         private string   $table,
-        private ?string  $conditionKey,
-        private ?string  $conditionValue,
+        private ?string  $conditionKey = null,
+        private ?string  $conditionValue = null,
         private ?Closure $closure = null
     ) {}
 

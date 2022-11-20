@@ -238,8 +238,10 @@ final class EventHandler implements Listener {
 
         if ($session === null) {
             SessionFactory::create($player);
-        } elseif ($session->getName() !== $player->getName()) {
-            $session->setName($player->getName());
+        } else {  
+            if ($session->getName() !== $player->getName()) {
+                $session->setName($player->getName());
+            }
         }
     }
 

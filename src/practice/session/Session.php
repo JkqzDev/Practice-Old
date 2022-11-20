@@ -30,6 +30,7 @@ use practice\item\duel\queue\RankedQueueItem;
 use practice\item\duel\queue\UnrankedQueueItem;
 use practice\item\party\PartyItem;
 use practice\database\mysql\queries\SelectAsync;
+use practice\item\player\PlayerLeaderboardItem;
 use practice\party\duel\DuelFactory as DuelDuelFactory;
 use practice\session\scoreboard\ScoreboardTrait;
 use practice\session\scoreboard\ScoreboardBuilder;
@@ -42,8 +43,9 @@ final class Session {
     use SettingTrait;
     use ScoreboardTrait;
 
-    public bool $initialKnockbackMotion = false;
-    public bool $cancelKnockbackMotion = false;
+    public static function create(string $uuid, string $xuid, string $name): self {
+        return new self($uuid, $xuid, $name);
+    }
 
     public function __construct(
         private string       $uuid,
@@ -53,7 +55,9 @@ final class Session {
         private ?Arena       $arena = null,
         private ?PlayerQueue $queue = null,
         private ?Duel        $duel = null,
-        private ?Party       $party = null
+        private ?Party       $party = null,
+        public bool $initialKnockbackMotion = false,
+        public bool $cancelKnockbackMotion = false
     ) {
         $this->setSettings(Setting::create());
         $this->setScoreboard(new ScoreboardBuilder($this, '&l&cMisty Network&r'));
@@ -84,8 +88,8 @@ final class Session {
         }));
     }
 
-    public static function create(string $uuid, string $xuid, string $name): self {
-        return new self($uuid, $xuid, $name);
+    public function getUuid(): string {
+        return $this->uuid;
     }
 
     public function getXuid(): string {
@@ -129,6 +133,20 @@ final class Session {
 
     public function inDuel(): bool {
         return $this->duel !== null;
+    }
+
+    public function inQueue(): bool {
+        return $this->queue !== null;
+    }
+
+    public function getDuel(): Duel {
+        /** @var Duel $duel */
+        $duel = $this->duel;
+        return $duel;
+    }
+
+    public function getArena(): Arena {
+        return $this->arena;
     }
 
     public function getCurrentKit(): string {
@@ -247,6 +265,7 @@ final class Session {
             2 => new JoinArenaItem,
             4 => new DuelSpectateItem,
             5 => new PartyItem,
+            7 => new PlayerLeaderboardItem,
             8 => new PlayerProfileItem
         ]);
     }
@@ -283,7 +302,7 @@ final class Session {
         $this->stopSetupDuelHandler();
         $this->updatePlayer();
     }
-    
+
     public function updatePlayer(): void {
         $name = $this->name;
         $xuid = $this->xuid;
@@ -305,20 +324,6 @@ final class Session {
         $sqlQuery = "UPDATE player_settings SET player = '$name', scoreboard = '$scoreboardValue', auto_respawn = '$autoRespawnValue', cps_counter = '$cpsCounterValue' WHERE xuid = '$xuid'";
         $query = new QueryAsync($sqlQuery);
         MySQL::runAsync($query);
-    }
-
-    public function inQueue(): bool {
-        return $this->queue !== null;
-    }
-
-    public function getDuel(): Duel {
-        /** @var Duel $duel */
-        $duel = $this->duel;
-        return $duel;
-    }
-
-    public function getArena(): Arena {
-        return $this->arena;
     }
 
     public function knockback(Player $damager, Kit $kit): void {
