@@ -294,7 +294,7 @@ final class Session {
             $streak = $this->killstreak;
             $elo = $this->elo;
 
-            $sqlQuery = "update duel_stats set player = '$name', kills = '$kills', deaths = '$deaths', streak = '$streak', elo = '$elo' where xuid = '$xuid'";
+            $sqlQuery = "UPDATE duel_stats SET player = '$name', kills = '$kills', deaths = '$deaths', streak = '$streak', elo = '$elo' WHERE xuid = '$xuid'";
             $query = new QueryAsync($sqlQuery);
             MySQL::runAsync($query);
         }
@@ -302,7 +302,7 @@ final class Session {
         $autoRespawnValue = (int) $this->getSetting(Setting::AUTO_RESPAWN)->isEnabled();
         $cpsCounterValue = (int) $this->getSetting(Setting::CPS_COUNTER)->isEnabled();
 
-        $sqlQuery = "update player_settings set player = '$name', scoreboard = '$scoreboardValue', auto_respawn = '$autoRespawnValue', cps_counter = '$cpsCounterValue' where xuid = '$xuid'";
+        $sqlQuery = "UPDATE player_settings SET player = '$name', scoreboard = '$scoreboardValue', auto_respawn = '$autoRespawnValue', cps_counter = '$cpsCounterValue' WHERE xuid = '$xuid'";
         $query = new QueryAsync($sqlQuery);
         MySQL::runAsync($query);
     }

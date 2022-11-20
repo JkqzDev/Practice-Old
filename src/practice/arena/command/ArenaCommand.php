@@ -17,10 +17,15 @@ final class ArenaCommand extends Command {
 
     public function __construct() {
         parent::__construct('arena', 'Arena command');
+        $this->setPermission('arena.command');
     }
 
     public function execute(CommandSender $sender, string $commandLabel, array $args): void {
         if (!$sender instanceof Player) {
+            return;
+        }
+
+        if (!$this->testPermission($sender)) {
             return;
         }
         $session = SessionFactory::get($sender);
@@ -29,7 +34,12 @@ final class ArenaCommand extends Command {
             return;
         }
 
-        if (!isset($args[0]) || !$sender->hasPermission('arena.command')) {
+        if (!isset($args[0])) {
+            $sender->sendMessage(TextFormat::colorize('&cUse /arena [setup|delete]'));
+            return;
+        }
+
+        /*if (!isset($args[0]) || !$sender->hasPermission('arena.command')) {
             if ($session->inArena()) {
                 $arena = $session->getArena();
 
@@ -45,7 +55,7 @@ final class ArenaCommand extends Command {
                 $arena->quit($sender);
             }
             return;
-        }
+        }*/
         $subCommand = strtolower($args[0]);
 
         if ($subCommand === 'setup') {

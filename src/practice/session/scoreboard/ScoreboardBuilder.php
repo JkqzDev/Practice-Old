@@ -14,6 +14,7 @@ use pocketmine\network\mcpe\protocol\SetScorePacket;
 use pocketmine\network\mcpe\protocol\RemoveObjectivePacket;
 use pocketmine\network\mcpe\protocol\types\ScorePacketEntry;
 use pocketmine\network\mcpe\protocol\SetDisplayObjectivePacket;
+use practice\duel\queue\QueueFactory;
 
 class ScoreboardBuilder {
 
@@ -58,7 +59,9 @@ class ScoreboardBuilder {
                 return !$target->inLobby() && $target->getPlayer() !== null;
             });
             $lines[] = ' &fOnline: &c' . count($plugin->getServer()->getOnlinePlayers());
+            $lines[] = ' &r ';
             $lines[] = ' &fPlaying: &c' . count($playing);
+            $lines[] = ' &fIn-Queue: &c' . count(QueueFactory::getAll());
 
             if ($session->inQueue()) {
                 $queue = $session->getQueue();

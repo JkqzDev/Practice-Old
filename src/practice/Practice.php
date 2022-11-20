@@ -30,6 +30,8 @@ use pocketmine\data\bedrock\PotionTypeIds;
 use pocketmine\data\bedrock\EntityLegacyIds;
 use pocketmine\data\bedrock\PotionTypeIdMap;
 use pocketmine\data\SavedDataLoadingException;
+use practice\command\PingCommand;
+use practice\command\SpawnCommand;
 use practice\database\mysql\queries\QueryAsync;
 use practice\party\duel\DuelFactory as PartyDuelFactory;
 
@@ -123,6 +125,9 @@ final class Practice extends PluginBase {
 
     protected function registerCommands(): void {
         $commands = [
+            // Global
+            new SpawnCommand,
+            new PingCommand,
             // Arena
             new ArenaCommand,
             // Duel
