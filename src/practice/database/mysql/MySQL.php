@@ -12,11 +12,8 @@ declare(strict_types=1);
 namespace practice\database\mysql;
 
 use mysqli;
-use Closure;
-use mysqli_result;
 use pocketmine\Server;
 use practice\Practice;
-use mysqli_sql_exception;
 
 final class MySQL {
 
@@ -33,12 +30,12 @@ final class MySQL {
         Server::getInstance()->getAsyncPool()->submitTask($query);
     }
 
-    public static function run(string $query, ?Closure $closure = null): void {
+    public static function run(string $query, ?\Closure $closure = null): void {
         try {
             $result = self::mysqli()->query($query);
 
             if (isset($closure)) {
-                if (!$result instanceof mysqli_result) {
+                if (!$result instanceof \mysqli_result) {
                     $closure();
 
                 } else {
@@ -51,12 +48,12 @@ final class MySQL {
                     $closure($rows);
                 }
             }
-        } catch (mysqli_sql_exception $exception) {
+        } catch (\mysqli_sql_exception $exception) {
             Practice::getInstance()->getLogger()->error('MySQL Query Error: ' . $exception->getMessage());
         }
     }
 
-    public static function mysqli(): mysqli {
+    public static function mysqli(): \mysqli {
         return new mysqli(
             self::$host,
             self::$username,
@@ -64,5 +61,18 @@ final class MySQL {
             self::$database,
             self::$port
         );
+    }
+
+    public static function setCredentials(array $credentials): void {
+        foreach ($credentials as $credential) {
+            if (!isset($credential)) {
+                throw new \InvalidArgumentException('Missing MySQL credentials.');
+            }
+        }
+        self::$host = $credentials['host'];
+        self::$port = $credentials['port'];
+        self::$username = $credentials['username'];
+        self::$password = $credentials['password'];
+        self::$database = $credentials['database'];
     }
 }

@@ -10,49 +10,20 @@
 
 namespace practice\database\mysql\queries;
 
-use mysqli;
-use Closure;
-use mysqli_result;
-use practice\database\mysql\AsyncQuery;
-
-final class SelectAsync extends AsyncQuery {
-
-    private ?string $rows = null;
-
+final class SelectAsync extends QueryAsync {
     public function __construct(
-        private string   $table,
-        private ?string  $conditionKey = null,
-        private ?string  $conditionValue = null,
-        private ?Closure $closure = null
-    ) {}
-
-    public function query(mysqli $mysqli): void {
-        if (!isset($this->conditionKey)) {
-            $result = $mysqli->query("SELECT * FROM $this->table");
-        } else {
-            $result = $mysqli->query("SELECT * FROM $this->table WHERE $this->conditionKey = '$this->conditionValue'");
-        }
-
-        if ($result instanceof mysqli_result):
-            $rows = [];
-            while ($row = $result->fetch_assoc()) {
-                $rows[] = $row;
-            }
-
-            $this->rows = serialize($rows);
-        endif;
-    }
-
-    public function onCompletion(): void {
-        if (!isset($this->closure)) {
+        string    $table,
+        array     $conditions,
+        string    $_extra = '',
+        ?\Closure $onComplete = null,
+        string    $columns = '*',
+    ) {
+        if ($conditions === []) {
+            parent::__construct(sprintf('SELECT %s FROM %s %s;', $columns, $table, $_extra), $onComplete);
             return;
         }
 
-        if (isset($this->rows)) {
-            $this->closure->__invoke(unserialize($this->rows));
-            return;
-        }
-
-        $this->closure->__invoke([]);
+        $where = implode(' AND ', array_map(static fn($key, $value) => "{$key} = '{$value}'", array_keys($conditions), array_values($conditions)));
+        parent::__construct(sprintf('SELECT %s FROM %s WHERE %s %s;', $columns, $table, $where, $_extra), $onComplete);
     }
 }

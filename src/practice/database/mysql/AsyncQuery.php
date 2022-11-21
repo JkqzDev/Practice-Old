@@ -12,6 +12,8 @@ use pocketmine\scheduler\AsyncTask;
 
 abstract class AsyncQuery extends AsyncTask {
 
+    public bool $failed = false;
+
     public string $host, $username, $password, $database;
     public int $port;
 
@@ -52,14 +54,9 @@ abstract class AsyncQuery extends AsyncTask {
             $this->query($mysqli);
             $mysqli->close();
         } catch (mysqli_sql_exception $exception) {
-            $this->onError();
+            $this->failed = true;
         }
     }
 
     abstract public function query(mysqli $mysqli): void;
-
-
-    public function onError(): void {
-        Server::getInstance()->getLogger()->error("An error occurred while executing an async query.");
-    }
 }

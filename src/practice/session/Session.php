@@ -16,7 +16,7 @@ use pocketmine\player\GameMode;
 use pocketmine\entity\Attribute;
 use pocketmine\utils\TextFormat;
 use practice\database\mysql\MySQL;
-use practice\database\mysql\queries\QueryAsync;
+use practice\item\party\PartyItem;
 use practice\duel\queue\PlayerQueue;
 use practice\duel\queue\QueueFactory;
 use practice\session\data\PlayerData;
@@ -27,25 +27,21 @@ use practice\session\handler\HandlerTrait;
 use practice\session\setting\SettingTrait;
 use practice\item\player\PlayerProfileItem;
 use practice\item\duel\queue\RankedQueueItem;
+use practice\database\mysql\queries\QueryAsync;
 use practice\item\duel\queue\UnrankedQueueItem;
-use practice\item\party\PartyItem;
-use practice\database\mysql\queries\SelectAsync;
 use practice\item\player\PlayerLeaderboardItem;
-use practice\party\duel\DuelFactory as DuelDuelFactory;
+use practice\database\mysql\queries\SelectAsync;
 use practice\session\scoreboard\ScoreboardTrait;
+use practice\database\mysql\queries\InsertAsync;
 use practice\session\scoreboard\ScoreboardBuilder;
 use practice\session\setting\display\DisplaySetting;
-use practice\session\setting\display\Scoreboard;
+use practice\party\duel\DuelFactory as DuelDuelFactory;
 
 final class Session {
     use PlayerData;
     use HandlerTrait;
     use SettingTrait;
     use ScoreboardTrait;
-
-    public static function create(string $uuid, string $xuid, string $name): self {
-        return new self($uuid, $xuid, $name);
-    }
 
     public function __construct(
         private string       $uuid,
@@ -56,36 +52,41 @@ final class Session {
         private ?PlayerQueue $queue = null,
         private ?Duel        $duel = null,
         private ?Party       $party = null,
-        public bool $initialKnockbackMotion = false,
-        public bool $cancelKnockbackMotion = false
+        public bool          $initialKnockbackMotion = false,
+        public bool          $cancelKnockbackMotion = false
     ) {
         $this->setSettings(Setting::create());
         $this->setScoreboard(new ScoreboardBuilder($this, '&l&cMisty Network&r'));
 
-        MySQL::runAsync(new SelectAsync('duel_stats', 'xuid', $this->xuid,
-        function (array $rows): void {
-            if (count($rows) === 0) {
-                MySQL::runAsync(new QueryAsync("INSERT INTO duel_stats (xuid, player) VALUES ('$this->xuid', '$this->name')"));
-            } else {
-                $row = $rows[0];
-                $this->kills = (int) $row['kills'];
-                $this->deaths = (int) $row['deaths'];
-                $this->killstreak = (int) $row['streak'];
-                $this->elo = (int) $row['elo'];
-            }
-        }));
+        MySQL::runAsync(new SelectAsync('duel_stats', ['xuid' => $this->xuid], '',
+            function(array $rows): void {
+                if (count($rows) === 0) {
+                    MySQL::runAsync(new InsertAsync('duel_stats', ['xuid' => $this->xuid, 'player' => $this->name]));
+                } else {
+                    $row = $rows[0];
+                    $this->kills = (int)$row['kills'];
+                    $this->deaths = (int)$row['deaths'];
+                    $this->killstreak = (int)$row['streak'];
+                    $this->elo = (int)$row['elo'];
+                }
+            }));
 
-        MySQL::runAsync(new SelectAsync('player_settings', 'xuid', $this->xuid,
-        function (array $rows): void {
-            if (count($rows) === 0) {
-                MySQL::runAsync(new QueryAsync("INSERT INTO player_settings (xuid, player) VALUES ('$this->xuid', '$this->name')"));
-            } else {
-                $row = $rows[0];
-                $this->getSetting(Setting::SCOREBOARD)?->setEnabled((bool) $row[Setting::SCOREBOARD]);
-                $this->getSetting(Setting::CPS_COUNTER)?->setEnabled((bool) $row[Setting::CPS_COUNTER]);
-                $this->getSetting(Setting::AUTO_RESPAWN)?->setEnabled((bool) $row[Setting::AUTO_RESPAWN]);
-            }
-        }));
+        MySQL::runAsync(new SelectAsync('player_settings', ['xuid' => $this->xuid], '',
+            function(array $rows): void {
+                if (count($rows) === 0) {
+                    MySQL::runAsync(new InsertAsync('player_settings', ['xuid' => $this->xuid, 'player' => $this->name]));
+                } else {
+                    $row = $rows[0];
+                    $this->getSetting(Setting::SCOREBOARD)?->setEnabled((bool)$row[Setting::SCOREBOARD]);
+                    $this->getSetting(Setting::CPS_COUNTER)?->setEnabled((bool)$row[Setting::CPS_COUNTER]);
+                    $this->getSetting(Setting::AUTO_RESPAWN)?->setEnabled((bool)$row[Setting::AUTO_RESPAWN]);
+                }
+            })
+        );
+    }
+
+    public static function create(string $uuid, string $xuid, string $name): self {
+        return new self($uuid, $xuid, $name);
     }
 
     public function getUuid(): string {
@@ -104,14 +105,6 @@ final class Session {
         return $this->queue;
     }
 
-    public function getParty(): ?Party {
-        return $this->party;
-    }
-
-    public function inParty(): bool {
-        return $this->party !== null;
-    }
-
     public function inLobby(): bool {
         if ($this->inDuel() || $this->inArena()) {
             return false;
@@ -127,26 +120,20 @@ final class Session {
         return true;
     }
 
-    public function inArena(): bool {
-        return $this->arena !== null;
-    }
-
     public function inDuel(): bool {
         return $this->duel !== null;
     }
 
-    public function inQueue(): bool {
-        return $this->queue !== null;
+    public function inArena(): bool {
+        return $this->arena !== null;
     }
 
-    public function getDuel(): Duel {
-        /** @var Duel $duel */
-        $duel = $this->duel;
-        return $duel;
+    public function inParty(): bool {
+        return $this->party !== null;
     }
 
-    public function getArena(): Arena {
-        return $this->arena;
+    public function getParty(): ?Party {
+        return $this->party;
     }
 
     public function getCurrentKit(): string {
@@ -171,6 +158,12 @@ final class Session {
 
     public function getName(): string {
         return $this->name;
+    }
+
+    public function getDuel(): Duel {
+        /** @var Duel $duel */
+        $duel = $this->duel;
+        return $duel;
     }
 
     public function setName(string $name): void {
@@ -303,10 +296,18 @@ final class Session {
         $this->updatePlayer();
     }
 
+    public function inQueue(): bool {
+        return $this->queue !== null;
+    }
+
+    public function getArena(): Arena {
+        return $this->arena;
+    }
+
     public function updatePlayer(): void {
         $name = $this->name;
         $xuid = $this->xuid;
-            
+
         if ($this->update) {
             $kills = $this->kills;
             $deaths = $this->deaths;
@@ -317,9 +318,9 @@ final class Session {
             $query = new QueryAsync($sqlQuery);
             MySQL::runAsync($query);
         }
-        $scoreboardValue = (int) $this->getSetting(Setting::SCOREBOARD)->isEnabled();
-        $autoRespawnValue = (int) $this->getSetting(Setting::AUTO_RESPAWN)->isEnabled();
-        $cpsCounterValue = (int) $this->getSetting(Setting::CPS_COUNTER)->isEnabled();
+        $scoreboardValue = (int)$this->getSetting(Setting::SCOREBOARD)->isEnabled();
+        $autoRespawnValue = (int)$this->getSetting(Setting::AUTO_RESPAWN)->isEnabled();
+        $cpsCounterValue = (int)$this->getSetting(Setting::CPS_COUNTER)->isEnabled();
 
         $sqlQuery = "UPDATE player_settings SET player = '$name', scoreboard = '$scoreboardValue', auto_respawn = '$autoRespawnValue', cps_counter = '$cpsCounterValue' WHERE xuid = '$xuid'";
         $query = new QueryAsync($sqlQuery);
