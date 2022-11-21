@@ -10,6 +10,7 @@
 
 namespace practice\database\mysql\queries;
 
+use pocketmine\Server;
 use practice\database\mysql\AsyncQuery;
 
 class QueryAsync extends AsyncQuery {
@@ -35,6 +36,10 @@ class QueryAsync extends AsyncQuery {
     }
 
     public function onCompletion(): void {
+        if ($this->failed) {
+            Server::getInstance()->getLogger()->error('Failed to execute query: ' . $this->sqlQuery);
+        }
+
         if (!isset($this->onComplete)) {
             return;
         }
