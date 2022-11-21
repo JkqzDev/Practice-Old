@@ -47,7 +47,7 @@ final class Practice extends PluginBase {
 
     protected function onLoad(): void {
         self::$instance = $this;
-        $this->initMySQL();
+        MySQL::setCredentials($this->getConfig()->get('database'));
     }
 
     protected function onEnable(): void {
@@ -76,17 +76,6 @@ final class Practice extends PluginBase {
 
         DuelFactory::disable();
         PartyDuelFactory::disable();
-    }
-
-    protected function initMySQL(): void {
-        $this->saveDefaultConfig();
-        $data = $this->getConfig()->get('database');
-        
-        MySQL::$host = $data['host'];
-        MySQL::$port = $data['port'];
-        MySQL::$username = $data['username'];
-        MySQL::$password = $data['password'];
-        MySQL::$database = $data['database'];
     }
 
     protected function createTables(): void {
