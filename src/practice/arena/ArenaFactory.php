@@ -29,17 +29,13 @@ final class ArenaFactory {
             self::create('No debuff (test)', 'no_debuff', Practice::getInstance()->getServer()->getWorldManager()->getDefaultWorld(), [Practice::getInstance()->getServer()->getWorldManager()->getDefaultWorld()->getSpawnLocation()->asPosition()]);
         }
         $plugin = Practice::getInstance();
-        $path = $plugin->getDataFolder() . 'storage/';
+        $path = $plugin->getDataFolder() . 'storage';
+        
         if (!is_dir($path)) {
             mkdir($path);
         }
+        $config = new Config($path . DIRECTORY_SEPARATOR . 'arenas.json', Config::JSON);
 
-        $config = new Config($plugin->getDataFolder() . 'storage' . DIRECTORY_SEPARATOR . 'arenas.json', Config::JSON);
-
-        /**
-         * @var string $name
-         * @var array $data
-         */
         foreach ($config->getAll() as $name => $data) {
             $d_data = Arena::deserializeData($data);
 
@@ -61,21 +57,17 @@ final class ArenaFactory {
     public static function saveAll(): void {
         $plugin = Practice::getInstance();
         $path = $plugin->getDataFolder() . 'storage';
+        
         if (!is_dir($path)) {
             mkdir($path);
         }
-
-        $config = new Config($plugin->getDataFolder() . 'storage' . DIRECTORY_SEPARATOR . 'arenas.json', Config::JSON);
-        $arenas = $config->getAll();
+        $config = new Config($path . DIRECTORY_SEPARATOR . 'arenas.json', Config::JSON);
+        $arenas = [];
 
         foreach (self::getAll() as $name => $arena) {
             $arenas[$name] = $arena->serializeData();
         }
         $config->setAll($arenas);
-        try {
-            $config->save();
-        } catch (\Exception $exception) {
-            $plugin->getLogger()->error('Failed to save arenas: ' . $exception->getMessage());
-        }
+        $config->save();
     }
 }

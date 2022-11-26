@@ -62,7 +62,7 @@ class Duel {
         $worldName = $this->worldName;
         $world = $this->world;
 
-        $world->setTime(World::TIME_FULL);
+        $world->setTime(World::TIME_DAY);
         $world->stopTime();
 
         $kit = KitFactory::get(strtolower(DuelFactory::getName($this->typeId)));
@@ -291,6 +291,8 @@ class Duel {
                 $member->getInventory()->clearAll();
                 $member->getOffHandInventory()->clearAll();
                 $member->getCursorInventory()->clearAll();
+                
+                $member->getEffects()->clear();
 
                 $member->setHealth($member->getMaxHealth());
             }

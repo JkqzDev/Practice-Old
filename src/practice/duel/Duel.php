@@ -79,7 +79,7 @@ class Duel {
         $firstSession = $this->firstSession;
         $secondSession = $this->secondSession;
 
-        $world->setTime(World::TIME_FULL);
+        $world->setTime(World::TIME_DAY);
         $world->stopTime();
 
         $kit = KitFactory::get(strtolower(DuelFactory::getName($this->typeId)));
@@ -289,6 +289,9 @@ class Duel {
         $firstPlayer->getInventory()->clearAll();
         $secondPlayer->getArmorInventory()->clearAll();
         $secondPlayer->getInventory()->clearAll();
+        
+        $firstPlayer->getEffects()->clear();
+        $secondPlayer->getEffects()->clear();
 
         $firstPlayer->setHealth($firstPlayer->getMaxHealth());
         $secondPlayer->setHealth($secondPlayer->getMaxHealth());

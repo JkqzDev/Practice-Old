@@ -31,8 +31,8 @@ final class Arena {
         private array  $combats = [],
         private array  $blocks = []
     ) {
-        $world->setTime(World::TIME_NOON);
-        $world->startTime();
+        $world->setTime(World::TIME_DAY);
+        $world->stopTime();
     }
 
     public static function deserializeData(array $data): ?array {
@@ -141,6 +141,8 @@ final class Arena {
                     $damager = SessionFactory::get($combat['player']);
                     $damager->addKill();
                     $damager->addKillstreak();
+                    
+                    $damager->getPlayer()?->setHealth($damager->getPlayer()->setMaxHealth());
 
                     unset($this->combats[$damager->getName()]);
 
@@ -200,7 +202,8 @@ final class Arena {
         $player->getHungerManager()->setFood($player->getHungerManager()->getMaxFood());
 
         $player->getXpManager()->setXpAndProgress(0, 0.0);
-
+        $player->getEffects()->clear();
+        
         $player->teleport($player->getServer()->getWorldManager()->getDefaultWorld()->getSpawnLocation());
 
         $session->giveLobyyItems();
@@ -214,6 +217,8 @@ final class Arena {
                 $damager = SessionFactory::get($combat['player']);
                 $damager->addKill();
                 $damager->addKillstreak();
+                
+                $damager->getPlayer()?->setHealth($damager->getPlayer()->getHealth());
 
                 unset($this->combats[$damager->getName()]);
 

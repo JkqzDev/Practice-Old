@@ -195,7 +195,7 @@ class Bridge extends Duel {
         $firstSession = $this->firstSession;
         $secondSession = $this->secondSession;
 
-        $world->setTime(World::TIME_FULL);
+        $world->setTime(World::TIME_DAY);
         $world->stopTime();
 
         $firstPlayer = $firstSession->getPlayer();
@@ -307,7 +307,7 @@ class Bridge extends Duel {
             (float)$firstPortal->getY(),
             (float)$firstPortal->getZ()
         );
-        $this->firstPortal->expand(8.0, 30.0, 8.0);
+        $this->firstPortal->expand(4.0, 30.0, 4.0);
 
         $this->secondPortal = new AxisAlignedBB(
             (float)$secondPortal->getX(),
@@ -317,6 +317,6 @@ class Bridge extends Duel {
             (float)$secondPortal->getY(),
             (float)$secondPortal->getZ()
         );
-        $this->secondPortal->expand(8.0, 30.0, 8.0);
+        $this->secondPortal->expand(4.0, 30.0, 4.0);
     }
 }

@@ -216,7 +216,7 @@ class BattleRush extends Duel {
         $firstSession = $this->firstSession;
         $secondSession = $this->secondSession;
 
-        $world->setTime($this->world::TIME_MIDNIGHT);
+        $world->setTime($this->world::TIME_DAY);
         $world->stopTime();
 
         $firstPlayer = $firstSession->getPlayer();
@@ -328,7 +328,7 @@ class BattleRush extends Duel {
             (float)$firstPortal->getY(),
             (float)$firstPortal->getZ()
         );
-        $this->firstPortal->expand(8.0, 30.0, 8.0);
+        $this->firstPortal->expand(4.0, 30.0, 4.0);
 
         $this->secondPortal = new AxisAlignedBB(
             (float)$secondPortal->getX(),
@@ -338,7 +338,7 @@ class BattleRush extends Duel {
             (float)$secondPortal->getY(),
             (float)$secondPortal->getZ()
         );
-        $this->secondPortal->expand(8.0, 30.0, 8.0);
+        $this->secondPortal->expand(4.0, 30.0, 4.0);
 
     }
 }
