@@ -47,11 +47,15 @@ final class Practice extends PluginBase {
 
     protected function onLoad(): void {
         self::$instance = $this;
+        
+        $this->saveDefaultConfig();
         MySQL::setCredentials($this->getConfig()->get('database'));
     }
 
     protected function onEnable(): void {
+        $this->setup();
         $this->createTables();
+        
         $this->registerEntities();
         $this->registerItems();
         $this->registerHandlers();
@@ -76,6 +80,14 @@ final class Practice extends PluginBase {
 
         DuelFactory::disable();
         PartyDuelFactory::disable();
+    }
+    
+    protected function setup(): void {
+        $config = $this->getConfig();
+        
+        $this->getServer()->getNetwork()->setName(TextFormat::colorize($config->get('server-motd', '')));
+        $this->getServer()->getQueryInformation()->setMaxPlayerCount($config->get('server-maxplayers', 200));
+        $this->getServer()->getConfigGroup()->setConfigBool("white-list", $config->get('server-whitelisted', false));
     }
 
     protected function createTables(): void {
@@ -137,7 +149,7 @@ final class Practice extends PluginBase {
             'suicide',
             'clear',
         ];
-
+        
         foreach ($commands as $commandName) {
             $command = $this->getServer()->getCommandMap()->getCommand($commandName);
 
