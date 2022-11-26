@@ -46,6 +46,8 @@ final class DuelFactory {
         $worldData = WorldFactory::getRandom(strtolower(implode('', $newName)));
 
         if ($worldData === null) {
+            $first->giveLobyyItems();
+            $second->giveLobyyItems();
             return;
         }
         $worldData->copyWorld(

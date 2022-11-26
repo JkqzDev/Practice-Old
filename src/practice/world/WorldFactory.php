@@ -104,16 +104,12 @@ final class WorldFactory {
         }
 
         $config = new Config($plugin->getDataFolder() . 'storage' . DIRECTORY_SEPARATOR . 'worlds.json', Config::JSON);
-        $worlds = $config->getAll();
+        $worlds = [];
 
         foreach (self::getAll() as $name => $world) {
             $worlds[$name] = $world->serializeData();
         }
         $config->setAll($worlds);
-        try {
-            $config->save();
-        } catch (\Exception $exception) {
-            $plugin->getLogger()->error($exception->getMessage());
-        }
+        $config->save();
     }
 }
