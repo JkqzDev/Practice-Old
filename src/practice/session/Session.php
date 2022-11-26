@@ -33,6 +33,7 @@ use practice\item\player\PlayerLeaderboardItem;
 use practice\database\mysql\queries\SelectAsync;
 use practice\session\scoreboard\ScoreboardTrait;
 use practice\database\mysql\queries\InsertAsync;
+use practice\database\mysql\queries\UpdateAsync;
 use practice\session\scoreboard\ScoreboardBuilder;
 use practice\session\setting\display\DisplaySetting;
 use practice\party\duel\DuelFactory as DuelDuelFactory;
@@ -313,18 +314,24 @@ final class Session {
             $deaths = $this->deaths;
             $streak = $this->killstreak;
             $elo = $this->elo;
-
-            $sqlQuery = "UPDATE duel_stats SET player = '$name', kills = '$kills', deaths = '$deaths', streak = '$streak', elo = '$elo' WHERE xuid = '$xuid'";
-            $query = new QueryAsync($sqlQuery);
-            MySQL::runAsync($query);
+            MySQL::runAsync(new UpdateAsync('duel_stats', [
+                'player' => $name,
+                'kills' => $kills,
+                'deaths' => $deaths,
+                'streak' => $streak,
+                'elo' => $elo
+            ], ['xuid' => $xuid]));
         }
         $scoreboardValue = (int)$this->getSetting(Setting::SCOREBOARD)->isEnabled();
         $autoRespawnValue = (int)$this->getSetting(Setting::AUTO_RESPAWN)->isEnabled();
         $cpsCounterValue = (int)$this->getSetting(Setting::CPS_COUNTER)->isEnabled();
 
-        $sqlQuery = "UPDATE player_settings SET player = '$name', scoreboard = '$scoreboardValue', auto_respawn = '$autoRespawnValue', cps_counter = '$cpsCounterValue' WHERE xuid = '$xuid'";
-        $query = new QueryAsync($sqlQuery);
-        MySQL::runAsync($query);
+        MySQL::runAsync(new UpdateAsync('player_settings', [
+            'player' => $name,
+            'scoreboard' => $scoreboardValue,
+            'auto_respawn' => $autoRespawnValue,
+            'cps_counter' => $cpsCounterValue
+        ], ['xuid' => $xuid]));
     }
 
     public function knockback(Player $damager, Kit $kit): void {
