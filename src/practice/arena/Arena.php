@@ -94,6 +94,7 @@ final class Arena {
     }
 
     public function handleDamage(EntityDamageEvent $event): void {
+        $cause = $event->getCause();
         $player = $event->getEntity();
 
         if (!$player instanceof Player) {
@@ -102,6 +103,39 @@ final class Arena {
         $session = SessionFactory::get($player);
 
         if ($session === null) {
+            return;
+        }
+        
+        if ($cause === EntityDamageEvent::CAUSE_VOID) {
+            $event->cancel();
+            
+            if (isset($this->combats[$player->getName()])) {
+                $combat = $this->combats[$player->getName()];
+
+                if ($combat['time'] >= time()) {
+                    $session->addDeath();
+                    $session->resetKillstreak();
+                    
+                    /** @var Session $damager */
+                    $damager = SessionFactory::get($combat['player']);
+                    $damager->addKill();
+                    $damager->addKillstreak();
+                    
+                    $damager->getPlayer()?->setHealth($damager->getPlayer()->getMaxHealth());
+
+                    unset($this->combats[$damager->getName()]);
+
+                    Server::getInstance()->broadcastMessage(TextFormat::colorize('&a' . $damager->getName() . ' &2[' . $damager->getKills() . '] &7killed &c' . $player->getName() . ' &4[' . $session->getKills() . ']'));
+                }
+                unset($this->combats[$player->getName()]);
+            }
+            $autoRespawn = $session->getSetting(Setting::AUTO_RESPAWN);
+
+            if ($autoRespawn instanceof AutoRespawn && $autoRespawn->isEnabled()) {
+                $this->join($player);
+                return;
+            }
+            $this->quit($player);
             return;
         }
 
@@ -117,7 +151,7 @@ final class Arena {
                 if (isset($this->combats[$player->getName()])) {
                     $combat = $this->combats[$player->getName()];
 
-                    if ($combat['time'] >= time() && $combat['player']->getName() !== $damager->getName()) {
+                    if ($combat['time'] > time() && $combat['player']->getName() !== $damager->getName()) {
                         $event->cancel();
                         return;
                     }
@@ -142,7 +176,7 @@ final class Arena {
                     $damager->addKill();
                     $damager->addKillstreak();
                     
-                    $damager->getPlayer()?->setHealth($damager->getPlayer()->setMaxHealth());
+                    $damager->getPlayer()?->setHealth($damager->getPlayer()->getMaxHealth());
 
                     unset($this->combats[$damager->getName()]);
 

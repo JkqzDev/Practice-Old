@@ -30,8 +30,6 @@ class SplashPotion extends ProjectileSplashPotion {
     protected $gravity = 0.06;
     protected $drag = 0.0025;
 
-    
-
     public function __construct(Location $location, ?Entity $shootingEntity, PotionType $potionType, ?CompoundTag $nbt = null) {
         parent::__construct($location, $shootingEntity, $potionType, $nbt);
         $this->setScale(0.6);
@@ -41,18 +39,15 @@ class SplashPotion extends ProjectileSplashPotion {
         }
     }
 
-    public function calculateInterceptWithBlock(Block $block, Vector3 $start, Vector3 $end): ?RayTraceResult {
-        if ($block->getId() === BlockLegacyIds::INVISIBLE_BEDROCK) {
-            return null;
-        }
-        return parent::calculateInterceptWithBlock($block, $start, $end);
-    }
-
     public function entityBaseTick(int $tickDiff = 1): bool {
-        if ($this->isCollided) {
+        $hasUpdate = parent::entityBaseTick($tickDiff);
+        $owning = $this->getOwningEntity();
+        
+        if (!$owning instanceof Player || !$owning->isOnline() || !$owning->isAlive() || $owning->getWorld()->getFolderName() !== $this->getWorld()->getFolderName()) {
             $this->flagForDespawn();
+            return true;
         }
-        return parent::entityBaseTick($tickDiff);
+        return $hasUpdate;
     }
 
     protected function onHit(ProjectileHitEvent $event): void {
@@ -98,6 +93,59 @@ class SplashPotion extends ProjectileSplashPotion {
                             $entity->getEffects()->add($effect);
                         } else {
                             $effect->getType()->applyEffect($entity, $effect, self::MAX_HIT, $this);
+                        }
+                    }
+                }
+            }
+        }
+    }
+    
+    protected function onHitBlock(Block $blockHit, RayTraceResult $hitResult): void {
+        parent::onHitBlock($blockHit, $hitResult);
+        
+        $owner = $this->getOwningEntity();
+		
+		if (!$owner instanceof Player) {
+			return;
+		}
+		
+		if ($blockHit->getId() === 95) {
+			
+            $effects = $this->getPotionEffects();
+            $hasEffects = true;
+
+            if (count($effects) === 0) {
+                $particle = new PotionSplashParticle(PotionSplashParticle::DEFAULT_COLOR());
+                $hasEffects = false;
+            } else {
+                $colors = [];
+                foreach ($effects as $effect) {
+                    $level = $effect->getEffectLevel();
+                    for ($j = 0; $j < $level; $j++) {
+                        $colors[] = $effect->getColor();
+                    }
+                }
+                $particle = new PotionSplashParticle(Color::mix(...$colors));
+            }
+
+            $this->getWorld()->addParticle($this->getLocation(), $particle);
+            $this->broadcastSound(new PotionSplashSound);
+
+            if ($hasEffects) {
+                foreach ($this->getWorld()->getNearbyEntities($this->getBoundingBox()->expand(1.85, 2.65, 1.85)) as $entity) {
+                    if ($entity instanceof Player && $entity->isAlive()) {
+                        foreach ($effects as $effect) {
+                            if (!$effect->getType() instanceof InstantEffect) {
+                                $newDuration = (int)round($effect->getDuration() * 0.75 * self::MAX_HIT);
+
+                                if ($newDuration < 20) {
+                                    continue;
+                                }
+                                $effect->setDuration($newDuration);
+                                $entity->getEffects()->add($effect);
+                            } else {
+                                $effect->getType()->applyEffect($entity, $effect, self::MAX_HIT, $this);
+                            }
                         }
                     }
                 }

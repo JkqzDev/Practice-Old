@@ -27,18 +27,15 @@ class EnderPearl extends ProjectileEnderPearl {
         $this->setScale(0.6);
     }
 
-    public function calculateInterceptWithBlock(Block $block, Vector3 $start, Vector3 $end): ?RayTraceResult {
-        if ($block->getId() === BlockLegacyIds::INVISIBLE_BEDROCK) {
-            return null;
-        }
-        return parent::calculateInterceptWithBlock($block, $start, $end);
-    }
-
     public function entityBaseTick(int $tickDiff = 1): bool {
-        if ($this->isCollided) {
+        $hasUpdate = parent::entityBaseTick($tickDiff);
+        $owning = $this->getOwningEntity();
+        
+        if (!$owning instanceof Player || !$owning->isOnline() || !$owning->isAlive() || $owning->getWorld()->getFolderName() !== $this->getWorld()->getFolderName()) {
             $this->flagForDespawn();
+            return true;
         }
-        return parent::entityBaseTick($tickDiff);
+        return $hasUpdate;
     }
 
     protected function onHit(ProjectileHitEvent $event): void {
@@ -69,4 +66,36 @@ class EnderPearl extends ProjectileEnderPearl {
         $this->getWorld()->addParticle($owner->getPosition(), new EndermanTeleportParticle);
         $this->getWorld()->addSound($owner->getPosition(), new EndermanTeleportSound);
     }
+    
+    protected function onHitBlock(Block $blockHit, RayTraceResult $hitResult): void {
+        parent::onHitBlock($blockHit, $hitResult);
+        $owner = $this->getOwningEntity();
+		
+		if (!$owner instanceof Player) {
+			return;
+		}
+		
+		if ($blockHit->getId() === 95) {
+			$this->getWorld()->addParticle($owner->getPosition(), new EndermanTeleportParticle);
+            $this->getWorld()->addSound($owner->getPosition(), new EndermanTeleportSound);
+
+            $vector = $hitResult->getHitVector();
+            $owner->teleport($vector);
+            $owner->getServer()->broadcastPackets(
+                $owner->getViewers(),
+                [
+                MoveActorAbsolutePacket::create($owner->getId(),
+                        $owner->getOffsetPosition($location = $owner->getLocation()),
+                        $location->pitch,
+                        $location->yaw,
+                        $location->yaw,
+                        (MoveActorAbsolutePacket::FLAG_TELEPORT | ($owner->onGround ? MoveActorAbsolutePacket::FLAG_GROUND : 0)))
+                ]
+            );
+
+            $this->getWorld()->addParticle($owner->getPosition(), new EndermanTeleportParticle);
+            $this->getWorld()->addSound($owner->getPosition(), new EndermanTeleportSound);
+			return;
+        }
+	}
 }

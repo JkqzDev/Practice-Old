@@ -19,6 +19,7 @@ use pocketmine\event\player\PlayerQuitEvent;
 use pocketmine\event\player\PlayerLoginEvent;
 use pocketmine\event\entity\EntityDamageEvent;
 use pocketmine\event\entity\EntityMotionEvent;
+use pocketmine\event\player\PlayerDropItemEvent;
 use pocketmine\event\player\PlayerExhaustEvent;
 use pocketmine\event\player\PlayerInteractEvent;
 use pocketmine\event\server\DataPacketSendEvent;
@@ -136,8 +137,9 @@ final class EventHandler implements Listener {
                 $duel->handleDamage($event);
             }
         }
+        
 
-        if ($event instanceof EntityDamageByEntityEvent) {
+        if (!$event->isCancelled() && $event instanceof EntityDamageByEntityEvent) {
             $damager = $event->getDamager();
             $kit = KitFactory::get($session->getCurrentKit());
 
@@ -193,6 +195,19 @@ final class EventHandler implements Listener {
             if ($item->getNamedTag()->getTag('practice_item') !== null) {
                 $event->cancel();
             }
+        }
+    }
+    
+    public function handleDropItem(PlayerDropItemEvent $event): void {
+        $player = $event->getPlayer();
+        $session = SessionFactory::get($player);
+        
+        if ($session === null) {
+            return;
+        }
+        
+        if ($session->inArena()) {
+            $event->cancel();
         }
     }
 
