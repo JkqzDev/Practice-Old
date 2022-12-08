@@ -10,6 +10,7 @@ use pocketmine\utils\Config;
 
 final class ArenaFactory {
 
+    /** @var Arena[] */
     static private array $arenas = [];
 
     public static function remove(string $name): void {

@@ -12,6 +12,7 @@ use practice\session\Session;
 use pocketmine\world\Position;
 use pocketmine\player\GameMode;
 use pocketmine\utils\TextFormat;
+use JetBrains\PhpStorm\ArrayShape;
 use practice\session\SessionFactory;
 use practice\session\setting\Setting;
 use pocketmine\event\block\BlockBreakEvent;
@@ -120,7 +121,7 @@ final class Arena {
                     $damager = SessionFactory::get($combat['player']);
                     $damager->addKill();
                     $damager->addKillstreak();
-                    
+
                     $damager->getPlayer()?->setHealth($damager->getPlayer()->getMaxHealth());
 
                     unset($this->combats[$damager->getName()]);
@@ -182,7 +183,7 @@ final class Arena {
                     $damager = SessionFactory::get($combat['player']);
                     $damager->addKill();
                     $damager->addKillstreak();
-                    
+
                     $damager->getPlayer()?->setHealth($damager->getPlayer()->getMaxHealth());
 
                     unset($this->combats[$damager->getName()]);
@@ -306,7 +307,7 @@ final class Arena {
         return $lines;
     }
 
-    public function serializeData(): array {
+    #[ArrayShape(['kit' => "string", 'world' => "string", 'spawns' => "array"])] public function serializeData(): array {
         $data = [
             'kit' => $this->kit,
             'world' => $this->world->getFolderName(),
