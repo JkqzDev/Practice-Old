@@ -282,9 +282,9 @@ final class Arena {
         }
 
         $lines = [
-            ' &fKills: &c' . $session->getKills(),
-            ' &fDeaths: &c' . $session->getDeaths(),
-            ' &fKillstreak: &c' . $session->getKillstreak()
+            ' &fKills: &e' . $session->getKills(),
+            ' &fDeaths: &e' . $session->getDeaths(),
+            ' &fKill streak: &e' . $session->getKillstreak()
         ];
 
         if (isset($this->combats[$player->getName()])) {

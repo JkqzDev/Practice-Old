@@ -22,12 +22,12 @@ final class PlayerLeaderboardForm extends SimpleForm {
 
         $this->addButton($eloLeaderboard, function(Player $player, int $button_index): void {
             MySQL::runAsync(new SelectAsync('duel_stats', [], 'ORDER BY elo DESC LIMIT 10', function(array $rows) use ($player): void {
-                $content = TextFormat::colorize('&c&lTOP 10 ELO PLAYERS&r' . PHP_EOL);
+                $content = TextFormat::colorize('&e&lTOP 10 ELO PLAYERS&r' . PHP_EOL);
 
                 foreach ($rows as $pos => $data) {
                     $position = $pos + 1;
 
-                    $content .= PHP_EOL . TextFormat::colorize('&c' . $position . '. &f' . $data['player'] . ' &7- &c' . $data['elo']);
+                    $content .= PHP_EOL . TextFormat::colorize('&e' . $position . '. &f' . $data['player'] . ' &7- &e' . $data['elo']);
                 }
 
                 $player->sendForm($this->createEloLeaderboard($content));
@@ -35,12 +35,12 @@ final class PlayerLeaderboardForm extends SimpleForm {
         });
         $this->addButton($killsLeaderboard, function(Player $player, int $button_index): void {
             MySQL::runAsync(new SelectAsync('duel_stats', [], 'ORDER BY kills DESC LIMIT 10', function(array $rows) use ($player): void {
-                $content = TextFormat::colorize('&c&lTOP 10 KILLS PLAYERS&r' . PHP_EOL);
+                $content = TextFormat::colorize('&e&lTOP 10 KILLS PLAYERS&r' . PHP_EOL);
 
                 foreach ($rows as $pos => $data) {
                     $position = $pos + 1;
 
-                    $content .= PHP_EOL . TextFormat::colorize('&c' . $position . '. &f' . $data['player'] . ' &7- &c' . $data['kills']);
+                    $content .= PHP_EOL . TextFormat::colorize('&e' . $position . '. &f' . $data['player'] . ' &7- &e' . $data['kills']);
                 }
 
                 $player->sendForm($this->createKillsLeaderboard($content));
@@ -48,12 +48,12 @@ final class PlayerLeaderboardForm extends SimpleForm {
         });
         $this->addButton($deathsLeaderboard, function(Player $player, int $button_index): void {
             MySQL::runAsync(new SelectAsync('duel_stats', [], 'ORDER BY deaths DESC LIMIT 10', function(array $rows) use ($player): void {
-                $content = TextFormat::colorize('&c&lTOP 10 DEATHS PLAYERS&r' . PHP_EOL);
+                $content = TextFormat::colorize('&e&lTOP 10 DEATHS PLAYERS&r' . PHP_EOL);
 
                 foreach ($rows as $pos => $data) {
                     $position = $pos + 1;
 
-                    $content .= PHP_EOL . TextFormat::colorize('&c' . $position . '. &f' . $data['player'] . ' &7- &c' . $data['deaths']);
+                    $content .= PHP_EOL . TextFormat::colorize('&e' . $position . '. &f' . $data['player'] . ' &7- &e' . $data['deaths']);
                 }
 
                 $player->sendForm($this->createDeathsLeaderboard($content));
@@ -65,7 +65,7 @@ final class PlayerLeaderboardForm extends SimpleForm {
         return new class($content) extends SimpleForm {
 
             public function __construct(string $content) {
-                parent::__construct(TextFormat::colorize('&cElo Leaderboard'), $content);
+                parent::__construct(TextFormat::colorize('&eElo Leaderboard'), $content);
             }
         };
     }
@@ -74,7 +74,7 @@ final class PlayerLeaderboardForm extends SimpleForm {
         return new class($content) extends SimpleForm {
 
             public function __construct(string $content) {
-                parent::__construct(TextFormat::colorize('&cKills Leaderboard'), $content);
+                parent::__construct(TextFormat::colorize('&eKills Leaderboard'), $content);
             }
         };
     }
@@ -83,7 +83,7 @@ final class PlayerLeaderboardForm extends SimpleForm {
         return new class($content) extends SimpleForm {
 
             public function __construct(string $content) {
-                parent::__construct(TextFormat::colorize('&cDeaths Leaderboard'), $content);
+                parent::__construct(TextFormat::colorize('&eDeaths Leaderboard'), $content);
             }
         };
     }

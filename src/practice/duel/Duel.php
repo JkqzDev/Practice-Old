@@ -166,19 +166,19 @@ class Duel {
             default:
                 if ($this->isSpectator($player)) {
                     return [
-                        ' &fKit: &c' . DuelFactory::getName($this->typeId),
-                        ' &fType: &c' . ($this->ranked ? 'Ranked' : 'Unranked'),
+                        ' &fKit: &e' . DuelFactory::getName($this->typeId),
+                        ' &fType: &e' . ($this->ranked ? 'Ranked' : 'Unranked'),
                         ' &r&r',
-                        ' &fDuration: &c' . gmdate('i:s', $this->running),
-                        ' &fSpectators: &c' . count($this->spectators)
+                        ' &fDuration: &e' . gmdate('i:s', $this->running),
+                        ' &fSpectators: &e' . count($this->spectators)
                     ];
                 }
                 /** @var Player $opponent */
                 $opponent = $this->getOpponent($player);
 
                 return [
-                    ' &fKit: &c' . DuelFactory::getName($this->typeId),
-                    ' &fDuration: &c' . gmdate('i:s', $this->running),
+                    ' &fKit: &e' . DuelFactory::getName($this->typeId),
+                    ' &fDuration: &e' . gmdate('i:s', $this->running),
                     ' &r&r',
                     ' &aYour ping: ' . $player->getNetworkSession()->getPing(),
                     ' &cTheir ping: ' . $opponent->getNetworkSession()->getPing()
@@ -269,14 +269,14 @@ class Duel {
         $loser->sendTitle(TextFormat::colorize('&l&cDEFEAT!&r'), TextFormat::colorize('&a' . $this->winner . '&7 won the fight!'));
 
         if ($this->ranked) {
-            $elos = self::calculateElo($loserElo, $winnerElo);
+            $elms = self::calculateElo($loserElo, $winnerElo);
 
             if ($this->loser === $firstSession->getName()) {
-                $secondSession->addElo($elos[0]);
-                $firstSession->removeElo($elos[1]);
+                $secondSession->addElo($elms[0]);
+                $firstSession->removeElo($elms[1]);
             } else {
-                $firstSession->addElo($elos[0]);
-                $secondSession->removeElo($elos[1]);
+                $firstSession->addElo($elms[0]);
+                $secondSession->removeElo($elms[1]);
             }
         }
         /** @var Player $firstPlayer */
@@ -318,18 +318,18 @@ class Duel {
                     if ($secondPlayer->isImmobile()) {
                         $secondPlayer->setImmobile(false);
                     }
-                    $firstPlayer->sendMessage(TextFormat::colorize('&cMatch started.'));
-                    $secondPlayer->sendMessage(TextFormat::colorize('&cMatch started.'));
+                    $firstPlayer->sendMessage(TextFormat::colorize('&eMatch started.'));
+                    $secondPlayer->sendMessage(TextFormat::colorize('&eMatch started.'));
 
                     $firstPlayer->sendTitle('Match Started!', TextFormat::colorize('&7The match has begun.'));
                     $secondPlayer->sendTitle('Match Started!', TextFormat::colorize('&7The match has begun.'));
                     return;
                 }
-                $firstPlayer->sendMessage(TextFormat::colorize('&7The match will be starting in &c' . $this->starting . '&7..'));
-                $secondPlayer->sendMessage(TextFormat::colorize('&7The match will be starting in &c' . $this->starting . '&7..'));
+                $firstPlayer->sendMessage(TextFormat::colorize('&7The match will be starting in &e' . $this->starting . '&7..'));
+                $secondPlayer->sendMessage(TextFormat::colorize('&7The match will be starting in &e' . $this->starting . '&7..'));
 
-                $firstPlayer->sendTitle('Match starting', TextFormat::colorize('&7The match will be starting in &c' . $this->starting . '&7..'));
-                $secondPlayer->sendTitle('Match starting', TextFormat::colorize('&7The match will be starting in &c' . $this->starting . '&7..'));
+                $firstPlayer->sendTitle('Match starting', TextFormat::colorize('&7The match will be starting in &e' . $this->starting . '&7..'));
+                $secondPlayer->sendTitle('Match starting', TextFormat::colorize('&7The match will be starting in &e' . $this->starting . '&7..'));
                 $this->starting--;
                 break;
 

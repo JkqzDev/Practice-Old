@@ -60,11 +60,11 @@ class Boxing extends Duel {
 
             if ($this->isSpectator($player)) {
                 return [
-                    ' &fKit: &c' . DuelFactory::getName($this->typeId),
-                    ' &fType: &c' . ($this->ranked ? 'Ranked' : 'Unranked'),
+                    ' &fKit: &e' . DuelFactory::getName($this->typeId),
+                    ' &fType: &e' . ($this->ranked ? 'Ranked' : 'Unranked'),
                     ' &r&r',
-                    ' &fDuration: &c' . gmdate('i:s', $this->running),
-                    ' &fSpectators: &c' . count($this->spectators),
+                    ' &fDuration: &e' . gmdate('i:s', $this->running),
+                    ' &fSpectators: &e' . count($this->spectators),
                     ' &fHits: &a' . $this->firstHit . ' &7| &c' . $this->secondHit
                 ];
             }
@@ -91,9 +91,9 @@ class Boxing extends Duel {
             }
 
             return [
-                ' &fFighting: &c' . $opponent->getName(),
+                ' &fFighting: &e' . $opponent->getName(),
                 ' &r&r&r',
-                ' &cHits: ' . ($hits >= 0 ? '&a(+' . $hits . ')' : '&c(-' . $hits . ')'),
+                ' &eHits: ' . ($hits >= 0 ? '&a(+' . $hits . ')' : '&c(-' . $hits . ')'),
                 '  &aYou: &f' . $playerHits . ($playerCombo > 0 ? ' &e(' . $playerCombo . ' combo)' : ''),
                 '  &cThem: &f' . $opponentHits . ($opponentCombo > 0 ? ' &e(' . $opponentCombo . ' combo)' : ''),
                 ' &r&r&r&r',

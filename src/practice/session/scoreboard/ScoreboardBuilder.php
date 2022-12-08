@@ -58,27 +58,27 @@ class ScoreboardBuilder {
             $playing = array_filter(SessionFactory::getAll(), static function(Session $target): bool {
                 return !$target->inLobby() && $target->getPlayer() !== null;
             });
-            $lines[] = ' &fOnline: &c' . count($plugin->getServer()->getOnlinePlayers());
+            $lines[] = ' &fOnline: &e' . count($plugin->getServer()->getOnlinePlayers());
             $lines[] = ' &r ';
-            $lines[] = ' &fPlaying: &c' . count($playing);
-            $lines[] = ' &fIn-Queue: &c' . count(QueueFactory::getAll());
+            $lines[] = ' &fPlaying: &e' . count($playing);
+            $lines[] = ' &fIn-Queue: &e' . count(QueueFactory::getAll());
 
             if ($session->inQueue()) {
                 $queue = $session->getQueue();
 
                 $lines[] = '&7&r&r&r';
-                $lines[] = $queue->isRanked() ? ' &cRanked ' . DuelFactory::getName($queue->getDuelType()) : ' &cUnranked ' . DuelFactory::getName($queue->getDuelType());
-                $lines[] = ' &fTime: &c' . gmdate('i:s', $queue->getTime());
+                $lines[] = $queue->isRanked() ? ' &eRanked ' . DuelFactory::getName($queue->getDuelType()) : ' &eUnranked ' . DuelFactory::getName($queue->getDuelType());
+                $lines[] = ' &fTime: &e' . gmdate('i:s', $queue->getTime());
             } elseif ($session->inParty()) {
                 $party = $session->getParty();
                 
                 $lines[] = '&7&r&r&r';
                 $lines[] = ' &aParty Information';
-                $lines[] = ' &fLeader: &c' . $party->getOwner()->getName();
-                $lines[] = ' &fMembers: &c' . count($party->getMembers()) . '/' . $party->getMaxPlayers();
+                $lines[] = ' &fLeader: &e' . $party->getOwner()->getName();
+                $lines[] = ' &fMembers: &e' . count($party->getMembers()) . '/' . $party->getMaxPlayers();
                 
                 if ($party->inQueue()) {
-                    $lines[] = ' &cIn queue';
+                    $lines[] = ' &eIn queue';
                 }
             }
         } elseif ($session->inArena()) {

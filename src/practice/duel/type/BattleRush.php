@@ -252,7 +252,7 @@ class BattleRush extends Duel {
                     ' &9[B] &9' . str_repeat('█', $firstPoints) . '&7' . str_repeat('█', 3 - $firstPoints),
                     ' &c[R] &c' . str_repeat('█', $secondPoints) . '&7' . str_repeat('█', 3 - $secondPoints),
                     ' &r ',
-                    ' &fDuration: &c' . gmdate('i:s', $this->running)
+                    ' &fDuration: &e' . gmdate('i:s', $this->running)
                 ];
             }
             /** @var Player $opponent */
@@ -262,7 +262,7 @@ class BattleRush extends Duel {
                 ' &9[B] &9' . str_repeat('█', $firstPoints) . '&7' . str_repeat('█', 3 - $firstPoints),
                 ' &c[R] &c' . str_repeat('█', $secondPoints) . '&7' . str_repeat('█', 3 - $secondPoints),
                 ' &r ',
-                ' &fDuration: &c' . gmdate('i:s', $this->running),
+                ' &fDuration: &e' . gmdate('i:s', $this->running),
                 ' &r&r ',
                 ' &aYour ping: ' . $player->getNetworkSession()->getPing(),
                 ' &cTheir ping: ' . $opponent->getNetworkSession()->getPing()

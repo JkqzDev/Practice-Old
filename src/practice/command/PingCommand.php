@@ -30,6 +30,6 @@ final class PingCommand extends Command {
             $sender->sendMessage(TextFormat::colorize('&cPlayer offline.'));
             return;
         }
-        $sender->sendMessage(TextFormat::colorize('&c' . $player->getName() . '\'s ping: &f' . $player->getNetworkSession()->getPing()));
+        $sender->sendMessage(TextFormat::colorize('&e' . $player->getName() . '\'s ping: &f' . $player->getNetworkSession()->getPing()));
     }
 }

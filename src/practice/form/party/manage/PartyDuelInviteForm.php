@@ -105,12 +105,12 @@ final class PartyDuelInviteForm extends SimpleForm {
                     $button = new Button($invite->getParty()->getName());
 
                     $this->addButton($button, function(Player $player, int $button_index) use ($party, $invite): void {
-                        $player->sendForm($this->createRequestReponseForm($party, $invite));
+                        $player->sendForm($this->createRequestResponseForm($party, $invite));
                     });
                 }
             }
 
-            private function createRequestReponseForm(Party $party, Invite $invite): SimpleForm {
+            private function createRequestResponseForm(Party $party, Invite $invite): SimpleForm {
                 return new class($party, $invite) extends SimpleForm {
                     
                     public function __construct(Party $party, Invite $invite) {

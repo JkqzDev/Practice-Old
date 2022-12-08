@@ -57,7 +57,7 @@ final class Session {
         public bool          $cancelKnockbackMotion = false
     ) {
         $this->setSettings(Setting::create());
-        $this->setScoreboard(new ScoreboardBuilder($this, '&l&cMisty Network&r'));
+        $this->setScoreboard(new ScoreboardBuilder($this, '&l&ePractice&r'));
 
         MySQL::runAsync(new SelectAsync('duel_stats', ['xuid' => $this->xuid], '',
             function(array $rows): void {
