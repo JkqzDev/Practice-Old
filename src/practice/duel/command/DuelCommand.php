@@ -43,8 +43,8 @@ final class DuelCommand extends Command {
             return;
         }
 
+        $subCommand = strtolower($args[0]);
         if ($sender->getGamemode()->equals(GameMode::CREATIVE()) && $sender->hasPermission('duel.command')) {
-            $subCommand = strtolower($args[0]);
 
             if ($subCommand === 'setup') {
                 $form = new SetupDuelForm;
@@ -54,8 +54,6 @@ final class DuelCommand extends Command {
                 $sender->sendForm($form);
             }
         } else {
-            $subCommand = strtolower($args[0]);
-
             if ($subCommand === 'accept') {
                 if (!isset($args[1])) {
                     $sender->sendMessage(TextFormat::colorize('&cUse /duel accept [player]'));
