@@ -155,6 +155,13 @@ final class Arena {
                         $event->cancel();
                         return;
                     }
+                } elseif (isset($this->combats[$damager->getName()])) {
+                    $combat = $this->combats[$damager->getName()];
+
+                    if ($combat['time'] > time() && $combat['player']->getName() !== $player->getName()) {
+                        $event->cancel();
+                        return;
+                    }
                 }
                 $this->combats[$player->getName()] = ['time' => time() + 15, 'player' => $damager];
                 $this->combats[$damager->getName()] = ['time' => time() + 15, 'player' => $player];
