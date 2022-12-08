@@ -41,7 +41,7 @@ final class DuelForm extends CustomForm {
             $duelName = $duels[$value];
 
             InviteFactory::create($target, $session, $value);
-            $player->sendMessage(TextFormat::colorize('&aYou have sent a party duel invite to ' . $session->getName() . ' in ' . $duelName));
+            $player->sendMessage(TextFormat::colorize('&aYou have sent a duel invite to ' . $target->getName() . ' in ' . $duelName));
             $target->getPlayer()?->sendMessage(TextFormat::colorize('&aYou have received a ' . $duelName . ' duel invite from ' . $player->getName() . '.'));
         });
     }

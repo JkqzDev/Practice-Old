@@ -296,6 +296,17 @@ class Duel {
         $firstPlayer->setHealth($firstPlayer->getMaxHealth());
         $secondPlayer->setHealth($secondPlayer->getMaxHealth());
 
+        foreach ($this->spectators as $spectator) {
+            /** @var Session $s_spectator */
+            $s_spectator = SessionFactory::get($spectator);
+            $s_spectator->setDuel(null);
+            $s_spectator->giveLobyyItems();
+
+            $spectator->setGamemode(GameMode::SURVIVAL());
+            $spectator->getInventory()->clearAll();
+            $spectator->teleport($spectator->getServer()->getWorldManager()->getDefaultWorld()->getSpawnLocation());
+        }
+
         $this->status = self::RESTARTING;
     }
 
@@ -350,17 +361,6 @@ class Duel {
 
                     $firstSession->setDuel(null);
                     $secondSession->setDuel(null);
-
-                    foreach ($this->spectators as $spectator) {
-                        /** @var Session $s_spectator */
-                        $s_spectator = SessionFactory::get($spectator);
-                        $s_spectator->setDuel(null);
-                        $s_spectator->giveLobyyItems();
-
-                        $spectator->setGamemode(GameMode::SURVIVAL());
-                        $spectator->getInventory()->clearAll();
-                        $spectator->teleport($spectator->getServer()->getWorldManager()->getDefaultWorld()->getSpawnLocation());
-                    }
                     $this->delete();
                     return;
                 }

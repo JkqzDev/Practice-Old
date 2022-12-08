@@ -74,7 +74,7 @@ final class DuelCommand extends Command {
                 $invite = $invites[$args[1]];
                 $target = $invite->getSession();
 
-                if (!$invite->isExpired()) {
+                if ($invite->isExpired()) {
                     InviteFactory::removeFromPlayer($session, $target);
                     $sender->sendMessage(TextFormat::colorize('&cInvite was expired.'));
                     return;
