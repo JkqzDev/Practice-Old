@@ -200,10 +200,10 @@ final class Session {
                 $xp = $times[0];
                 $progress = 0 . '.' . ($times[1] ?? 0.00);
 
-                $this->getPlayer()?->getXpManager()->setXpAndProgressNoEvent((int)$xp, (float)$progress);
+                $this->getPlayer()?->getXpManager()->setXpAndProgress((int)$xp, (float)$progress);
             } else {
                 $this->enderpearl = null;
-                $this->getPlayer()?->getXpManager()->setXpAndProgressNoEvent(0, 0.00);
+                $this->getPlayer()?->getXpManager()->setXpAndProgress(0, 0.00);
             }
         }
     }
