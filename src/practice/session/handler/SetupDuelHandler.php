@@ -258,7 +258,7 @@ final class SetupDuelHandler {
         $player->teleport(Server::getInstance()->getWorldManager()->getDefaultWorld()?->getSpawnLocation());
         $player->setGamemode(GameMode::SURVIVAL());
 
-        $session->giveLobyyItems();
+        $session->giveLobbyItems();
         $session->stopSetupDuelHandler();
     }
 }

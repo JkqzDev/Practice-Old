@@ -27,7 +27,6 @@ use practice\session\handler\HandlerTrait;
 use practice\session\setting\SettingTrait;
 use practice\item\player\PlayerProfileItem;
 use practice\item\duel\queue\RankedQueueItem;
-use practice\database\mysql\queries\QueryAsync;
 use practice\item\duel\queue\UnrankedQueueItem;
 use practice\item\player\PlayerLeaderboardItem;
 use practice\database\mysql\queries\SelectAsync;
@@ -88,10 +87,6 @@ final class Session {
 
     public static function create(string $uuid, string $xuid, string $name): self {
         return new self($uuid, $xuid, $name);
-    }
-
-    public function getUuid(): string {
-        return $this->uuid;
     }
 
     public function getXuid(): string {
@@ -239,7 +234,7 @@ final class Session {
         $player->setHealth($player->getMaxHealth());
         $player->getHungerManager()->setFood($player->getHungerManager()->getMaxFood());
 
-        $this->giveLobyyItems();
+        $this->giveLobbyItems();
 
         $player->teleport($player->getServer()->getWorldManager()->getDefaultWorld()?->getSpawnLocation());
         $player->setNameTag(TextFormat::colorize('&7' . $player->getName()));
@@ -249,7 +244,7 @@ final class Session {
         }
     }
 
-    public function giveLobyyItems(): void {
+    public function giveLobbyItems(): void {
         $player = $this->getPlayer();
 
         if ($player === null) {

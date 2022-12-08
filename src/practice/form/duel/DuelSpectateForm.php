@@ -38,13 +38,10 @@ final class DuelSpectateForm extends SimpleForm {
         });
     }
 
-    /**
-     * TODO: CHECK THIS FUNCTION
-     */
     private function firstPage(Player $player, array $matches): void {
-        $simpleForm = new class($player, $matches) extends SimpleForm {
+        $simpleForm = new class($matches) extends SimpleForm {
 
-            public function __construct(Player $player, array $matches) {
+            public function __construct(array $matches) {
                 parent::__construct(TextFormat::colorize('&3Unranked Duels'), TextFormat::colorize('&7Select duel for spectate'));
 
                 foreach ($matches as $match) {
@@ -61,7 +58,6 @@ final class DuelSpectateForm extends SimpleForm {
                             return;
                         }
                         $match->addSpectator($player);
-
                         $session->setDuel($match);
 
                         $player->getInventory()->clearAll();
@@ -78,13 +74,10 @@ final class DuelSpectateForm extends SimpleForm {
         $player->sendForm($simpleForm);
     }
 
-    /**
-     * TODO: CHECK THIS FUNCTION
-     */
     private function secondPage(Player $player, array $matches): void {
-        $simpleForm = new class($player, $matches) extends SimpleForm {
+        $simpleForm = new class($matches) extends SimpleForm {
 
-            public function __construct(Player $player, array $matches) {
+            public function __construct(array $matches) {
                 parent::__construct(TextFormat::colorize('&3Ranked Duels'), TextFormat::colorize('&7Select duel for spectate'));
 
                 foreach ($matches as $match) {
@@ -101,7 +94,6 @@ final class DuelSpectateForm extends SimpleForm {
                             return;
                         }
                         $match->addSpectator($player);
-
                         $session->setDuel($match);
 
                         $player->getInventory()->clearAll();

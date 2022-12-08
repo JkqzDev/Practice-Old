@@ -41,10 +41,10 @@ class Duel {
     static public function calculateElo(int $loser, int $winner): array {
         $expectedScoreA = 1 / (1 + (pow(10, ($loser - $winner) / 400)));
         $expectedScoreB = abs(1 / (1 + (pow(10, ($winner - $loser) / 400))));
-        
+
         $winnerElo = $winner + intval(32 * (1 - $expectedScoreA));
         $loserElo = $loser + intval(32 * (0 - $expectedScoreB));
-        
+
         return [
             $winnerElo - $winner,
             abs($loser - $loserElo)
@@ -244,9 +244,7 @@ class Duel {
         }
     }
 
-    public function handleMove(PlayerMoveEvent $event): void {
-        // Nothing
-    }
+    public function handleMove(PlayerMoveEvent $event): void {}
 
     public function finish(Player $loser): void {
         $firstSession = $this->firstSession;
@@ -289,23 +287,12 @@ class Duel {
         $firstPlayer->getInventory()->clearAll();
         $secondPlayer->getArmorInventory()->clearAll();
         $secondPlayer->getInventory()->clearAll();
-        
+
         $firstPlayer->getEffects()->clear();
         $secondPlayer->getEffects()->clear();
 
         $firstPlayer->setHealth($firstPlayer->getMaxHealth());
         $secondPlayer->setHealth($secondPlayer->getMaxHealth());
-
-        foreach ($this->spectators as $spectator) {
-            /** @var Session $s_spectator */
-            $s_spectator = SessionFactory::get($spectator);
-            $s_spectator->setDuel(null);
-            $s_spectator->giveLobyyItems();
-
-            $spectator->setGamemode(GameMode::SURVIVAL());
-            $spectator->getInventory()->clearAll();
-            $spectator->teleport($spectator->getServer()->getWorldManager()->getDefaultWorld()->getSpawnLocation());
-        }
 
         $this->status = self::RESTARTING;
     }
@@ -356,11 +343,22 @@ class Duel {
                     $firstPlayer?->teleport($firstPlayer->getServer()->getWorldManager()->getDefaultWorld()->getSpawnLocation());
                     $secondPlayer?->teleport($secondPlayer->getServer()->getWorldManager()->getDefaultWorld()->getSpawnLocation());
 
-                    $firstSession->giveLobyyItems();
-                    $secondSession->giveLobyyItems();
+                    $firstSession->giveLobbyItems();
+                    $secondSession->giveLobbyItems();
 
                     $firstSession->setDuel(null);
                     $secondSession->setDuel(null);
+
+                    foreach ($this->spectators as $spectator) {
+                        $session = SessionFactory::get($spectator);
+                        $session?->setDuel(null);
+                        $session?->giveLobbyItems();
+                        $session->getPlayer()?->sendMessage(TextFormat::colorize('&cDuel has finished'));
+
+                        $spectator->setGamemode(GameMode::SURVIVAL());
+                        $spectator->getInventory()->clearAll();
+                        $spectator->teleport($spectator->getServer()->getWorldManager()->getDefaultWorld()->getSpawnLocation());
+                    }
                     $this->delete();
                     return;
                 }

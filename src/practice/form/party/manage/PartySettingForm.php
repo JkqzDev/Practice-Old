@@ -145,7 +145,7 @@ final class PartySettingForm extends SimpleForm {
                     $member->sendMessage(TextFormat::colorize('&cYou has been kicked of the party'));
 
                     $session->setParty(null);
-                    $session->giveLobyyItems();
+                    $session->giveLobbyItems();
 
                     $player->sendMessage(TextFormat::colorize('&cYou have kicked ' . $member->getName()));
                 });

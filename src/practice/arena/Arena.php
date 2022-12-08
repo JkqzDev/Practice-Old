@@ -247,7 +247,7 @@ final class Arena {
         
         $player->teleport($player->getServer()->getWorldManager()->getDefaultWorld()->getSpawnLocation());
 
-        $session->giveLobyyItems();
+        $session->giveLobbyItems();
         $session->setArena(null);
 
         if ($withCombat && isset($this->combats[$player->getName()])) {

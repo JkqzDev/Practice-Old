@@ -127,7 +127,7 @@ final class Party {
         $player->getCraftingGrid()->clearAll();
 
         $session = SessionFactory::get($player);
-        $session?->giveLobyyItems();
+        $session?->giveLobbyItems();
         $session?->setParty(null);
 
         unset($this->members[spl_object_hash($player)]);

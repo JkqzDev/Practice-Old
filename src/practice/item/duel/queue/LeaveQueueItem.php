@@ -24,7 +24,7 @@ class LeaveQueueItem extends PracticeItem {
         if ($session === null) {
             return ItemUseResult::FAIL();
         }
-        $session->giveLobyyItems();
+        $session->giveLobbyItems();
 
         if ($session->inQueue()) {
             $session->setQueue(null);
