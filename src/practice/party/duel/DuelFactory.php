@@ -6,7 +6,7 @@ namespace practice\party\duel;
 
 use pocketmine\scheduler\ClosureTask;
 use pocketmine\world\World;
-use practice\duel\type\CaveUHC;
+use practice\party\duel\type\CaveUHC;
 use practice\party\duel\type\BuildUHC;
 use practice\party\duel\type\Combo;
 use practice\party\duel\type\FinalUHC;
@@ -80,7 +80,6 @@ final class DuelFactory {
 
     static private function getClass(int $type): string {
         return match($type) {
-            Duel::TYPE_NODEBUFF => Nodebuff::class,
             Duel::TYPE_GAPPLE => Gapple::class,
             Duel::TYPE_FIST => Fist::class,
             Duel::TYPE_COMBO => Combo::class,

@@ -249,6 +249,12 @@ final class EventHandler implements Listener {
 
     public function handleLogin(PlayerLoginEvent $event): void {
         $player = $event->getPlayer();
+
+        if (!$player->getServer()->isWhitelisted($player->getName())) {
+            $event->setKickMessage(TextFormat::colorize(Practice::getInstance()->getConfig()->get('server-whitelist', '')));
+            $event->cancel();
+            return;
+        }
         $session = SessionFactory::get($player);
 
         if ($session === null) {

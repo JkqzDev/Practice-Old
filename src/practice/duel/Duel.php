@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace practice\duel;
 
+use CortexPE\DiscordWebhookAPI\Message;
+use CortexPE\DiscordWebhookAPI\Webhook;
 use practice\Practice;
 use pocketmine\world\World;
 use practice\kit\KitFactory;
@@ -72,7 +74,7 @@ class Duel {
         $this->init();
     }
 
-    public function prepare(): void {
+    protected function prepare(): void {
         $worldName = $this->worldName;
         $world = $this->world;
 
@@ -277,6 +279,7 @@ class Duel {
                 $secondSession->removeElo($elms[1]);
             }
         }
+        $this->log();
         /** @var Player $firstPlayer */
         $firstPlayer = $firstSession->getPlayer();
 
@@ -365,7 +368,7 @@ class Duel {
         }
     }
 
-    public function delete(): void {
+    protected function delete(): void {
         Practice::getInstance()->getServer()->getWorldManager()->unloadWorld($this->world);
         Practice::getInstance()->getServer()->getAsyncPool()->submitTask(new WorldDeleteAsync(
             'duel-' . $this->id,
@@ -374,5 +377,34 @@ class Duel {
         DuelFactory::remove($this->id);
     }
 
-    public function log(): void {}
+    protected function log(): void {
+        $webhook = new Webhook(Practice::getInstance()->getConfig()->get('webhook-duels', ''));
+        $message = new Message();
+
+        if ($this->winner === $this->firstSession->getName()) {
+            $winner = $this->firstSession;
+            $loser = $this->secondSession;
+        } else {
+            $winner = $this->secondSession;
+            $loser = $this->firstSession;
+        }
+        $message->setUsername('Kresu Practice');
+
+        if ($this->ranked) {
+            $message->setContent(
+                '**UNRANKED - ' . DuelFactory::getName($this->typeId) . '**' . PHP_EOL .
+                '__Winner:__ ' . $winner->getName() . PHP_EOL .
+                '__Loser:__ ' . $loser->getName() . PHP_EOL .
+                '__Time:__ ' . gmdate('i:s', $this->running)
+            );
+        } else {
+            $message->setContent(
+                '**RANKED - ' . DuelFactory::getName($this->typeId) . '**' . PHP_EOL .
+                '__Winner:__ ' . $winner->getName() . ' [' . $winner->getElo() . ']' . PHP_EOL .
+                '__Loser:__ ' . $loser->getName() . ' [' . $loser->getElo() . ']' . PHP_EOL .
+                '__Time:__ ' . gmdate('i:s', $this->running)
+            );
+        }
+        $webhook->send($message);
+    }
 }

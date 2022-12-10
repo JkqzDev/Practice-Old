@@ -210,7 +210,7 @@ class BattleRush extends Duel {
         }
     }
 
-    public function prepare(): void {
+    protected function prepare(): void {
         $world = $this->world;
 
         $firstSession = $this->firstSession;

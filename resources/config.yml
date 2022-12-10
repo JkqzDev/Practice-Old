@@ -1,6 +1,10 @@
-server-motd: "&cMisty Practice&7"
+server-motd: '&cServer Practice'
+server-whitelist: '&cServer in maintenance!\n\n&eFor more information join\nour discord.'
 server-maxplayers: 200
-server-whitelisted: false
+
+webhook-duels: ''
+webhook-parties: ''
+webhook-events: ''
 
 database:
   host: localhost

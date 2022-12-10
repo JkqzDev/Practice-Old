@@ -41,7 +41,7 @@ class Sumo extends Duel {
                     return;
                 }
 
-                if ( $secondPlayer->getPosition()->getY() < 0 || $secondPlayer->getPosition()->getWorld()->getBlock($secondPlayer->getPosition()) instanceof Water) {
+                if ($secondPlayer->getPosition()->getY() < 0 || $secondPlayer->getPosition()->getWorld()->getBlock($secondPlayer->getPosition()) instanceof Water) {
                     $this->finish($secondPlayer);
                 }
             }

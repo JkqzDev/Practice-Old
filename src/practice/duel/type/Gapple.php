@@ -6,6 +6,4 @@ namespace practice\duel\type;
 
 use practice\duel\Duel;
 
-class Gapple extends Duel {
-
-}
+class Gapple extends Duel {}

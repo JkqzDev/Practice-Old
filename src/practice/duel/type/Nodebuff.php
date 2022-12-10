@@ -6,5 +6,4 @@ namespace practice\duel\type;
 
 use practice\duel\Duel;
 
-class Nodebuff extends Duel {
-}
+class Nodebuff extends Duel {}

@@ -189,7 +189,7 @@ class Bridge extends Duel {
         $secondPlayer->sendTitle(TextFormat::colorize($title), TextFormat::colorize($subTitle));
     }
 
-    public function prepare(): void {
+    protected function prepare(): void {
         $world = $this->world;
 
         $firstSession = $this->firstSession;

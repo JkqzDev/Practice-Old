@@ -90,8 +90,7 @@ final class Practice extends PluginBase {
         $config = $this->getConfig();
         
         $this->getServer()->getNetwork()->setName(TextFormat::colorize($config->get('server-motd', '')));
-        $this->getServer()->getQueryInformation()->setMaxPlayerCount($config->get('server-maxplayers', 200));
-        $this->getServer()->getConfigGroup()->setConfigBool("white-list", $config->get('server-whitelisted', false));
+        $this->getServer()->getQueryInformation()->setMaxPlayerCount($config->get('server-max-players', 200));
     }
 
     protected function createTables(): void {

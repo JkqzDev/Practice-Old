@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace practice\party\duel;
 
+use CortexPE\DiscordWebhookAPI\Message;
+use CortexPE\DiscordWebhookAPI\Webhook;
 use pocketmine\event\block\BlockBreakEvent;
 use pocketmine\event\block\BlockPlaceEvent;
 use pocketmine\event\entity\EntityDamageByEntityEvent;
@@ -35,28 +37,26 @@ class Duel {
     public const RESTARTING = 2;
 
     public function __construct(
-        protected int     $id,
-        protected int     $typeId,
-        protected string  $worldName,
-        protected Party   $firstParty,
-        protected Party   $secondParty,
-        protected World   $world,
-        protected int     $status = self::STARTING,
-        protected int     $starting = 5,
-        protected int     $running = 0,
-        protected int     $restarting = 5,
-        protected string  $winner = '',
-        protected string  $loser = '',
-        protected array   $spectators = [],
-        protected array   $blocks = []
+        protected int    $id,
+        protected int    $typeId,
+        protected string $worldName,
+        protected Party  $firstParty,
+        protected Party  $secondParty,
+        protected World  $world,
+        protected int    $status = self::STARTING,
+        protected int    $starting = 5,
+        protected int    $running = 0,
+        protected int    $restarting = 5,
+        protected string $winner = '',
+        protected string $loser = '',
+        protected array  $spectators = [],
+        protected array  $blocks = []
     ) {
         $this->prepare();
         $this->init();
     }
 
-    protected function init(): void {
-
-    }
+    protected function init(): void {}
 
     protected function prepare(): void {
         $worldName = $this->worldName;
@@ -74,7 +74,7 @@ class Duel {
 
         foreach ($this->firstParty->getMembers() as $member) {
             $member->setGamemode(GameMode::SURVIVAL());
-            
+
             $member->getInventory()->clearAll();
             $member->getArmorInventory()->clearAll();
             $member->getCursorInventory()->clearAll();
@@ -147,7 +147,7 @@ class Duel {
                 return [
                     ' &fParty match ended'
                 ];
-            
+
             default:
                 if ($this->isSpectator($player)) {
                     return [
@@ -194,17 +194,17 @@ class Duel {
     public function handleBreak(BlockBreakEvent $event): void {
         $block = $event->getBlock();
 
-        if (!isset($this->blocks[(string)$block->getPosition()])) {
+        if (!isset($this->blocks[(string) $block->getPosition()])) {
             $event->cancel();
             return;
         }
-        unset($this->blocks[(string)$block->getPosition()]);
+        unset($this->blocks[(string) $block->getPosition()]);
     }
 
     public function handlePlace(BlockPlaceEvent $event): void {
         $block = $event->getBlock();
 
-        $this->blocks[(string)$block->getPosition()] = $block;
+        $this->blocks[(string) $block->getPosition()] = $block;
     }
 
     public function handleDamage(EntityDamageEvent $event): void {
@@ -291,7 +291,7 @@ class Duel {
                 $member->getInventory()->clearAll();
                 $member->getOffHandInventory()->clearAll();
                 $member->getCursorInventory()->clearAll();
-                
+
                 $member->getEffects()->clear();
 
                 $member->setHealth($member->getMaxHealth());
@@ -367,12 +367,35 @@ class Duel {
         }
     }
 
-    public function delete(): void {
+    protected function delete(): void {
         Practice::getInstance()->getServer()->getWorldManager()->unloadWorld($this->world);
         Practice::getInstance()->getServer()->getAsyncPool()->submitTask(new WorldDeleteAsync(
             'party-duel-' . $this->id,
             Practice::getInstance()->getServer()->getDataPath() . 'worlds'
         ));
         DuelFactory::remove($this->id);
+    }
+
+    protected function log(): void {
+        $webhook = new Webhook(Practice::getInstance()->getConfig()->get('webhook-parties', ''));
+        $message = new Message();
+
+        if ($this->winner === $this->firstParty->getName()) {
+            $winner = $this->firstParty;
+            $loser = $this->secondParty;
+        } else {
+            $winner = $this->secondParty;
+            $loser = $this->firstParty;
+        }
+        $message->setUsername('Kresu Practice');
+        $message->setContent(
+            '**' . DuelFactory::getName($this->typeId) . ' - ' . strtoupper($this->firstParty->getName()) . ' vs ' . strtoupper($this->secondParty->getName()) . '**' . PHP_EOL .
+            '__Time:__ ' . gmdate('i:s', $this->running) . PHP_EOL .
+            '__Winner:__ ' . strtoupper($winner->getName()) . PHP_EOL .
+            implode(PHP_EOL, array_map(fn(Player $player) => ' - ' . $player->getName(), $winner->getMembers())) . PHP_EOL .
+            '__Loser:__ ' . strtoupper($loser->getName()) . PHP_EOL .
+            implode(PHP_EOL, array_map(fn(Player $player) => ' - ' . $player->getName(), $loser->getMembers()))
+        );
+        $webhook->send($message);
     }
 }
