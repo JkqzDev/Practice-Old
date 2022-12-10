@@ -59,29 +59,29 @@ final class Session {
         $this->setScoreboard(new ScoreboardBuilder($this, '&l&ePractice&r'));
 
         MySQL::runAsync(new SelectAsync('duel_stats', ['xuid' => $this->xuid], '',
-            function(array $rows): void {
+            function (array $rows): void {
                 if (count($rows) === 0) {
                     MySQL::runAsync(new InsertAsync('duel_stats', ['xuid' => $this->xuid, 'player' => $this->name]));
                 } else {
                     $row = $rows[0];
-                    $this->kills = (int)$row['kills'];
-                    $this->deaths = (int)$row['deaths'];
-                    $this->killstreak = (int)$row['streak'];
-                    $this->elo = (int)$row['elo'];
+                    $this->kills = (int) $row['kills'];
+                    $this->deaths = (int) $row['deaths'];
+                    $this->killstreak = (int) $row['streak'];
+                    $this->elo = (int) $row['elo'];
                 }
             }));
 
         MySQL::runAsync(new SelectAsync('player_settings', ['xuid' => $this->xuid], '',
-            function(array $rows): void {
-                if (count($rows) === 0) {
-                    MySQL::runAsync(new InsertAsync('player_settings', ['xuid' => $this->xuid, 'player' => $this->name]));
-                } else {
-                    $row = $rows[0];
-                    $this->getSetting(Setting::SCOREBOARD)?->setEnabled((bool)$row[Setting::SCOREBOARD]);
-                    $this->getSetting(Setting::CPS_COUNTER)?->setEnabled((bool)$row[Setting::CPS_COUNTER]);
-                    $this->getSetting(Setting::AUTO_RESPAWN)?->setEnabled((bool)$row[Setting::AUTO_RESPAWN]);
-                }
-            })
+                function (array $rows): void {
+                    if (count($rows) === 0) {
+                        MySQL::runAsync(new InsertAsync('player_settings', ['xuid' => $this->xuid, 'player' => $this->name]));
+                    } else {
+                        $row = $rows[0];
+                        $this->getSetting(Setting::SCOREBOARD)?->setEnabled((bool) $row[Setting::SCOREBOARD]);
+                        $this->getSetting(Setting::CPS_COUNTER)?->setEnabled((bool) $row[Setting::CPS_COUNTER]);
+                        $this->getSetting(Setting::AUTO_RESPAWN)?->setEnabled((bool) $row[Setting::AUTO_RESPAWN]);
+                    }
+                })
         );
     }
 
@@ -195,12 +195,12 @@ final class Session {
             $time = round($enderpearl - microtime(true), 2);
 
             if ($time >= 0.00) {
-                $times = explode('.', (string)$time);
+                $times = explode('.', (string) $time);
 
                 $xp = $times[0];
                 $progress = 0 . '.' . ($times[1] ?? 0.00);
 
-                $this->getPlayer()?->getXpManager()->setXpAndProgress((int)$xp, (float)$progress);
+                $this->getPlayer()?->getXpManager()->setXpAndProgress((int) $xp, (float) $progress);
             } else {
                 $this->enderpearl = null;
                 $this->getPlayer()?->getXpManager()->setXpAndProgress(0, 0.00);
@@ -228,7 +228,7 @@ final class Session {
         $player->getInventory()->clearAll();
         $player->getArmorInventory()->clearAll();
         $player->getCursorInventory()->clearAll();
-        
+
         $player->getEffects()->clear();
 
         $player->setHealth($player->getMaxHealth());
@@ -319,9 +319,9 @@ final class Session {
                 'elo' => $elo
             ], ['xuid' => $xuid]));
         }
-        $scoreboardValue = (int)$this->getSetting(Setting::SCOREBOARD)->isEnabled();
-        $autoRespawnValue = (int)$this->getSetting(Setting::AUTO_RESPAWN)->isEnabled();
-        $cpsCounterValue = (int)$this->getSetting(Setting::CPS_COUNTER)->isEnabled();
+        $scoreboardValue = (int) $this->getSetting(Setting::SCOREBOARD)->isEnabled();
+        $autoRespawnValue = (int) $this->getSetting(Setting::AUTO_RESPAWN)->isEnabled();
+        $cpsCounterValue = (int) $this->getSetting(Setting::CPS_COUNTER)->isEnabled();
 
         MySQL::runAsync(new UpdateAsync('player_settings', [
             'player' => $name,

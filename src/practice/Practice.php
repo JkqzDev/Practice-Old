@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace practice;
 
+use pocketmine\world\generator\GeneratorManager;
 use pocketmine\world\World;
 use pocketmine\item\PotionType;
 use pocketmine\item\ItemFactory;
@@ -34,6 +35,7 @@ use practice\kit\command\KitCommand;
 use practice\kit\KitFactory;
 use practice\party\duel\DuelFactory as PartyDuelFactory;
 use practice\session\SessionFactory;
+use practice\world\generator\VoidGenerator;
 use practice\world\WorldFactory;
 
 final class Practice extends PluginBase {
@@ -59,6 +61,7 @@ final class Practice extends PluginBase {
         
         $this->registerEntities();
         $this->registerItems();
+        $this->registerGenerators();
         $this->registerHandlers();
         $this->registerCommands();
         $this->unregisterCommands();
@@ -119,6 +122,10 @@ final class Practice extends PluginBase {
         foreach (PotionType::getAll() as $potionType) {
             ItemFactory::getInstance()->register(new SplashPotionItem($potionType), true);
         }
+    }
+
+    protected function registerGenerators(): void {
+        GeneratorManager::getInstance()->addGenerator(VoidGenerator::class, 'void', fn() => null, true);
     }
 
     protected function registerHandlers(): void {

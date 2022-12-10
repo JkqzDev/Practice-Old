@@ -186,7 +186,7 @@ class Duel {
         }
     }
 
-    public function getOpponent(Player $player): ?Player {
+    public function getOpponent(Player|Session $player): ?Player {
         $firstSession = $this->firstSession;
         $secondSession = $this->secondSession;
 
@@ -353,10 +353,8 @@ class Duel {
                         $session = SessionFactory::get($spectator);
                         $session?->setDuel(null);
                         $session?->giveLobbyItems();
-                        $session->getPlayer()?->sendMessage(TextFormat::colorize('&cDuel has finished'));
 
                         $spectator->setGamemode(GameMode::SURVIVAL());
-                        $spectator->getInventory()->clearAll();
                         $spectator->teleport($spectator->getServer()->getWorldManager()->getDefaultWorld()->getSpawnLocation());
                     }
                     $this->delete();

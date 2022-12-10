@@ -37,7 +37,6 @@ final class KitCommand extends Command {
                     return;
                 }
                 $kit = KitFactory::get($arena->getKit());
-
                 $kit?->giveTo($sender);
             }
             return;
@@ -49,7 +48,9 @@ final class KitCommand extends Command {
                 if (!isset($args[1])) {
                     return;
                 }
-                $kitName = $args[1];
+                $text = $args;
+                unset($text[0]);
+                $kitName = implode(' ', $text);
                 $kit = KitFactory::get($kitName);
 
                 if ($kit === null) {

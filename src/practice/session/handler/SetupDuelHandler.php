@@ -81,7 +81,7 @@ final class SetupDuelHandler {
         $secondPortal = BlockFactory::getInstance()->get(BlockLegacyIds::EMERALD_ORE, 0)->asItem();
         $secondPortal->setCustomName(TextFormat::colorize('&r&2Second Portal'));
         $secondPortal->getNamedTag()->setString('practice_item', 'secondPortal');
-        
+
         if ($this->withPortal) {
             $player->getInventory()->setContents([
                 0 => $firstPosition,

@@ -9,7 +9,6 @@ use practice\session\Session;
 use practice\duel\DuelFactory;
 use pocketmine\utils\TextFormat;
 use practice\session\SessionFactory;
-use practice\duel\queue\PlayerQueue;
 use pocketmine\network\mcpe\protocol\SetScorePacket;
 use pocketmine\network\mcpe\protocol\RemoveObjectivePacket;
 use pocketmine\network\mcpe\protocol\types\ScorePacketEntry;
@@ -98,7 +97,7 @@ class ScoreboardBuilder {
             }
         }
         $lines[] = '&r&r';
-        $lines[] = ' &7misty.lol';
+        $lines[] = ' &7kresu.rip';
         $lines[] = '&7&r';
         $this->clear();
 

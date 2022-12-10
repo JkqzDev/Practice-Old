@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace practice\world;
 
 use Closure;
+use JetBrains\PhpStorm\ArrayShape;
 use practice\Practice;
 use pocketmine\world\Position;
 use practice\world\async\WorldCopyAsync;
@@ -30,7 +31,7 @@ final class World {
         }
     }
 
-    public static function deserializeData(array $data): array {
+    #[ArrayShape(['modes' => "mixed", 'firstPosition' => "\pocketmine\world\Position", 'secondPosition' => "\pocketmine\world\Position", 'firstPortal' => "null|\pocketmine\world\Position", 'secondPortal' => "null|\pocketmine\world\Position"])] public static function deserializeData(array $data): array {
         $storage = [
             'modes' => $data['modes'],
             'firstPosition' => new Position(
@@ -100,7 +101,7 @@ final class World {
         ));
     }
 
-    public function serializeData(): array {
+    #[ArrayShape(['modes' => "array", 'firstPosition' => "array", 'secondPosition' => "array", 'firstPortal' => "array|null", 'secondPortal' => "array|null"])] public function serializeData(): array {
         $firstPosition = $this->firstPosition;
         $secondPosition = $this->secondPosition;
 
@@ -119,8 +120,8 @@ final class World {
                 'y' => $secondPosition->getY(),
                 'z' => $secondPosition->getZ()
             ],
-            'firstPortal' => null, // For bridge
-            'secondPortal' => null // For bridge
+            'firstPortal' => null,
+            'secondPortal' => null
         ];
 
         if ($firstPortal !== null && $secondPortal !== null) {

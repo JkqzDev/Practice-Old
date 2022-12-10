@@ -53,7 +53,7 @@ final class DuelFactory {
         $worldData->copyWorld(
             'duel-' . $id,
             Practice::getInstance()->getServer()->getDataPath() . 'worlds',
-            static function(World $world) use ($className, $id, $duelType, $worldData, $ranked, $first, $second): void {
+            static function (World $world) use ($className, $id, $duelType, $worldData, $ranked, $first, $second): void {
                 $duel = new $className($id, $duelType, $worldData->getName(), $ranked, $first, $second, $world);
 
                 $first->setDuel($duel);
@@ -105,7 +105,7 @@ final class DuelFactory {
     }
 
     public static function task(): void {
-        Practice::getInstance()->getScheduler()->scheduleRepeatingTask(new ClosureTask(static function(): void {
+        Practice::getInstance()->getScheduler()->scheduleRepeatingTask(new ClosureTask(static function (): void {
             foreach (self::getAll() as $duel) {
                 $duel->update();
             }
