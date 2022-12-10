@@ -378,7 +378,7 @@ class Duel {
     }
 
     protected function log(): void {
-        $webhook = new Webhook(Practice::getInstance()->getConfig()->get('webhook-duels', ''));
+        $webhook = new Webhook($this->ranked ? Practice::getInstance()->getConfig()->get('webhook-ranked-duels', '') : Practice::getInstance()->getConfig()->get('webhook-unranked-duels', ''));
         $message = new Message();
 
         if ($this->winner === $this->firstSession->getName()) {
