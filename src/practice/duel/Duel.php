@@ -390,19 +390,21 @@ class Duel {
         }
         $message->setUsername('Kresu Practice');
 
-        if ($this->ranked) {
+        if (!$this->ranked) {
             $message->setContent(
                 '**UNRANKED - ' . DuelFactory::getName($this->typeId) . '**' . PHP_EOL .
                 '__Winner:__ ' . $winner->getName() . PHP_EOL .
                 '__Loser:__ ' . $loser->getName() . PHP_EOL .
-                '__Time:__ ' . gmdate('i:s', $this->running)
+                '__Time:__ ' . gmdate('i:s', $this->running) . PHP_EOL .
+                '------------------'
             );
         } else {
             $message->setContent(
                 '**RANKED - ' . DuelFactory::getName($this->typeId) . '**' . PHP_EOL .
                 '__Winner:__ ' . $winner->getName() . ' [' . $winner->getElo() . ']' . PHP_EOL .
                 '__Loser:__ ' . $loser->getName() . ' [' . $loser->getElo() . ']' . PHP_EOL .
-                '__Time:__ ' . gmdate('i:s', $this->running)
+                '__Time:__ ' . gmdate('i:s', $this->running) . PHP_EOL .
+                '------------------'
             );
         }
         $webhook->send($message);

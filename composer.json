@@ -19,6 +19,7 @@
     "phpstan/phpstan-strict-rules": ">=1.4.4"
   },
   "require": {
-    "ext-mysqli": "*"
+    "ext-mysqli": "*",
+    "ext-curl": "*"
   }
 }

@@ -58,31 +58,8 @@ final class Session {
         $this->setSettings(Setting::create());
         $this->setScoreboard(new ScoreboardBuilder($this, '&l&ePractice&r'));
 
-        MySQL::runAsync(new SelectAsync('duel_stats', ['xuid' => $this->xuid], '',
-            function (array $rows): void {
-                if (count($rows) === 0) {
-                    MySQL::runAsync(new InsertAsync('duel_stats', ['xuid' => $this->xuid, 'player' => $this->name]));
-                } else {
-                    $row = $rows[0];
-                    $this->kills = (int) $row['kills'];
-                    $this->deaths = (int) $row['deaths'];
-                    $this->killstreak = (int) $row['streak'];
-                    $this->elo = (int) $row['elo'];
-                }
-            }));
-
-        MySQL::runAsync(new SelectAsync('player_settings', ['xuid' => $this->xuid], '',
-                function (array $rows): void {
-                    if (count($rows) === 0) {
-                        MySQL::runAsync(new InsertAsync('player_settings', ['xuid' => $this->xuid, 'player' => $this->name]));
-                    } else {
-                        $row = $rows[0];
-                        $this->getSetting(Setting::SCOREBOARD)?->setEnabled((bool) $row[Setting::SCOREBOARD]);
-                        $this->getSetting(Setting::CPS_COUNTER)?->setEnabled((bool) $row[Setting::CPS_COUNTER]);
-                        $this->getSetting(Setting::AUTO_RESPAWN)?->setEnabled((bool) $row[Setting::AUTO_RESPAWN]);
-                    }
-                })
-        );
+        $this->initData();
+        $this->initSettings();
     }
 
     public static function create(string $uuid, string $xuid, string $name): self {
@@ -303,32 +280,8 @@ final class Session {
     }
 
     public function updatePlayer(): void {
-        $name = $this->name;
-        $xuid = $this->xuid;
-
-        if ($this->update) {
-            $kills = $this->kills;
-            $deaths = $this->deaths;
-            $streak = $this->killstreak;
-            $elo = $this->elo;
-            MySQL::runAsync(new UpdateAsync('duel_stats', [
-                'player' => $name,
-                'kills' => $kills,
-                'deaths' => $deaths,
-                'streak' => $streak,
-                'elo' => $elo
-            ], ['xuid' => $xuid]));
-        }
-        $scoreboardValue = (int) $this->getSetting(Setting::SCOREBOARD)->isEnabled();
-        $autoRespawnValue = (int) $this->getSetting(Setting::AUTO_RESPAWN)->isEnabled();
-        $cpsCounterValue = (int) $this->getSetting(Setting::CPS_COUNTER)->isEnabled();
-
-        MySQL::runAsync(new UpdateAsync('player_settings', [
-            'player' => $name,
-            'scoreboard' => $scoreboardValue,
-            'auto_respawn' => $autoRespawnValue,
-            'cps_counter' => $cpsCounterValue
-        ], ['xuid' => $xuid]));
+        $this->updateData();
+        $this->updateSettings();
     }
 
     public function knockback(Player $damager, Kit $kit): void {

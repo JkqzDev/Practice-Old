@@ -96,6 +96,7 @@ final class Practice extends PluginBase {
     protected function createTables(): void {
         MySQL::runAsync(new QueryAsync(Table::DUEL_STATS));
         MySQL::runAsync(new QueryAsync(Table::PLAYER_SETTINGS));
+        MySQL::runAsync(new QueryAsync(Table::PLAYER_INVENTORIES));
     }
 
     protected function registerEntities(): void {

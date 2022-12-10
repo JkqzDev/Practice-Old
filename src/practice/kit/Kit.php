@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace practice\kit;
 
+use JetBrains\PhpStorm\ArrayShape;
 use pocketmine\item\Durable;
 use pocketmine\player\Player;
 use pocketmine\item\ItemFactory;
@@ -11,6 +12,7 @@ use pocketmine\data\bedrock\EffectIdMap;
 use pocketmine\entity\effect\EffectInstance;
 use pocketmine\data\bedrock\EnchantmentIdMap;
 use pocketmine\item\enchantment\EnchantmentInstance;
+use pocketmine\utils\TextFormat;
 
 final class Kit {
 
@@ -27,11 +29,11 @@ final class Kit {
 
     public static function deserializeData(array $data): array {
         $storage = [
-            'attackCooldown' => (int)($data['attackCooldown'] ?? 10),
-            'maxHeight' => (float)($data['maxHeight'] ?? 0.0),
-            'horizontalKnockback' => (float)($data['horizontalKnockback'] ?? 0.4),
-            'verticalKnockback' => (float)($data['verticalKnockback'] ?? 0.4),
-            'canRevert' => (bool)($data['canRevert'] ?? false),
+            'attackCooldown' => (int) ($data['attackCooldown'] ?? 10),
+            'maxHeight' => (float) ($data['maxHeight'] ?? 0.0),
+            'horizontalKnockback' => (float) ($data['horizontalKnockback'] ?? 0.4),
+            'verticalKnockback' => (float) ($data['verticalKnockback'] ?? 0.4),
+            'canRevert' => (bool) ($data['canRevert'] ?? false),
             'armorContents' => [],
             'inventoryContents' => [],
             'effects' => []
@@ -42,18 +44,19 @@ final class Kit {
         $effects = $data['effects'] ?? [];
 
         foreach ($armorContents as $slot => $armor) {
-            $item = ItemFactory::getInstance()->get((int)$armor['id'], (int)$armor['meta']);
+            $item = ItemFactory::getInstance()->get((int) $armor['id'], (int) $armor['meta']);
+            $item->setCustomName(TextFormat::colorize('&r&l&cKRESU&r'));
 
             if (isset($armor['unbreakable']) && $item instanceof Durable) {
-                $item->setUnbreakable((bool)$armor['unbreakable']);
+                $item->setUnbreakable((bool) $armor['unbreakable']);
             }
 
             if (isset($armor['enchantments'])) {
                 foreach ($armor['enchantments'] as $enchantId => $enchantLevel) {
-                    $enchant = EnchantmentIdMap::getInstance()->fromId((int)$enchantId);
+                    $enchant = EnchantmentIdMap::getInstance()->fromId((int) $enchantId);
 
                     if ($enchant !== null) {
-                        $item->addEnchantment(new EnchantmentInstance($enchant, (int)$enchantLevel));
+                        $item->addEnchantment(new EnchantmentInstance($enchant, (int) $enchantLevel));
                     }
                 }
             }
@@ -61,18 +64,18 @@ final class Kit {
         }
 
         foreach ($inventoryContents as $slot => $it) {
-            $item = ItemFactory::getInstance()->get((int)$it['id'], (int)$it['meta'], (int)($it['count'] ?? 1));
+            $item = ItemFactory::getInstance()->get((int) $it['id'], (int) $it['meta'], (int) ($it['count'] ?? 1));
 
             if (isset($it['unbreakable']) && $item instanceof Durable) {
-                $item->setUnbreakable((bool)$it['unbreakable']);
+                $item->setUnbreakable((bool) $it['unbreakable']);
             }
 
             if (isset($it['enchantments'])) {
                 foreach ($it['enchantments'] as $enchantId => $enchantLevel) {
-                    $enchant = EnchantmentIdMap::getInstance()->fromId((int)$enchantId);
+                    $enchant = EnchantmentIdMap::getInstance()->fromId((int) $enchantId);
 
                     if ($enchant !== null) {
-                        $item->addEnchantment(new EnchantmentInstance($enchant, (int)$enchantLevel));
+                        $item->addEnchantment(new EnchantmentInstance($enchant, (int) $enchantLevel));
                     }
                 }
             }
@@ -80,10 +83,10 @@ final class Kit {
         }
 
         foreach ($effects as $id => $eff) {
-            $effect = EffectIdMap::getInstance()->fromId((int)$id);
+            $effect = EffectIdMap::getInstance()->fromId((int) $id);
 
             if ($effect !== null) {
-                $storage['effects'][(int)$id] = new EffectInstance($effect, (int)$eff['duration'], (int)$eff['amplifier'], false);
+                $storage['effects'][(int) $id] = new EffectInstance($effect, (int) $eff['duration'], (int) $eff['amplifier'], false);
             }
         }
         return $storage;
@@ -155,7 +158,7 @@ final class Kit {
         return $this->effects;
     }
 
-    public function serializeData(): array {
+    #[ArrayShape(['attackCooldown' => "int", 'maxHeight' => "float", 'horizontalKnockback' => "float", 'verticalKnockback' => "float", 'canRevert' => "bool"])] public function serializeData(): array {
         return [
             'attackCooldown' => $this->attackCooldown,
             'maxHeight' => $this->maxHeight,

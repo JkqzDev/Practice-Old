@@ -49,4 +49,26 @@ create table if not exists player_settings
         unique (xuid)
 );";
 
+    public const PLAYER_INVENTORIES = "
+create table if not exists player_inventories
+(
+    id           int auto_increment
+        primary key,
+    xuid         varchar(50)                 not null,
+    player       varchar(36)                 not null,
+    no_debuff    blob(255)                   not null,
+    battle_rush  blob(255)                   not null,
+    boxing       blob(255)                   not null,
+    bridge       blob(255)                   not null,
+    build_uhc    blob(255)                   not null,
+    cave_uhc     blob(255)                   not null,
+    combo        blob(255)                   not null,
+    final_uhc    blob(255)                   not null,
+    fist         blob(255)                   not null,
+    gapple       blob(255)                   not null,
+    sumo         blob(255)                   not null,
+    constraint xuid
+        unique (xuid)
+);";
+
 }

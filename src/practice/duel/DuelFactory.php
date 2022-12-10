@@ -54,6 +54,7 @@ final class DuelFactory {
             'duel-' . $id,
             Practice::getInstance()->getServer()->getDataPath() . 'worlds',
             static function (World $world) use ($className, $id, $duelType, $worldData, $ranked, $first, $second): void {
+                /** @var Duel $duel */
                 $duel = new $className($id, $duelType, $worldData->getName(), $ranked, $first, $second, $world);
 
                 $first->setDuel($duel);
