@@ -7,6 +7,7 @@ namespace practice\form\player;
 use cosmicpe\form\CustomForm;
 use cosmicpe\form\SimpleForm;
 use pocketmine\player\Player;
+use practice\duel\Duel;
 use practice\session\Session;
 use pocketmine\utils\TextFormat;
 use practice\session\SessionFactory;
@@ -22,16 +23,20 @@ class PlayerProfileForm extends SimpleForm {
 
         $statsButton = new Button(TextFormat::colorize('&7Player stats'));
         $settingsButton = new Button(TextFormat::colorize('&7Player settings'));
+        $kitEditorButton = new Button(TextFormat::colorize('&7Kit Editor'));
 
         $this->addButton($statsButton, function(Player $player, int $button_index): void {
-            $this->firstPage($player);
+            $this->createStatsForm($player);
         });
         $this->addButton($settingsButton, function(Player $player, int $button_index): void {
-            $this->secondPage($player);
+            $this->createSettingsForm($player);
+        });
+        $this->addButton($kitEditorButton, function (Player $player, int $button_index): void {
+
         });
     }
 
-    private function firstPage(Player $player): void {
+    private function createStatsForm(Player $player): void {
         $session = SessionFactory::get($player);
 
         if ($session === null) {
@@ -56,7 +61,7 @@ class PlayerProfileForm extends SimpleForm {
         $player->sendForm($simpleForm);
     }
 
-    private function secondPage(Player $player): void {
+    private function createSettingsForm(Player $player): void {
         $session = SessionFactory::get($player);
 
         if ($session === null) {
@@ -87,5 +92,48 @@ class PlayerProfileForm extends SimpleForm {
             }
         };
         $player->sendForm($customForm);
+    }
+
+    private function createKitEditorForm(Player $player): void {
+        $session = SessionFactory::get($player);
+
+        if ($session === null) {
+            return;
+        }
+        $simpleForm = new class($session) extends SimpleForm {
+
+            private array $types = [
+                'No Debuff',
+                'Boxing',
+                'Bridge',
+                'Battle Rush',
+                'Fist',
+                'Gapple',
+                'Sumo',
+                'Final UHC',
+                'Cave UHC',
+                'Build UHC',
+                'Combo'
+            ];
+
+            public function __construct(Session $session) {
+                parent::__construct(TextFormat::colorize('&gKit Editor'));
+
+                foreach ($this->types as $name) {
+                    $realName = strtolower(str_replace(' ', '', $name));
+                    $inventory = $session->getInventory($realName);
+
+                    if ($inventory === null) {
+                        continue;
+                    }
+                    $button = new Button($name);
+                    $this->addButton($button, function (Player $player, int $button_index) use ($inventory, $session): void {
+                        $session->setCurrentKitEdit($inventory);
+                        $player->getInventory()->setContents($inventory->getInventoryContents());
+                    });
+                }
+            }
+        };
+        $player->sendForm($simpleForm);
     }
 }

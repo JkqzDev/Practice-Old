@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace practice;
 
+use pocketmine\block\tile\Sign;
+use pocketmine\event\player\PlayerItemUseEvent;
 use pocketmine\world\World;
 use practice\kit\KitFactory;
 use pocketmine\player\Player;
@@ -188,6 +190,18 @@ final class EventHandler implements Listener {
 
     public function handleTransaction(InventoryTransactionEvent $event): void {
         $transaction = $event->getTransaction();
+        $player = $transaction->getSource();
+
+        $session = SessionFactory::get($player);
+
+        if ($session === null) {
+            $event->cancel();
+            return;
+        }
+
+        if ($session->getCurrentKitEdit() !== null) {
+            return;
+        }
 
         foreach ($transaction->getActions() as $action) {
             $item = $action->getSourceItem();
@@ -226,11 +240,61 @@ final class EventHandler implements Listener {
         if ($session->inLobby()) {
             $handlerSetupArena = $session->getSetupArenaHandler();
             $handlerSetupDuel = $session->getSetupDuelHandler();
+            $currentKitEdit = $session->getCurrentKitEdit();
 
             if ($handlerSetupArena !== null) {
                 $handlerSetupArena->handleInteract($event);
             } elseif ($handlerSetupDuel !== null) {
                 $handlerSetupDuel->handleInteract($event);
+            } elseif ($currentKitEdit !== null) {
+                $block = $event->getBlock();
+                $tile = $player->getWorld()->getTile($block->getPosition());
+
+                if (!$tile instanceof Sign) {
+                    return;
+                }
+                $text = $tile->getText();
+
+                switch ($text->getLine(0)) {
+                    case TextFormat::colorize('&aSave'):
+                        $currentKitEdit->setInventoryContents($player->getInventory()->getContents());
+
+                        $player->sendMessage(TextFormat::colorize('&aKit edited successfully.'));
+                        break;
+
+                    case TextFormat::colorize('&fReset'):
+                        $player->getInventory()->setContents($currentKitEdit->getRealKit()->getInventoryContents());
+                        $player->sendMessage(TextFormat::colorize('&aYou have reset the kit.'));
+                        break;
+
+                    case TextFormat::colorize('&cExit'):
+                        $session->setCurrentKitEdit(null);
+                        $session->giveLobbyItems();
+
+                        $player->teleport($player->getServer()->getWorldManager()->getDefaultWorld()->getSpawnLocation());
+
+                        foreach ($player->getServer()->getOnlinePlayers() as $target) {
+                            if (!$target->canSee($player)) {
+                                $target->showPlayer($player);
+                            }
+                        }
+                        break;
+                }
+            }
+        }
+    }
+
+    public function handleItemUse(PlayerItemUseEvent $event): void {
+        $player = $event->getPlayer();
+        $session = SessionFactory::get($player);
+
+        if ($session === null) {
+            return;
+        }
+
+        if ($session->inLobby()) {
+            if ($session->getCurrentKitEdit() !== null) {
+                $event->cancel();
             }
         }
     }

@@ -15,11 +15,11 @@ use practice\duel\DuelFactory;
 use pocketmine\player\GameMode;
 use pocketmine\entity\Attribute;
 use pocketmine\utils\TextFormat;
-use practice\database\mysql\MySQL;
 use practice\item\party\PartyItem;
 use practice\duel\queue\PlayerQueue;
 use practice\duel\queue\QueueFactory;
 use practice\session\data\PlayerData;
+use practice\session\inventory\InventoryTrait;
 use practice\session\setting\Setting;
 use practice\item\arena\JoinArenaItem;
 use practice\item\duel\DuelSpectateItem;
@@ -29,10 +29,7 @@ use practice\item\player\PlayerProfileItem;
 use practice\item\duel\queue\RankedQueueItem;
 use practice\item\duel\queue\UnrankedQueueItem;
 use practice\item\player\PlayerLeaderboardItem;
-use practice\database\mysql\queries\SelectAsync;
 use practice\session\scoreboard\ScoreboardTrait;
-use practice\database\mysql\queries\InsertAsync;
-use practice\database\mysql\queries\UpdateAsync;
 use practice\session\scoreboard\ScoreboardBuilder;
 use practice\session\setting\display\DisplaySetting;
 use practice\party\duel\DuelFactory as DuelDuelFactory;
@@ -40,6 +37,7 @@ use practice\party\duel\DuelFactory as DuelDuelFactory;
 final class Session {
     use PlayerData;
     use HandlerTrait;
+    use InventoryTrait;
     use SettingTrait;
     use ScoreboardTrait;
 
@@ -165,7 +163,7 @@ final class Session {
 
     public function update(): void {
         $this->scoreboard->update();
-
+        $player = $this->getPlayer();
         $enderpearl = $this->enderpearl;
 
         if ($enderpearl !== null) {
@@ -177,10 +175,19 @@ final class Session {
                 $xp = $times[0];
                 $progress = 0 . '.' . ($times[1] ?? 0.00);
 
-                $this->getPlayer()?->getXpManager()->setXpAndProgress((int) $xp, (float) $progress);
+                $player?->getXpManager()->setXpAndProgress((int) $xp, (float) $progress);
             } else {
                 $this->enderpearl = null;
-                $this->getPlayer()?->getXpManager()->setXpAndProgress(0, 0.00);
+                $player?->getXpManager()->setXpAndProgress(0, 0.00);
+            }
+        }
+        $currentKitEdit = $this->getCurrentKitEdit();
+
+        if ($player !== null && $currentKitEdit !== null) {
+            foreach ($player->getServer()->getOnlinePlayers() as $target) {
+                if ($target->canSee($player)) {
+                    $target->hidePlayer($player);
+                }
             }
         }
     }
@@ -265,6 +272,7 @@ final class Session {
         $this->queue = null;
         $this->duel = null;
         $this->party = null;
+        $this->currentKitEdit = null;
 
         $this->stopSetupArenaHandler();
         $this->stopSetupDuelHandler();

@@ -8,13 +8,13 @@ use practice\duel\Duel;
 use pocketmine\color\Color;
 use pocketmine\world\World;
 use pocketmine\item\ItemIds;
-use practice\kit\KitFactory;
 use pocketmine\player\Player;
 use pocketmine\world\Position;
 use practice\duel\DuelFactory;
 use pocketmine\player\GameMode;
 use pocketmine\item\ItemFactory;
 use pocketmine\utils\TextFormat;
+use practice\session\Session;
 use practice\world\WorldFactory;
 use pocketmine\math\AxisAlignedBB;
 use pocketmine\event\block\BlockBreakEvent;
@@ -62,13 +62,14 @@ class Bridge extends Duel {
             $event->cancel();
             $isFirst = $player->getName() === $this->firstSession->getName();
 
-            $this->giveKit($player, $isFirst);
+            $this->giveKit($isFirst ? $this->firstSession : $this->secondSession, $isFirst);
             $this->teleportPlayer($player, $isFirst);
         }
     }
 
-    private function giveKit(Player $player, bool $firstPlayer = true): void {
-        $kit = KitFactory::get(strtolower(DuelFactory::getName($this->typeId)));
+    private function giveKit(Session $session, bool $firstPlayer = true): void {
+        $kit = $session->getInventory(strtolower(DuelFactory::getName($this->typeId)));
+        $player = $session->getPlayer();
 
         $player->getCursorInventory()->clearAll();
         $player->getOffHandInventory()->clearAll();
@@ -77,9 +78,9 @@ class Bridge extends Duel {
         $player->getHungerManager()->setFood($player->getHungerManager()->getMaxFood());
 
         if ($kit !== null) {
-            $armorContents = $kit->getArmorContents();
+            $armorContents = $kit->getRealKit()->getArmorContents();
             $inventoryContents = $kit->getInventoryContents();
-            $effects = $kit->getEffects();
+            $effects = $kit->getRealKit()->getEffects();
 
             $color = new Color(0, 0, 255);
 
@@ -134,7 +135,7 @@ class Bridge extends Duel {
 
             if ($block->getId() === ItemIds::END_PORTAL) {
                 $this->teleportPlayer($player, $isFirst);
-                $this->giveKit($player, $isFirst);
+                $this->giveKit($isFirst ? $this->firstSession : $this->secondSession, $isFirst);
                 return;
             }
         }
@@ -144,7 +145,6 @@ class Bridge extends Duel {
 
             if ($block->getId() === ItemIds::END_PORTAL) {
                 $this->addPoint($isFirst);
-                return;
             }
         }
     }
@@ -176,8 +176,8 @@ class Bridge extends Duel {
             $this->finish($firstPlayer);
             return;
         }
-        $this->giveKit($firstPlayer);
-        $this->giveKit($secondPlayer, false);
+        $this->giveKit($this->firstSession);
+        $this->giveKit($this->secondSession, false);
 
         $firstPlayer->setImmobile(true);
         $secondPlayer->setImmobile(true);
@@ -210,8 +210,8 @@ class Bridge extends Duel {
             $secondPlayer->getArmorInventory()->clearAll();
             $secondPlayer->getInventory()->clearAll();
 
-            $this->giveKit($firstPlayer);
-            $this->giveKit($secondPlayer, false);
+            $this->giveKit($firstSession);
+            $this->giveKit($secondSession, false);
 
             $this->teleportPlayer($firstPlayer);
             $this->teleportPlayer($secondPlayer, false);
@@ -279,10 +279,10 @@ class Bridge extends Duel {
 
             if ($firstPlayer->getPosition()->getY() < 0) {
                 $this->teleportPlayer($firstPlayer);
-                $this->giveKit($firstPlayer);
+                $this->giveKit($this->firstSession);
             } elseif ($secondPlayer->getPosition()->getY() < 0) {
                 $this->teleportPlayer($secondPlayer, false);
-                $this->giveKit($secondPlayer, false);
+                $this->giveKit($this->secondSession, false);
             }
         }
     }

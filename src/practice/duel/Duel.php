@@ -8,7 +8,6 @@ use CortexPE\DiscordWebhookAPI\Message;
 use CortexPE\DiscordWebhookAPI\Webhook;
 use practice\Practice;
 use pocketmine\world\World;
-use practice\kit\KitFactory;
 use pocketmine\player\Player;
 use practice\session\Session;
 use pocketmine\world\Position;
@@ -84,8 +83,6 @@ class Duel {
         $world->setTime(World::TIME_DAY);
         $world->stopTime();
 
-        $kit = KitFactory::get(strtolower(DuelFactory::getName($this->typeId)));
-
         /** @var \practice\world\World $worldData */
         $worldData = WorldFactory::get($worldName);
         $firstPosition = $worldData->getFirstPosition();
@@ -103,8 +100,8 @@ class Duel {
             $secondPlayer->getArmorInventory()->clearAll();
             $secondPlayer->getInventory()->clearAll();
 
-            $kit?->giveTo($firstPlayer);
-            $kit?->giveTo($secondPlayer);
+            $firstSession->getInventory(strtolower(DuelFactory::getName($this->typeId)))?->giveTo($firstPlayer);
+            $secondSession->getInventory(strtolower(DuelFactory::getName($this->typeId)))?->giveTo($secondPlayer);
 
             $firstPlayer->teleport(Position::fromObject($firstPosition->add(0.5, 0, 0.5), $world));
             $secondPlayer->teleport(Position::fromObject($secondPosition->add(0.5, 0, 0.5), $world));

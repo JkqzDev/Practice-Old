@@ -49,9 +49,7 @@ class FinalUHC extends Duel {
         } else {
             $newPosition->z = $position->z;
         }
-
-        $newPosition->y = $this->world->getHighestBlockAt($newPosition->getFloorX(), $newPosition->getFloorZ());
-
+        $newPosition->y = $this->world->getHighestBlockAt($newPosition->getFloorX(), $newPosition->getFloorZ()) ?? $position->y;
         $player->teleport($newPosition->add(0, 1, 0));
     }
 

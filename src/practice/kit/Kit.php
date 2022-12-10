@@ -6,6 +6,7 @@ namespace practice\kit;
 
 use JetBrains\PhpStorm\ArrayShape;
 use pocketmine\item\Durable;
+use pocketmine\item\Item;
 use pocketmine\player\Player;
 use pocketmine\item\ItemFactory;
 use pocketmine\data\bedrock\EffectIdMap;
@@ -16,6 +17,16 @@ use pocketmine\utils\TextFormat;
 
 final class Kit {
 
+    /**
+     * @param int $attackCooldown
+     * @param float $maxHeight
+     * @param float $horizontalKnockback
+     * @param float $verticalKnockback
+     * @param bool $canRevert
+     * @param Item[] $armorContents
+     * @param Item[] $inventoryContents
+     * @param EffectInstance[] $effects
+     */
     public function __construct(
         private int   $attackCooldown,
         private float $maxHeight,
@@ -27,7 +38,7 @@ final class Kit {
         private array $effects
     ) {}
 
-    public static function deserializeData(array $data): array {
+    #[ArrayShape(['attackCooldown' => "int", 'maxHeight' => "float", 'horizontalKnockback' => "float", 'verticalKnockback' => "float", 'canRevert' => "bool", 'armorContents' => "array", 'inventoryContents' => "array", 'effects' => "array"])] public static function deserializeData(array $data): array {
         $storage = [
             'attackCooldown' => (int) ($data['attackCooldown'] ?? 10),
             'maxHeight' => (float) ($data['maxHeight'] ?? 0.0),

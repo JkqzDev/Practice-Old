@@ -5,10 +5,10 @@ declare(strict_types=1);
 namespace practice\duel\type;
 
 use practice\duel\Duel;
+use practice\session\Session;
 use practice\world\World;
 use pocketmine\color\Color;
 use pocketmine\item\ItemIds;
-use practice\kit\KitFactory;
 use pocketmine\player\Player;
 use pocketmine\world\Position;
 use practice\duel\DuelFactory;
@@ -79,13 +79,14 @@ class BattleRush extends Duel {
             $event->cancel();
             $isFirst = $player->getName() === $this->firstSession->getName();
 
-            $this->giveKit($player, $isFirst);
+            $this->giveKit($isFirst ? $this->firstSession : $this->secondSession, $isFirst);
             $this->teleportPlayer($player, $isFirst);
         }
     }
 
-    private function giveKit(Player $player, bool $firstPlayer = true): void {
-        $kit = KitFactory::get(strtolower(DuelFactory::getName($this->typeId)));
+    private function giveKit(Session $session, bool $firstPlayer = true): void {
+        $kit = $session->getInventory(strtolower(DuelFactory::getName($this->typeId)));
+        $player = $session->getPlayer();
 
         $player->getCursorInventory()->clearAll();
         $player->getOffHandInventory()->clearAll();
@@ -94,10 +95,9 @@ class BattleRush extends Duel {
         $player->getHungerManager()->setFood($player->getHungerManager()->getMaxFood());
 
         if ($kit !== null) {
-            $armorContents = $kit->getArmorContents();
+            $armorContents = $kit->getRealKit()->getArmorContents();
             $inventoryContents = $kit->getInventoryContents();
-            $effects = $kit->getEffects();
-
+            $effects = $kit->getRealKit()->getEffects();
             $color = new Color(0, 0, 255);
 
             if (!$firstPlayer) {
@@ -149,7 +149,7 @@ class BattleRush extends Duel {
 
             if ($block->getId() === ItemIds::END_PORTAL) {
                 $this->teleportPlayer($player, $isFirst);
-                $this->giveKit($player, $isFirst);
+                $this->giveKit($isFirst ? $this->firstSession : $this->secondSession, $isFirst);
                 return;
             }
         }
@@ -170,7 +170,6 @@ class BattleRush extends Duel {
         } else {
             $this->secondPoints++;
         }
-
         /** @var Player $firstPlayer */
         $firstPlayer = $this->firstSession->getPlayer();
 
@@ -192,11 +191,11 @@ class BattleRush extends Duel {
             $this->finish($firstPlayer);
             return;
         }
-        $this->giveKit($firstPlayer);
-        $this->giveKit($secondPlayer, false);
+        $this->giveKit($this->firstSession);
+        $this->giveKit($this->secondSession, false);
 
-        $firstPlayer->setImmobile(true);
-        $secondPlayer->setImmobile(true);
+        $firstPlayer->setImmobile();
+        $secondPlayer->setImmobile();
 
         $title = ($isFirstPlayer ? '&9' . $firstPlayer->getName() : '&c' . $secondPlayer->getName()) . ' &escored!';
         $subTitle = '&9' . $this->firstPoints . ' &7- &c' . $this->secondPoints;
@@ -231,14 +230,14 @@ class BattleRush extends Duel {
             $secondPlayer->getArmorInventory()->clearAll();
             $secondPlayer->getInventory()->clearAll();
 
-            $this->giveKit($firstPlayer);
-            $this->giveKit($secondPlayer, false);
+            $this->giveKit($firstSession);
+            $this->giveKit($secondSession, false);
 
             $this->teleportPlayer($firstPlayer);
             $this->teleportPlayer($secondPlayer, false);
 
-            $firstPlayer->setImmobile(true);
-            $secondPlayer->setImmobile(true);
+            $firstPlayer->setImmobile();
+            $secondPlayer->setImmobile();
         }
     }
 
@@ -300,10 +299,10 @@ class BattleRush extends Duel {
 
             if ($firstPlayer->getPosition()->getY() < 0) {
                 $this->teleportPlayer($firstPlayer);
-                $this->giveKit($firstPlayer);
+                $this->giveKit($this->firstSession);
             } elseif ($secondPlayer->getPosition()->getY() < 0) {
                 $this->teleportPlayer($secondPlayer, false);
-                $this->giveKit($secondPlayer, false);
+                $this->giveKit($this->secondSession, false);
             }
         }
     }

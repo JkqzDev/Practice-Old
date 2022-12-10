@@ -9,6 +9,7 @@ use pocketmine\utils\Config;
 
 final class KitFactory {
 
+    /** @var Kit[] */
     static private array $kits = [];
 
     public static function loadAll(): void {
