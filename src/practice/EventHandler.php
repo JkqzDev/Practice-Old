@@ -258,7 +258,6 @@ final class EventHandler implements Listener {
                 switch ($text->getLine(0)) {
                     case TextFormat::colorize('&aSave'):
                         $currentKitEdit->setInventoryContents($player->getInventory()->getContents());
-
                         $player->sendMessage(TextFormat::colorize('&aKit edited successfully.'));
                         break;
 
@@ -271,6 +270,7 @@ final class EventHandler implements Listener {
                         $session->setCurrentKitEdit(null);
                         $session->giveLobbyItems();
 
+                        $player->setImmobile(false);
                         $player->teleport($player->getServer()->getWorldManager()->getDefaultWorld()->getSpawnLocation());
 
                         foreach ($player->getServer()->getOnlinePlayers() as $target) {

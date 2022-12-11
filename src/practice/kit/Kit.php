@@ -56,7 +56,6 @@ final class Kit {
 
         foreach ($armorContents as $slot => $armor) {
             $item = ItemFactory::getInstance()->get((int) $armor['id'], (int) $armor['meta']);
-            $item->setCustomName(TextFormat::colorize('&r&l&cKRESU&r'));
 
             if (isset($armor['unbreakable']) && $item instanceof Durable) {
                 $item->setUnbreakable((bool) $armor['unbreakable']);
@@ -71,6 +70,7 @@ final class Kit {
                     }
                 }
             }
+            $item->setCustomName(TextFormat::colorize('&r&l&cKRESU&r'));
             $storage['armorContents'][$slot] = $item;
         }
 
@@ -90,6 +90,7 @@ final class Kit {
                     }
                 }
             }
+            $item->setCustomName(TextFormat::colorize('&r&l&cKRESU&r'));
             $storage['inventoryContents'][$slot] = $item;
         }
 

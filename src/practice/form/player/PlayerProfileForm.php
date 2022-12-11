@@ -33,7 +33,7 @@ class PlayerProfileForm extends SimpleForm {
             $this->createSettingsForm($player);
         });
         $this->addButton($kitEditorButton, function (Player $player, int $button_index): void {
-
+            $this->createKitEditorForm($player);
         });
     }
 
@@ -121,7 +121,7 @@ class PlayerProfileForm extends SimpleForm {
                 parent::__construct(TextFormat::colorize('&gKit Editor'));
 
                 foreach ($this->types as $name) {
-                    $realName = strtolower(str_replace(' ', '', $name));
+                    $realName = strtolower($name);
                     $inventory = $session->getInventory($realName);
 
                     if ($inventory === null) {
@@ -130,7 +130,7 @@ class PlayerProfileForm extends SimpleForm {
                     $button = new Button($name);
                     $this->addButton($button, function (Player $player, int $button_index) use ($inventory, $session): void {
                         if (!$player->getServer()->getWorldManager()->isWorldGenerated('kiteditor')) {
-                            $player->sendMessage(TextFormat::colorize('&cWorl kiteditor not exists.'));
+                            $player->sendMessage(TextFormat::colorize('&cWorld kiteditor not exists.'));
                             return;
                         }
 
@@ -142,6 +142,7 @@ class PlayerProfileForm extends SimpleForm {
 
                         $session->setCurrentKitEdit($inventory);
                         $player->getInventory()->setContents($inventory->getInventoryContents());
+                        $player->setImmobile();
                         $player->teleport(Position::fromObject($position->add(0.5, 0, 0.5), $position->getWorld()));
                     });
                 }
