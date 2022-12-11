@@ -8,7 +8,6 @@ use cosmicpe\form\CustomForm;
 use cosmicpe\form\SimpleForm;
 use pocketmine\player\Player;
 use pocketmine\world\Position;
-use practice\duel\Duel;
 use practice\session\Session;
 use pocketmine\utils\TextFormat;
 use practice\session\SessionFactory;
