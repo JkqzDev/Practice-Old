@@ -15,7 +15,7 @@ trait InventoryTrait {
     private ?Inventory $currentKitEdit = null;
 
     private function initInventories(): void {
-        MySQL::runAsync(new SelectAsync('player_settings', ['xuid' => $this->xuid], '',
+        MySQL::runAsync(new SelectAsync('player_inventories', ['xuid' => $this->xuid], '',
             function (array $rows): void {
                 if (count($rows) === 0) {
                     foreach (KitFactory::getAll() as $name => $kit) {

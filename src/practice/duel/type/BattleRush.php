@@ -59,7 +59,7 @@ class BattleRush extends Duel {
             $event->cancel();
             return;
         }
-        $this->blocks[(string)$position] = $block;
+        $this->blocks[(string) $position] = $block;
     }
 
     public function handleDamage(EntityDamageEvent $event): void {
@@ -88,6 +88,9 @@ class BattleRush extends Duel {
         $kit = $session->getInventory(strtolower(DuelFactory::getName($this->typeId)));
         $player = $session->getPlayer();
 
+        if ($player === null) {
+            return;
+        }
         $player->getCursorInventory()->clearAll();
         $player->getOffHandInventory()->clearAll();
 
@@ -159,7 +162,6 @@ class BattleRush extends Duel {
 
             if ($block->getId() === ItemIds::END_PORTAL) {
                 $this->addPoint($isFirst);
-                return;
             }
         }
     }
@@ -170,10 +172,7 @@ class BattleRush extends Duel {
         } else {
             $this->secondPoints++;
         }
-        /** @var Player $firstPlayer */
         $firstPlayer = $this->firstSession->getPlayer();
-
-        /** @var Player $secondPlayer */
         $secondPlayer = $this->secondSession->getPlayer();
 
         $this->starting = 5;
@@ -274,21 +273,18 @@ class BattleRush extends Duel {
         parent::update();
 
         if ($this->status === self::RUNNING) {
-            /** @var Player $firstPlayer */
             $firstPlayer = $this->firstSession->getPlayer();
-
-            /** @var Player $secondPlayer */
             $secondPlayer = $this->secondSession->getPlayer();
 
             if ($this->mode === self::STARTING_BATTLE) {
                 if ($this->starting <= 0) {
                     $this->mode = self::RUNNING_BATTLE;
 
-                    if ($firstPlayer->isImmobile()) {
+                    if ($firstPlayer !== null && $firstPlayer->isImmobile()) {
                         $firstPlayer->setImmobile(false);
                     }
 
-                    if ($secondPlayer->isImmobile()) {
+                    if ($secondPlayer !== null && $secondPlayer->isImmobile()) {
                         $secondPlayer->setImmobile(false);
                     }
                     return;
@@ -297,10 +293,10 @@ class BattleRush extends Duel {
                 return;
             }
 
-            if ($firstPlayer->getPosition()->getY() < 0) {
+            if ($firstPlayer !== null && $firstPlayer->getPosition()->getY() < 0) {
                 $this->teleportPlayer($firstPlayer);
                 $this->giveKit($this->firstSession);
-            } elseif ($secondPlayer->getPosition()->getY() < 0) {
+            } elseif ($secondPlayer !== null && $secondPlayer->getPosition()->getY() < 0) {
                 $this->teleportPlayer($secondPlayer, false);
                 $this->giveKit($this->secondSession, false);
             }
@@ -320,22 +316,22 @@ class BattleRush extends Duel {
         $secondPortal = $worldData->getSecondPortal();
 
         $this->firstPortal = new AxisAlignedBB(
-            (float)$firstPortal->getX(),
-            (float)$firstPortal->getY(),
-            (float)$firstPortal->getZ(),
-            (float)$firstPortal->getX(),
-            (float)$firstPortal->getY(),
-            (float)$firstPortal->getZ()
+            (float) $firstPortal->getX(),
+            (float) $firstPortal->getY(),
+            (float) $firstPortal->getZ(),
+            (float) $firstPortal->getX(),
+            (float) $firstPortal->getY(),
+            (float) $firstPortal->getZ()
         );
         $this->firstPortal->expand(4.0, 30.0, 4.0);
 
         $this->secondPortal = new AxisAlignedBB(
-            (float)$secondPortal->getX(),
-            (float)$secondPortal->getY(),
-            (float)$secondPortal->getZ(),
-            (float)$secondPortal->getX(),
-            (float)$secondPortal->getY(),
-            (float)$secondPortal->getZ()
+            (float) $secondPortal->getX(),
+            (float) $secondPortal->getY(),
+            (float) $secondPortal->getZ(),
+            (float) $secondPortal->getX(),
+            (float) $secondPortal->getY(),
+            (float) $secondPortal->getZ()
         );
         $this->secondPortal->expand(4.0, 30.0, 4.0);
 

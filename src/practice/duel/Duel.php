@@ -277,31 +277,26 @@ class Duel {
             }
         }
         $this->log();
-        /** @var Player $firstPlayer */
-        $firstPlayer = $firstSession->getPlayer();
 
-        /** @var Player $secondPlayer */
+        $firstPlayer = $firstSession->getPlayer();
         $secondPlayer = $secondSession->getPlayer();
 
-        $firstPlayer->getArmorInventory()->clearAll();
-        $firstPlayer->getInventory()->clearAll();
-        $secondPlayer->getArmorInventory()->clearAll();
-        $secondPlayer->getInventory()->clearAll();
+        $firstPlayer?->getArmorInventory()->clearAll();
+        $firstPlayer?->getInventory()->clearAll();
+        $secondPlayer?->getArmorInventory()->clearAll();
+        $secondPlayer?->getInventory()->clearAll();
 
-        $firstPlayer->getEffects()->clear();
-        $secondPlayer->getEffects()->clear();
+        $firstPlayer?->getEffects()->clear();
+        $secondPlayer?->getEffects()->clear();
 
-        $firstPlayer->setHealth($firstPlayer->getMaxHealth());
-        $secondPlayer->setHealth($secondPlayer->getMaxHealth());
+        $firstPlayer?->setHealth($firstPlayer->getMaxHealth());
+        $secondPlayer?->setHealth($secondPlayer->getMaxHealth());
 
         $this->status = self::RESTARTING;
     }
 
     public function update(): void {
-        /** @var Player $firstPlayer */
         $firstPlayer = $this->firstSession->getPlayer();
-
-        /** @var Player $secondPlayer */
         $secondPlayer = $this->secondSession->getPlayer();
 
         switch ($this->status) {
@@ -309,25 +304,25 @@ class Duel {
                 if ($this->starting <= 0) {
                     $this->status = self::RUNNING;
 
-                    if ($firstPlayer->isImmobile()) {
+                    if ($firstPlayer !== null && $firstPlayer->isImmobile()) {
                         $firstPlayer->setImmobile(false);
                     }
 
-                    if ($secondPlayer->isImmobile()) {
+                    if ($secondPlayer !== null && $secondPlayer->isImmobile()) {
                         $secondPlayer->setImmobile(false);
                     }
-                    $firstPlayer->sendMessage(TextFormat::colorize('&eMatch started.'));
-                    $secondPlayer->sendMessage(TextFormat::colorize('&eMatch started.'));
+                    $firstPlayer?->sendMessage(TextFormat::colorize('&eMatch started.'));
+                    $secondPlayer?->sendMessage(TextFormat::colorize('&eMatch started.'));
 
-                    $firstPlayer->sendTitle('Match Started!', TextFormat::colorize('&7The match has begun.'));
-                    $secondPlayer->sendTitle('Match Started!', TextFormat::colorize('&7The match has begun.'));
+                    $firstPlayer?->sendTitle('Match Started!', TextFormat::colorize('&7The match has begun.'));
+                    $secondPlayer?->sendTitle('Match Started!', TextFormat::colorize('&7The match has begun.'));
                     return;
                 }
-                $firstPlayer->sendMessage(TextFormat::colorize('&7The match will be starting in &e' . $this->starting . '&7..'));
-                $secondPlayer->sendMessage(TextFormat::colorize('&7The match will be starting in &e' . $this->starting . '&7..'));
+                $firstPlayer?->sendMessage(TextFormat::colorize('&7The match will be starting in &e' . $this->starting . '&7..'));
+                $secondPlayer?->sendMessage(TextFormat::colorize('&7The match will be starting in &e' . $this->starting . '&7..'));
 
-                $firstPlayer->sendTitle('Match starting', TextFormat::colorize('&7The match will be starting in &e' . $this->starting . '&7..'));
-                $secondPlayer->sendTitle('Match starting', TextFormat::colorize('&7The match will be starting in &e' . $this->starting . '&7..'));
+                $firstPlayer?->sendTitle('Match starting', TextFormat::colorize('&7The match will be starting in &e' . $this->starting . '&7..'));
+                $secondPlayer?->sendTitle('Match starting', TextFormat::colorize('&7The match will be starting in &e' . $this->starting . '&7..'));
                 $this->starting--;
                 break;
 
