@@ -15,7 +15,8 @@ final class Inventory {
      */
     public function __construct(
         private Kit $kit,
-        private array $inventoryContents
+        private array $inventoryContents,
+        private bool $update = false
     ) {}
 
     public function getRealKit(): Kit {
@@ -26,8 +27,13 @@ final class Inventory {
         return $this->inventoryContents;
     }
 
+    public function isUpdate(): bool {
+        return $this->update;
+    }
+
     public function setInventoryContents(array $inventoryContents): void {
         $this->inventoryContents = $inventoryContents;
+        $this->update = true;
     }
 
     public function giveTo(Player $player): void {
@@ -42,5 +48,28 @@ final class Inventory {
         foreach ($this->kit->getEffects() as $effect) {
             $effectManager->add($effect);
         }
+    }
+
+    public function serializeData(): array {
+        $data = [];
+
+        foreach ($this->inventoryContents as $slot => $item) {
+            $data[$item->getVanillaName()] = $slot;
+        }
+        return $data;
+    }
+
+    static public function deserializeData(array $data, Kit $kit): self {
+        $inventory = $kit->getInventoryContents();
+        $newInventory = [];
+
+        foreach ($inventory as $item) {
+            if (isset($data[$item->getVanillaName()])) {
+                $newInventory[$data[$item->getVanillaName()]] = $item;
+            } else {
+                $newInventory[] = $item;
+            }
+        }
+        return new self($kit, $newInventory);
     }
 }
