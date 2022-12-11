@@ -25,6 +25,15 @@ final class Party {
     public const EIGHT_PLAYERS = 8;
     public const TEN_PLAYERS = 10;
 
+    /**
+     * @param string $name
+     * @param Player $owner
+     * @param int $maxPlayers
+     * @param bool $open
+     * @param Player[] $members
+     * @param PartyQueue|null $queue
+     * @param Duel|null $duel
+     */
     public function __construct(
         private string $name,
         private Player $owner,
@@ -34,7 +43,7 @@ final class Party {
         private ?PartyQueue $queue = null,
         private ?Duel $duel = null
     ) {
-        $this->addMemeber($owner, false);
+        $this->addMember($owner, false);
     }
 
     public function getName(): string {
@@ -92,7 +101,7 @@ final class Party {
         $this->owner = $player;
     }
 
-    public function addMemeber(Player $player, bool $announce = true): void {
+    public function addMember(Player $player, bool $announce = true): void {
         $session = SessionFactory::get($player);
 
         if ($session === null) {
@@ -129,7 +138,6 @@ final class Party {
         $session = SessionFactory::get($player);
         $session?->giveLobbyItems();
         $session?->setParty(null);
-
         unset($this->members[spl_object_hash($player)]);
 
         if ($announce) {

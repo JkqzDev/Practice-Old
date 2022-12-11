@@ -7,6 +7,7 @@ namespace practice\form\player;
 use cosmicpe\form\CustomForm;
 use cosmicpe\form\SimpleForm;
 use pocketmine\player\Player;
+use pocketmine\world\Position;
 use practice\duel\Duel;
 use practice\session\Session;
 use pocketmine\utils\TextFormat;
@@ -128,8 +129,20 @@ class PlayerProfileForm extends SimpleForm {
                     }
                     $button = new Button($name);
                     $this->addButton($button, function (Player $player, int $button_index) use ($inventory, $session): void {
+                        if (!$player->getServer()->getWorldManager()->isWorldGenerated('kiteditor')) {
+                            $player->sendMessage(TextFormat::colorize('&cWorl kiteditor not exists.'));
+                            return;
+                        }
+
+                        if (!$player->getServer()->getWorldManager()->isWorldLoaded('kiteditor')) {
+                            $player->getServer()->getWorldManager()->loadWorld('kiteditor', true);
+                        }
+                        $world = $player->getServer()->getWorldManager()->getWorldByName('kiteditor');
+                        $position = $world->getSpawnLocation();
+
                         $session->setCurrentKitEdit($inventory);
                         $player->getInventory()->setContents($inventory->getInventoryContents());
+                        $player->teleport(Position::fromObject($position->add(0.5, 0, 0.5), $position->getWorld()));
                     });
                 }
             }

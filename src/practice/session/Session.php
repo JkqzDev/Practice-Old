@@ -57,6 +57,7 @@ final class Session {
         $this->setScoreboard(new ScoreboardBuilder($this, '&l&ePractice&r'));
 
         $this->initData();
+        $this->initInventories();
         $this->initSettings();
     }
 
@@ -246,8 +247,11 @@ final class Session {
     }
 
     public function quit(): void {
-        /** @var Player $player */
         $player = $this->getPlayer();
+
+        if ($player === null) {
+            return;
+        }
 
         if ($this->inQueue()) {
             QueueFactory::remove($player);
@@ -262,11 +266,22 @@ final class Session {
         } elseif ($this->inArena()) {
             $arena = $this->getArena();
             $arena->quit($player);
-        }
-
-        if ($this->inParty()) {
+        } elseif ($this->inParty()) {
             $party = $this->getParty();
-            $party->disband();
+
+            if ($party->isOwner($player)) {
+                $party->disband();
+            } else {
+                $party->removeMember($player);
+
+                if ($party->inDuel()) {
+                    $duel = $party->getDuel();
+
+                    if ($duel->isSpectator($player)) {
+                        $duel->removeSpectator($player);
+                    }
+                }
+            }
         }
         $this->arena = null;
         $this->queue = null;

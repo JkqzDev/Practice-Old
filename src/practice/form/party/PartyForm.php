@@ -98,7 +98,7 @@ final class PartyForm extends SimpleForm {
                             $player->sendMessage(TextFormat::colorize('&cParty is in duel!'));
                             return;
                         }
-                        $party->addMemeber($player);
+                        $party->addMember($player);
                     });
                 }
             }
@@ -139,7 +139,7 @@ final class PartyForm extends SimpleForm {
                             $player->sendMessage(TextFormat::colorize('&cYou can\'t join to the party'));
                             return;
                         }
-                        $party->addMemeber($player);
+                        $party->addMember($player);
                         InviteFactory::remove($player);
                     });
                 }

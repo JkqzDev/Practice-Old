@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace practice\party\duel;
 
+use CortexPE\DiscordWebhookAPI\Embed;
 use CortexPE\DiscordWebhookAPI\Message;
 use CortexPE\DiscordWebhookAPI\Webhook;
 use pocketmine\event\block\BlockBreakEvent;
@@ -109,10 +110,6 @@ class Duel {
 
     public function isRunning(): bool {
         return $this->status === self::RUNNING;
-    }
-
-    public function isEnded(): bool {
-        return $this->status === self::RESTARTING;
     }
 
     public function getOpponent(Player $player): Party {
@@ -379,6 +376,7 @@ class Duel {
     protected function log(): void {
         $webhook = new Webhook(Practice::getInstance()->getConfig()->get('webhook-parties', ''));
         $message = new Message();
+        $embed = new Embed();
 
         if ($this->winner === $this->firstParty->getName()) {
             $winner = $this->firstParty;
@@ -387,15 +385,16 @@ class Duel {
             $winner = $this->secondParty;
             $loser = $this->firstParty;
         }
-        $message->setUsername('Kresu Practice');
-        $message->setContent(
-            '**' . DuelFactory::getName($this->typeId) . ' - ' . strtoupper($this->firstParty->getName()) . ' vs ' . strtoupper($this->secondParty->getName()) . '**' . PHP_EOL .
-            '__Time:__ ' . gmdate('i:s', $this->running) . PHP_EOL .
-            '__Winner:__ ' . strtoupper($winner->getName()) . PHP_EOL .
-            implode(PHP_EOL, array_map(fn(Player $player) => ' - ' . $player->getName(), $winner->getMembers())) . PHP_EOL .
-            '__Loser:__ ' . strtoupper($loser->getName()) . PHP_EOL .
-            implode(PHP_EOL, array_map(fn(Player $player) => ' - ' . $player->getName(), $loser->getMembers()))
+        $embed->setColor(hexdec('00a6ff'));
+        $embed->setTitle('Party Duel - ' . DuelFactory::getName($this->typeId));
+        $embed->setDescription(
+            '**Winner:** ' . $winner->getName() . PHP_EOL .
+            implode(PHP_EOL, array_map(fn(Player $player) => '- ' . $player->getName(), $winner->getMembers())) . PHP_EOL .
+            '**Loser:** ' . $loser->getName() . PHP_EOL .
+            implode(PHP_EOL, array_map(fn(Player $player) => '- ' . $player->getName(), $loser->getMembers()))
         );
+
+        $message->addEmbed($embed);
         $webhook->send($message);
     }
 }
