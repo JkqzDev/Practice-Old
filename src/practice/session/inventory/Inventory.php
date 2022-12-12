@@ -54,21 +54,16 @@ final class Inventory {
         $data = [];
 
         foreach ($this->inventoryContents as $slot => $item) {
-            $data[$item->getVanillaName()] = $slot;
+            $data[(string) $slot] = $item->jsonSerialize();
         }
         return $data;
     }
 
     static public function deserializeData(array $data, Kit $kit): self {
-        $inventory = $kit->getInventoryContents();
         $newInventory = [];
 
-        foreach ($inventory as $item) {
-            if (isset($data[$item->getVanillaName()])) {
-                $newInventory[$data[$item->getVanillaName()]] = $item;
-            } else {
-                $newInventory[] = $item;
-            }
+        foreach ($data as $slot => $itemSerialize) {
+            $newInventory[(int) $slot] = Item::jsonDeserialize($itemSerialize);
         }
         return new self($kit, $newInventory);
     }

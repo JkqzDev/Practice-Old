@@ -50,8 +50,10 @@ final class Practice extends PluginBase {
 
     protected function onLoad(): void {
         self::$instance = $this;
-        
-        $this->saveDefaultConfig();
+
+        $this->saveResource('config.yml');
+        $this->saveResource('kits.yml');
+
         MySQL::setCredentials($this->getConfig()->get('database'));
     }
 

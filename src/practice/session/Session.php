@@ -305,6 +305,7 @@ final class Session {
     public function updatePlayer(): void {
         $this->updateData();
         $this->updateSettings();
+	    $this->updateInventories();
     }
 
     public function knockback(Player $damager, Kit $kit): void {
