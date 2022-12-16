@@ -231,6 +231,7 @@ final class EventHandler implements Listener {
     }
 
     public function handleInteract(PlayerInteractEvent $event): void {
+        $action = $event->getAction();
         $player = $event->getPlayer();
         $session = SessionFactory::get($player);
 
@@ -252,6 +253,10 @@ final class EventHandler implements Listener {
                 $tile = $player->getWorld()->getTile($block->getPosition());
 
                 if (!$tile instanceof Sign) {
+                    return;
+                }
+
+                if ($action !== PlayerInteractEvent::LEFT_CLICK_BLOCK) {
                     return;
                 }
                 $text = $tile->getText();
