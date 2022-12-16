@@ -10,7 +10,7 @@ use pocketmine\event\player\PlayerMoveEvent;
 
 class FinalUHC extends Duel {
 
-    private int $size = 24;
+    private int $size = 49;
     private int $x, $z;
 
     public function handleMove(PlayerMoveEvent $event): void {
