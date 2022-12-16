@@ -74,7 +74,6 @@ final class DuelFactory {
 
     public static function getName(int $type): string {
         return match ($type) {
-            Duel::TYPE_NODEBUFF => 'No Debuff',
             Duel::TYPE_BATTLERUSH => 'Battle Rush',
             Duel::TYPE_BOXING => 'Boxing',
             Duel::TYPE_BRIDGE => 'Bridge',
@@ -85,7 +84,8 @@ final class DuelFactory {
             Duel::TYPE_FIST => 'Fist',
             Duel::TYPE_GAPPLE => 'Gapple',
             Duel::TYPE_SUMO => 'Sumo',
-            default => 'None'
+            Duel::TYPE_SG => 'SG',
+            default => 'No Debuff'
         };
     }
 

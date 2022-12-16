@@ -5,14 +5,12 @@ namespace practice\entity;
 
 use pocketmine\block\Block;
 use pocketmine\color\Color;
-use pocketmine\math\Vector3;
 use pocketmine\entity\Entity;
 use pocketmine\player\Player;
 use pocketmine\entity\Location;
 use pocketmine\item\PotionType;
 use pocketmine\math\RayTraceResult;
 use pocketmine\nbt\tag\CompoundTag;
-use pocketmine\block\BlockLegacyIds;
 use pocketmine\entity\effect\InstantEffect;
 use pocketmine\world\sound\PotionSplashSound;
 use pocketmine\event\entity\ProjectileHitEvent;
@@ -20,12 +18,10 @@ use pocketmine\world\particle\PotionSplashParticle;
 use pocketmine\event\entity\EntityRegainHealthEvent;
 use pocketmine\event\entity\ProjectileHitEntityEvent;
 use pocketmine\entity\projectile\SplashPotion as ProjectileSplashPotion;
-use practice\session\SessionFactory;
 
 class SplashPotion extends ProjectileSplashPotion {
 
-    public const MAX_HIT = 1.0515;
-    public const MAX_MISS = 0.9215;
+    public const MAX_HIT = 1.0415;
 
     protected $gravity = 0.06;
     protected $drag = 0.0025;
@@ -33,10 +29,6 @@ class SplashPotion extends ProjectileSplashPotion {
     public function __construct(Location $location, ?Entity $shootingEntity, PotionType $potionType, ?CompoundTag $nbt = null) {
         parent::__construct($location, $shootingEntity, $potionType, $nbt);
         $this->setScale(0.6);
-
-        if ($shootingEntity instanceof Player) {
-            $session = SessionFactory::get($shootingEntity);
-        }
     }
 
     public function entityBaseTick(int $tickDiff = 1): bool {
@@ -76,7 +68,7 @@ class SplashPotion extends ProjectileSplashPotion {
                 $entityHit = $event->getEntityHit();
 
                 if ($entityHit instanceof Player) {
-                    $entityHit->heal(new EntityRegainHealthEvent($entityHit, 1.45, EntityRegainHealthEvent::CAUSE_CUSTOM));
+                    $entityHit->heal(new EntityRegainHealthEvent($entityHit, 1.41, EntityRegainHealthEvent::CAUSE_CUSTOM));
                 }
             }
 
@@ -110,7 +102,6 @@ class SplashPotion extends ProjectileSplashPotion {
 		}
 		
 		if ($blockHit->getId() === 95) {
-			
             $effects = $this->getPotionEffects();
             $hasEffects = true;
 
@@ -150,6 +141,7 @@ class SplashPotion extends ProjectileSplashPotion {
                     }
                 }
             }
+            $this->flagForDespawn();
         }
     }
 }

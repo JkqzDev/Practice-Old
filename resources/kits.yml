@@ -114,7 +114,7 @@ boxing:
       unbreakable: true
   effects:
     1:
-      amplifier: 1
+      amplifier: 0
       duration: 9999999
     11:
       amplifier: 4
@@ -217,7 +217,27 @@ combo:
         17: 5
     - id: 466
       meta: 0
-      count: 64
+      count: 32
+    - id: 310
+      meta: 0
+      enchantments:
+        0: 5
+        17: 5
+    - id: 311
+      meta: 0
+      enchantments:
+        0: 5
+        17: 5
+    - id: 312
+      meta: 0
+      enchantments:
+        0: 5
+        17: 5
+    - id: 313
+      meta: 0
+      enchantments:
+        0: 5
+        17: 5
   effects:
     1:
       amplifier: 1
@@ -296,8 +316,74 @@ bridge:
   canRevert: false
   maxHeight: 0
 build uhc:
-  armorContents: []
-  inventoryContents: []
+  armorContents:
+    - id: 310
+      meta: 0
+      unbreakable: true
+      enchantments:
+        - 1
+    - id: 311
+      meta: 0
+      unbreakable: true
+      enchantments:
+        - 1
+    - id: 312
+      meta: 0
+      unbreakable: true
+      enchantments:
+        - 1
+    - id: 313
+      meta: 0
+      unbreakable: true
+      enchantments:
+        - 1
+  inventoryContents:
+    0:
+      id: 276
+      meta: 0
+      enchantments:
+        17: 1
+    1:
+      id: 322
+      meta: 0
+      count: 6
+    2:
+      id: 261
+      meta: 0
+    3:
+      id: 322
+      meta: 10
+      count: 3
+    4:
+      id: 4
+      meta: 0
+      count: 64
+    5:
+      id: 278
+      meta: 0
+    6:
+      id: 279
+      meta: 0
+    7:
+      id: 325
+      meta: 8
+    8:
+      id: 325
+      meta: 10
+    9:
+      id: 262
+      meta: 0
+      count: 32
+    10:
+      id: 5
+      meta: 0
+      count: 64
+    11:
+      id: 325
+      meta: 8
+    12:
+      id: 325
+      meta: 10
   effects: []
   attackCooldown: 10
   horizontalKnockback: 0.4
@@ -305,9 +391,88 @@ build uhc:
   canRevert: false
   maxHeight: 0
 cave uhc:
-  armorContents: []
-  inventoryContents: []
-  effects: []
+  armorContents:
+    0:
+      id: 310
+      meta: 163
+      enchantments:
+        0: 3
+    1:
+      id: 311
+      meta: 338
+      enchantments:
+        0: 3
+    2:
+      id: 312
+      meta: 307
+      enchantments:
+        0: 3
+    3:
+      id: 313
+      meta: 241
+      enchantments:
+        0: 3
+  inventoryContents:
+    0:
+      id: 276
+      meta: 0
+      enchantments:
+        9: 3
+    1:
+      id: 322
+      meta: 0
+      count: 18
+    2:
+      id: 4
+      meta: 0
+      count: 64
+    3:
+      id: 322
+      meta: 10
+      count: 5
+    4:
+      id: 310
+      meta: 148
+      enchantments:
+        0: 2
+    5:
+      id: 313
+      meta: 241
+      enchantments:
+        0: 2
+    6:
+      id: 278
+      meta: 0
+    7:
+      id: 325
+      meta: 8
+    8:
+      id: 325
+      meta: 10
+    9:
+      id: 311
+      meta: 132
+      enchantments:
+        0: 2
+    10:
+      id: 312
+      meta: 144
+      enchantments:
+        0: 2
+    11:
+      id: 325
+      meta: 10
+    12:
+      id: 325
+      meta: 8
+    13:
+      id: 4
+      meta: 0
+      count: 64
+  effects:
+    16:
+      amplifier: 0
+      duration: 9999999
   attackCooldown: 10
   horizontalKnockback: 0.4
   verticalKnockback: 0.4
@@ -315,41 +480,129 @@ cave uhc:
   maxHeight: 0
 final uhc:
   armorContents:
-    - id: 310
+    0:
+      id: 310
+      meta: 163
+      enchantments:
+        0: 3
+    1:
+      id: 311
+      meta: 338
+      enchantments:
+        0: 3
+    2:
+      id: 312
+      meta: 307
+      enchantments:
+        0: 3
+    3:
+      id: 313
+      meta: 241
+      enchantments:
+        0: 3
+  inventoryContents:
+    0:
+      id: 276
       meta: 0
       enchantments:
-        0: 5
-        17: 5
-    - id: 311
+        9: 3
+    1:
+      id: 322
       meta: 0
-      enchantments:
-        0: 5
-        17: 5
-    - id: 312
-      meta: 0
-      enchantments:
-        0: 5
-        17: 5
-    - id: 313
-      meta: 0
-      enchantments:
-        0: 5
-        17: 5
-      inventoryContents: ~
-    - id: 276
-      meta: 0
-      unbreakable: true
-      enchantments:
-        0: 5
-        17: 5
-    - id: 466
+      count: 18
+    2:
+      id: 4
       meta: 0
       count: 64
-    - id: 313
-      meta: 0
+    3:
+      id: 322
+      meta: 10
+      count: 5
+    4:
+      id: 310
+      meta: 148
       enchantments:
-        0: 5
-        17: 5
+        0: 2
+    5:
+      id: 313
+      meta: 241
+      enchantments:
+        0: 2
+    6:
+      id: 278
+      meta: 0
+    7:
+      id: 325
+      meta: 8
+    8:
+      id: 325
+      meta: 10
+    9:
+      id: 311
+      meta: 132
+      enchantments:
+        0: 2
+    10:
+      id: 312
+      meta: 144
+      enchantments:
+        0: 2
+    11:
+      id: 325
+      meta: 10
+    12:
+      id: 325
+      meta: 8
+    13:
+      id: 4
+      meta: 0
+      count: 64
+  effects: []
+  attackCooldown: 10
+  horizontalKnockback: 0.4
+  verticalKnockback: 0.4
+  canRevert: false
+  maxHeight: 0
+sg:
+  armorContents:
+    0:
+      id: 306
+      meta: 0
+    1:
+      id: 303
+      meta: 0
+    2:
+      id: 304
+      meta: 0
+    3:
+      id: 313
+      meta: 0
+  inventoryContents:
+    0:
+      id: 272
+      meta: 0
+    1:
+      id: 261
+      meta: 0
+    2:
+      id: 322
+      meta: 0
+    3:
+      id: 332
+      meta: 0
+      count: 2
+    4:
+      id: 30
+      meta: 0
+      count: 4
+    5:
+      id: 364
+      meta: 0
+      count: 5
+    6:
+      id: 262
+      meta: 0
+      count: 8
   effects: []
   attackCooldown: 10
   horizontalKnockback: 0.4

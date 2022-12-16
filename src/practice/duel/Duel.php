@@ -7,6 +7,8 @@ namespace practice\duel;
 use CortexPE\DiscordWebhookAPI\Embed;
 use CortexPE\DiscordWebhookAPI\Message;
 use CortexPE\DiscordWebhookAPI\Webhook;
+use pocketmine\event\player\PlayerItemUseEvent;
+use pocketmine\Server;
 use practice\Practice;
 use pocketmine\world\World;
 use pocketmine\player\Player;
@@ -35,6 +37,7 @@ class Duel {
     public const TYPE_CAVEUHC = 8;
     public const TYPE_BUILDUHC = 9;
     public const TYPE_COMBO = 10;
+    public const TYPE_SG = 11;
 
     public const STARTING = 0;
     public const RUNNING = 1;
@@ -244,6 +247,8 @@ class Duel {
         }
     }
 
+    public function handleItemUse(PlayerItemUseEvent $event): void {}
+
     public function handleMove(PlayerMoveEvent $event): void {}
 
     public function finish(Player $loser): void {
@@ -267,15 +272,23 @@ class Duel {
         $loser->sendTitle(TextFormat::colorize('&l&cDEFEAT!&r'), TextFormat::colorize('&a' . $this->winner . '&7 won the fight!'));
 
         if ($this->ranked) {
+            $winnerSession = $firstSession;
+            $loserSession = $secondSession;
             $elms = self::calculateElo($loserElo, $winnerElo);
 
             if ($this->loser === $firstSession->getName()) {
+                $winnerSession = $secondSession;
+                $loserSession = $firstSession;
+
                 $secondSession->addElo($elms[0]);
                 $firstSession->removeElo($elms[1]);
             } else {
                 $firstSession->addElo($elms[0]);
                 $secondSession->removeElo($elms[1]);
             }
+            Server::getInstance()->broadcastMessage(TextFormat::colorize('&c' . $winnerSession->getName() . ' [' . $winnerSession->getElo() . '] has won an Ranked Duel against ' . $loserSession->getName() . ' [' . $loserSession->getElo() . '] in ' . DuelFactory::getName($this->typeId)));
+        } else {
+            Server::getInstance()->broadcastMessage(TextFormat::colorize('&c' . $this->winner . ' has won an Unranked Duel against ' . $loser->getName() . ' in ' . DuelFactory::getName($this->typeId)));
         }
         $this->log();
 
@@ -289,6 +302,9 @@ class Duel {
 
         $firstPlayer?->getEffects()->clear();
         $secondPlayer?->getEffects()->clear();
+
+        $firstPlayer?->setImmobile();
+        $secondPlayer?->setImmobile();
 
         $firstPlayer?->setHealth($firstPlayer->getMaxHealth());
         $secondPlayer?->setHealth($secondPlayer->getMaxHealth());
@@ -315,15 +331,15 @@ class Duel {
                     $firstPlayer?->sendMessage(TextFormat::colorize('&eMatch started.'));
                     $secondPlayer?->sendMessage(TextFormat::colorize('&eMatch started.'));
 
-                    $firstPlayer?->sendTitle('Match Started!', TextFormat::colorize('&7The match has begun.'));
-                    $secondPlayer?->sendTitle('Match Started!', TextFormat::colorize('&7The match has begun.'));
+                    $firstPlayer?->sendTitle('Match Started!', TextFormat::colorize('&7The match has begun.'), 1, 1, 1);
+                    $secondPlayer?->sendTitle('Match Started!', TextFormat::colorize('&7The match has begun.'), 1, 1, 1);
                     return;
                 }
                 $firstPlayer?->sendMessage(TextFormat::colorize('&7The match will be starting in &e' . $this->starting . '&7..'));
                 $secondPlayer?->sendMessage(TextFormat::colorize('&7The match will be starting in &e' . $this->starting . '&7..'));
 
-                $firstPlayer?->sendTitle('Match starting', TextFormat::colorize('&7The match will be starting in &e' . $this->starting . '&7..'));
-                $secondPlayer?->sendTitle('Match starting', TextFormat::colorize('&7The match will be starting in &e' . $this->starting . '&7..'));
+                $firstPlayer?->sendTitle('Match starting', TextFormat::colorize('&7The match will be starting in &e' . $this->starting . '&7..'), 1, 1, 1);
+                $secondPlayer?->sendTitle('Match starting', TextFormat::colorize('&7The match will be starting in &e' . $this->starting . '&7..'), 1, 1, 1);
                 $this->starting--;
                 break;
 

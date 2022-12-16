@@ -22,6 +22,7 @@ final class DuelQueueForm extends SimpleForm {
         'Boxing' => Duel::TYPE_BOXING,
         'Sumo' => Duel::TYPE_SUMO,
         'Fist' => Duel::TYPE_FIST,
+        'SG' => Duel::TYPE_SG,
         'Gapple' => Duel::TYPE_GAPPLE,
         'Build UHC' => Duel::TYPE_BUILDUHC,
         'Final UHC' => Duel::TYPE_FINALUHC,

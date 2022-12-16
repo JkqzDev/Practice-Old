@@ -25,7 +25,8 @@ final class DuelForm extends CustomForm {
         'Final UHC' => Duel::TYPE_FINALUHC,
         'Cave UHC' => Duel::TYPE_CAVEUHC,
         'Build UHC' => Duel::TYPE_BUILDUHC,
-        'Combo' => Duel::TYPE_COMBO
+        'Combo' => Duel::TYPE_COMBO,
+        'SG' => Duel::TYPE_SG
     ];
 
     public function __construct(Session $session, Session $target) {

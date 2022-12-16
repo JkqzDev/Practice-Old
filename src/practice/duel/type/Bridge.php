@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace practice\duel\type;
 
+use pocketmine\event\player\PlayerItemUseEvent;
 use practice\duel\Duel;
 use pocketmine\color\Color;
 use pocketmine\world\World;
@@ -17,7 +18,6 @@ use pocketmine\utils\TextFormat;
 use practice\session\Session;
 use practice\world\WorldFactory;
 use pocketmine\math\AxisAlignedBB;
-use pocketmine\event\block\BlockBreakEvent;
 use pocketmine\event\block\BlockPlaceEvent;
 use pocketmine\event\player\PlayerMoveEvent;
 use pocketmine\event\entity\EntityDamageEvent;
@@ -31,6 +31,8 @@ class Bridge extends Duel {
 
     private int $firstPoints = 0, $secondPoints = 0;
     private AxisAlignedBB $firstPortal, $secondPortal;
+
+    private array $bow = [];
 
     public function handlePlace(BlockPlaceEvent $event): void {
         $block = $event->getBlock();
@@ -67,6 +69,25 @@ class Bridge extends Duel {
         }
     }
 
+    public function handleItemUse(PlayerItemUseEvent $event): void {
+        $item = $event->getItem();
+        $player = $event->getPlayer();
+
+        if ($item->getId() !== ItemIds::BOW) {
+            return;
+        }
+
+        if (isset($this->bow[$player->getXuid()])) {
+            $time = $this->bow[$player->getXuid()];
+
+            if ($time > time()) {
+                $event->cancel();
+                return;
+            }
+        }
+        $this->bow[$player->getXuid()] = time() + 7;
+    }
+
     private function giveKit(Session $session, bool $firstPlayer = true): void {
         $kit = $session->getInventory(strtolower(DuelFactory::getName($this->typeId)));
         $player = $session->getPlayer();
@@ -84,7 +105,6 @@ class Bridge extends Duel {
             $armorContents = $kit->getRealKit()->getArmorContents();
             $inventoryContents = $kit->getInventoryContents();
             $effects = $kit->getRealKit()->getEffects();
-
             $color = new Color(0, 0, 255);
 
             if (!$firstPlayer) {

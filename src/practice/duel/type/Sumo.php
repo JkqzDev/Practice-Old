@@ -11,14 +11,6 @@ use pocketmine\event\entity\EntityDamageEvent;
 
 class Sumo extends Duel {
 
-    protected function init(): void {
-        $firstPlayer = $this->firstSession->getPlayer();
-        $secondPlayer = $this->secondSession->getPlayer();
-
-        $firstPlayer?->setImmobile();
-        $secondPlayer?->setImmobile();
-    }
-
     public function handleDamage(EntityDamageEvent $event): void {
         $player = $event->getEntity();
 

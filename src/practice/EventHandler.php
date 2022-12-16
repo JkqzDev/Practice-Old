@@ -6,6 +6,7 @@ namespace practice;
 
 use pocketmine\block\tile\Sign;
 use pocketmine\event\player\PlayerItemUseEvent;
+use pocketmine\item\ItemIds;
 use pocketmine\world\World;
 use practice\kit\KitFactory;
 use pocketmine\player\Player;
@@ -219,8 +220,8 @@ final class EventHandler implements Listener {
         if ($session === null) {
             return;
         }
-        
-        if ($session->inArena()) {
+
+        if ($session->inDuel() || $session->inArena()) {
             $event->cancel();
         }
     }
@@ -296,6 +297,9 @@ final class EventHandler implements Listener {
             if ($session->getCurrentKitEdit() !== null) {
                 $event->cancel();
             }
+        } elseif ($session->inDuel()) {
+            $duel = $session->getDuel();
+            $duel->handleItemUse($event);
         }
     }
 

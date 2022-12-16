@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace practice\arena;
 
+use pocketmine\item\Item;
 use pocketmine\Server;
 use pocketmine\world\World;
 use practice\kit\KitFactory;
@@ -112,20 +113,20 @@ final class Arena {
             
             if (isset($this->combats[$player->getName()])) {
                 $combat = $this->combats[$player->getName()];
+                /** @var Player $killer */
+                $killer = $combat['player'];
 
-                if ($combat['time'] >= time()) {
+                if ($combat['time'] >= time() && $killer->isOnline()) {
                     $session->addDeath();
                     $session->resetKillstreak();
                     
                     /** @var Session $damager */
-                    $damager = SessionFactory::get($combat['player']);
+                    $damager = SessionFactory::get($killer);
                     $damager->addKill();
                     $damager->addKillstreak();
-
                     $damager->getPlayer()?->setHealth($damager->getPlayer()->getMaxHealth());
 
                     unset($this->combats[$damager->getName()]);
-
                     Server::getInstance()->broadcastMessage(TextFormat::colorize('&a' . $damager->getName() . ' &2[' . $damager->getKills() . '] &7killed &c' . $player->getName() . ' &4[' . $session->getKills() . ']'));
                 }
                 unset($this->combats[$player->getName()]);
@@ -177,10 +178,12 @@ final class Arena {
 
             if (isset($this->combats[$player->getName()])) {
                 $combat = $this->combats[$player->getName()];
+                /** @var Player $killer */
+                $killer = $combat['player'];
 
-                if ($combat['time'] >= time()) {
+                if ($combat['time'] >= time() && $killer->isOnline()) {
                     /** @var Session $damager */
-                    $damager = SessionFactory::get($combat['player']);
+                    $damager = SessionFactory::get($killer);
                     $damager->addKill();
                     $damager->addKillstreak();
 
@@ -188,7 +191,13 @@ final class Arena {
 
                     unset($this->combats[$damager->getName()]);
 
-                    Server::getInstance()->broadcastMessage(TextFormat::colorize('&a' . $damager->getName() . ' &2[' . $damager->getKills() . '] &7killed &c' . $player->getName() . ' &4[' . $session->getKills() . ']'));
+                    if ($this->kit !== 'no debuff') {
+                        Server::getInstance()->broadcastMessage(TextFormat::colorize('&a' . $damager->getName() . ' &2[' . $damager->getKills() . '] &7killed &c' . $player->getName() . ' &4[' . $session->getKills() . ']'));
+                    } else {
+                        $killerPots = array_filter($killer->getInventory()->getContents(), fn(Item $item) => $item->getId() === 438 && $item->getMeta() === 22);
+                        $playerPots = array_filter($player->getInventory()->getContents(), fn(Item $item) => $item->getId() === 438 && $item->getMeta() === 22);
+                        Server::getInstance()->broadcastMessage(TextFormat::colorize('&a' . $damager->getName() . ' &2[' . count($killerPots) . '] &7killed &c' . $player->getName() . ' &4[' . count($playerPots) . ']'));
+                    }
                 }
                 unset($this->combats[$player->getName()]);
             }
@@ -253,18 +262,24 @@ final class Arena {
 
         if ($withCombat && isset($this->combats[$player->getName()])) {
             $combat = $this->combats[$player->getName()];
+            /** @var Player $killer */
+            $killer = $combat['player'];
 
-            if ($combat['time'] >= time()) {
+            if ($combat['time'] >= time() && $killer->isOnline()) {
                 /** @var Session $damager */
-                $damager = SessionFactory::get($combat['player']);
+                $damager = SessionFactory::get($killer);
                 $damager->addKill();
                 $damager->addKillstreak();
-                
                 $damager->getPlayer()?->setHealth($damager->getPlayer()->getHealth());
-
                 unset($this->combats[$damager->getName()]);
 
-                Server::getInstance()->broadcastMessage(TextFormat::colorize('&a' . $damager->getName() . ' &2[' . $damager->getKills() . '] &7killed &c' . $player->getName() . ' &4[' . $session->getKills() . ']'));
+                if ($this->kit !== 'no debuff') {
+                    Server::getInstance()->broadcastMessage(TextFormat::colorize('&a' . $damager->getName() . ' &2[' . $damager->getKills() . '] &7killed &c' . $player->getName() . ' &4[' . $session->getKills() . ']'));
+                } else {
+                    $killerPots = array_filter($killer->getInventory()->getContents(), fn(Item $item) => $item->getId() === 438 && $item->getMeta() === 22);
+                    $playerPots = array_filter($player->getInventory()->getContents(), fn(Item $item) => $item->getId() === 438 && $item->getMeta() === 22);
+                    Server::getInstance()->broadcastMessage(TextFormat::colorize('&a' . $damager->getName() . ' &2[' . count($killerPots) . '] &7killed &c' . $player->getName() . ' &4[' . count($playerPots) . ']'));
+                }
             }
             unset($this->combats[$player->getName()]);
         }
