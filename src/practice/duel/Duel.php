@@ -104,6 +104,9 @@ class Duel {
             $secondPlayer->getArmorInventory()->clearAll();
             $secondPlayer->getInventory()->clearAll();
 
+            $firstPlayer->setImmobile();
+            $secondPlayer->setImmobile();
+
             $firstSession->getInventory(strtolower(DuelFactory::getName($this->typeId)))?->giveTo($firstPlayer);
             $secondSession->getInventory(strtolower(DuelFactory::getName($this->typeId)))?->giveTo($secondPlayer);
 
@@ -302,9 +305,6 @@ class Duel {
 
         $firstPlayer?->getEffects()->clear();
         $secondPlayer?->getEffects()->clear();
-
-        $firstPlayer?->setImmobile();
-        $secondPlayer?->setImmobile();
 
         $firstPlayer?->setHealth($firstPlayer->getMaxHealth());
         $secondPlayer?->setHealth($secondPlayer->getMaxHealth());

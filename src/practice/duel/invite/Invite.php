@@ -11,7 +11,8 @@ final class Invite {
     public function __construct(
         private Session $session,
         private int $duelType,
-        private int $time = 0
+        private ?string $worldName = null,
+        private int $time = 0,
     ) {
         $this->time = time() + 60;
     }
@@ -22,6 +23,10 @@ final class Invite {
 
     public function getDuelType(): int {
         return $this->duelType;
+    }
+
+    public function getWorldName(): ?string {
+        return $this->worldName;
     }
 
     public function isExpired(): bool {

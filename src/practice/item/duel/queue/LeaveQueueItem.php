@@ -25,12 +25,9 @@ class LeaveQueueItem extends PracticeItem {
             return ItemUseResult::FAIL();
         }
         $session->giveLobbyItems();
+        $session->setQueue(null);
 
-        if ($session->inQueue()) {
-            $session->setQueue(null);
-
-            QueueFactory::remove($player);
-        }
+        QueueFactory::remove($player);
         return ItemUseResult::SUCCESS();
     }
 }

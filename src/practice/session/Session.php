@@ -231,11 +231,7 @@ final class Session {
 
     public function giveLobbyItems(): void {
         $player = $this->getPlayer();
-
-        if ($player === null) {
-            return;
-        }
-        $player->getInventory()->setContents([
+        $player?->getInventory()->setContents([
             0 => new RankedQueueItem,
             1 => new UnrankedQueueItem,
             2 => new JoinArenaItem,
@@ -314,7 +310,6 @@ final class Session {
         if ($player === null) {
             return;
         }
-
         $horizontalKnockback = $kit->getHorizontalKnockback();
         $verticalKnockback = $kit->getVerticalKnockback();
         $maxHeight = $kit->getMaxHeight();

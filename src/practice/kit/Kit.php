@@ -90,7 +90,10 @@ final class Kit {
                     }
                 }
             }
-            $item->setCustomName(TextFormat::colorize('&r&l&cKRESU&r'));
+
+            if ($item instanceof Durable) {
+                $item->setCustomName(TextFormat::colorize('&r&l&cKRESU&r'));
+            }
             $storage['inventoryContents'][$slot] = $item;
         }
 

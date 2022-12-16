@@ -13,6 +13,10 @@ final class WorldFactory {
 
     static private array $worlds = [];
 
+    public static function getAll(): array {
+        return self::$worlds;
+    }
+
     public static function getAllByMode(string $mode): array {
         $worlds = array_filter(self::getAll(),
             static function(World $world) use ($mode): bool {
@@ -29,16 +33,12 @@ final class WorldFactory {
         }, $worlds);
     }
 
-    public static function getAll(): array {
-        return self::$worlds;
+    public static function get(string $world): ?World {
+        return self::$worlds[$world] ?? null;
     }
 
     public static function getRandom(string $mode): ?World {
-        $worlds = array_filter(self::getAll(),
-            static function(World $world) use ($mode): bool {
-                return $world->isMode($mode);
-            }
-        );
+        $worlds = self::getAllByMode($mode);
 
         if (count($worlds) === 0) {
             return null;
@@ -51,10 +51,6 @@ final class WorldFactory {
             return;
         }
         unset(self::$worlds[$name]);
-    }
-
-    public static function get(string $name): ?World {
-        return self::$worlds[$name] ?? null;
     }
 
     public static function loadAll(): void {
@@ -72,18 +68,13 @@ final class WorldFactory {
 
             self::create($world->getFolderName(), ['no debuff'], $world->getSpawnLocation(), $world->getSpawnLocation(), null, null, true);
         }
-
         $storagePath = $plugin->getDataFolder() . 'storage/';
+
         if (!is_dir($storagePath)) {
             mkdir($storagePath);
         }
-
         $config = new Config($plugin->getDataFolder() . 'storage' . DIRECTORY_SEPARATOR . 'worlds.json', Config::JSON);
 
-        /**
-         * @var string $name
-         * @var array $data
-         */
         foreach ($config->getAll() as $name => $data) {
             $d_data = World::deserializeData($data);
 

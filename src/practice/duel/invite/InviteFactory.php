@@ -15,8 +15,8 @@ final class InviteFactory {
         return self::$invites[$session->getXuid()] ?? null;
     }
 
-    static public function create(Session $to, Session $from, int $duelType = Duel::TYPE_NODEBUFF): void {
-        self::$invites[$to->getXuid()][$from->getName()] = new Invite($from, $duelType);
+    static public function create(Session $to, Session $from, int $duelType = Duel::TYPE_NODEBUFF, ?string $worldName = null): void {
+        self::$invites[$to->getXuid()][$from->getName()] = new Invite($from, $duelType, $worldName);
     }
 
     static public function removeFromPlayer(Session $session, Session $target): void {

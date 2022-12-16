@@ -91,7 +91,7 @@ final class DuelCommand extends Command {
                     $sender->sendMessage(TextFormat::colorize('&cPlayer don\'t play duel.'));
                     return;
                 }
-                DuelFactory::create($session, $target, $invite->getDuelType(), false);
+                DuelFactory::create($session, $target, $invite->getDuelType(), false, $invite->getWorldName());
 
                 $target->getPlayer()?->sendMessage(TextFormat::colorize('&a' . $session->getName() . ' accepted your party duel request'));
                 $sender->sendMessage(TextFormat::colorize('&aYou have accepted ' . $target->getName() . '\'s request'));
@@ -104,6 +104,11 @@ final class DuelCommand extends Command {
 
             if (!$player instanceof Player || !$player->isOnline()) {
                 $sender->sendMessage(TextFormat::colorize('&cPlayer is offline.'));
+                return;
+            }
+
+            if ($player === $sender) {
+                $sender->sendMessage(TextFormat::colorize('&cYou can\'t send duel yourself.'));
                 return;
             }
             $target = SessionFactory::get($player);

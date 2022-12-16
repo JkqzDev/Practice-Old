@@ -33,7 +33,7 @@ final class DuelFactory {
         return self::$duels[$id] ?? null;
     }
 
-    public static function create(Session $first, Session $second, int $duelType, bool $ranked): void {
+    public static function create(Session $first, Session $second, int $duelType, bool $ranked, string $worldName = null): void {
         $id = 0;
 
         while (self::get($id) !== null || is_dir(Practice::getInstance()->getServer()->getDataPath() . 'worlds' . DIRECTORY_SEPARATOR . 'duel-' . $id)) {
@@ -42,8 +42,12 @@ final class DuelFactory {
         $className = self::getClass($duelType);
         $duelName = self::getName($duelType);
 
-        $newName = explode(' ', $duelName);
-        $worldData = WorldFactory::getRandom(strtolower(implode('', $newName)));
+        if ($worldName === null) {
+            $newName = explode(' ', $duelName);
+            $worldData = WorldFactory::getRandom(strtolower(implode('', $newName)));
+        } else {
+            $worldData = WorldFactory::get($worldName);
+        }
 
         if ($worldData === null) {
             $first->giveLobbyItems();

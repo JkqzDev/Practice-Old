@@ -101,7 +101,7 @@ no debuff:
     1:
       amplifier: 0
       duration: 9999999
-  attackCooldown: 10
+  attackCooldown: 9
   horizontalKnockback: 0.389
   verticalKnockback: 0.392
   canRevert: false
@@ -119,25 +119,25 @@ boxing:
     11:
       amplifier: 4
       duration: 9999999
-  attackCooldown: 10
-  horizontalKnockback: 0.4
-  verticalKnockback: 0.4
+  attackCooldown: 8
+  horizontalKnockback: 0.394
+  verticalKnockback: 0.392
   canRevert: false
-  maxHeight: 10
+  maxHeight: 2.8
 sumo:
   armorContents: []
   inventoryContents:
     - id: 280
       meta: 0
-  effects: ~
-  11:
-    amplifier: 4
-    duration: 9999999
-  attackCooldown: 10
-  horizontalKnockback: 0.39
-  verticalKnockback: 0.39
+  effects:
+    11:
+      amplifier: 4
+      duration: 9999999
+  attackCooldown: 8
+  horizontalKnockback: 0.395
+  verticalKnockback: 0.387
   canRevert: false
-  maxHeight: 3
+  maxHeight: 2.5
 gapple:
   armorContents:
     - id: 310
@@ -170,9 +170,9 @@ gapple:
       meta: 0
       count: 16
   effects: []
-  attackCooldown: 10
-  horizontalKnockback: 0.4
-  verticalKnockback: 0.4
+  attackCooldown: 9
+  horizontalKnockback: 0.394
+  verticalKnockback: 0.394
   canRevert: false
   maxHeight: 0
 fist:
@@ -181,11 +181,11 @@ fist:
     - id: 280
       meta: 0
   effects: []
-  attackCooldown: 10
-  horizontalKnockback: 0.4
-  verticalKnockback: 0.4
+  attackCooldown: 9
+  horizontalKnockback: 0.39
+  verticalKnockback: 0.39
   canRevert: false
-  maxHeight: 0
+  maxHeight: 10
 combo:
   armorContents:
     - id: 310
