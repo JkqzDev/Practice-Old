@@ -5,9 +5,9 @@ declare(strict_types=1);
 namespace practice\item\player;
 
 use pocketmine\item\ItemIds;
-use pocketmine\player\Player;
-use pocketmine\math\Vector3;
 use pocketmine\item\ItemUseResult;
+use pocketmine\math\Vector3;
+use pocketmine\player\Player;
 use practice\form\player\PlayerLeaderboardForm;
 use practice\item\PracticeItem;
 

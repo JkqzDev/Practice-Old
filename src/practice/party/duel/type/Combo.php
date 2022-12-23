@@ -6,4 +6,4 @@ namespace practice\party\duel\type;
 
 use practice\party\duel\Duel;
 
-final class Combo extends Duel {}
+final class Combo extends Duel { }

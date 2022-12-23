@@ -5,8 +5,8 @@ declare(strict_types=1);
 namespace cosmicpe\form\entries\custom;
 
 use ArgumentCountError;
-use InvalidArgumentException;
 use cosmicpe\form\entries\ModifiableEntry;
+use InvalidArgumentException;
 
 final class StepSliderEntry implements CustomFormEntry, ModifiableEntry {
 

@@ -5,8 +5,6 @@ declare(strict_types=1);
 namespace practice\database\mysql;
 
 use mysqli;
-use practice\Practice;
-use pocketmine\Server;
 use mysqli_sql_exception;
 use pocketmine\scheduler\AsyncTask;
 

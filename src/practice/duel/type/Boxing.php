@@ -4,11 +4,11 @@ declare(strict_types=1);
 
 namespace practice\duel\type;
 
-use practice\duel\Duel;
-use pocketmine\player\Player;
-use practice\duel\DuelFactory;
-use pocketmine\event\entity\EntityDamageEvent;
 use pocketmine\event\entity\EntityDamageByEntityEvent;
+use pocketmine\event\entity\EntityDamageEvent;
+use pocketmine\player\Player;
+use practice\duel\Duel;
+use practice\duel\DuelFactory;
 
 class Boxing extends Duel {
 

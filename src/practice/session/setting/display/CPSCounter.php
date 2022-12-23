@@ -30,7 +30,7 @@ class CPSCounter extends DisplaySetting {
         }
         $now = microtime(true);
 
-        return round(count(array_filter($this->clicks, static function(float $time) use ($now, $deltaTime): bool {
+        return round(count(array_filter($this->clicks, static function (float $time) use ($now, $deltaTime): bool {
                 return ($now - $time) <= $deltaTime;
             })) / $deltaTime, $roundPrecision);
     }

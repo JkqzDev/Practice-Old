@@ -4,10 +4,10 @@ declare(strict_types=1);
 
 namespace practice\duel\type;
 
-use practice\duel\Duel;
 use pocketmine\block\Water;
-use pocketmine\player\Player;
 use pocketmine\event\entity\EntityDamageEvent;
+use pocketmine\player\Player;
+use practice\duel\Duel;
 
 class Sumo extends Duel {
 

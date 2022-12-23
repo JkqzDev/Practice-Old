@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace cosmicpe\form\entries\custom;
 
-use InvalidArgumentException;
 use cosmicpe\form\entries\ModifiableEntry;
+use InvalidArgumentException;
 
 final class DropdownEntry implements CustomFormEntry, ModifiableEntry {
     private string $title;

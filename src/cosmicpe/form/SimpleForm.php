@@ -5,10 +5,10 @@ declare(strict_types=1);
 namespace cosmicpe\form;
 
 use Closure;
-use Exception;
-use pocketmine\player\Player;
 use cosmicpe\form\entries\simple\Button;
+use Exception;
 use pocketmine\form\FormValidationException;
+use pocketmine\player\Player;
 
 abstract class SimpleForm implements Form {
 

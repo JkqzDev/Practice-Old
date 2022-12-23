@@ -14,10 +14,19 @@ final class Inventory {
      * @param Item[] $inventoryContents
      */
     public function __construct(
-        private Kit $kit,
+        private Kit   $kit,
         private array $inventoryContents,
-        private bool $update = false
+        private bool  $update = false
     ) {}
+
+    static public function deserializeData(array $data, Kit $kit): self {
+        $newInventory = [];
+
+        foreach ($data as $slot => $itemSerialize) {
+            $newInventory[(int) $slot] = Item::jsonDeserialize($itemSerialize);
+        }
+        return new self($kit, $newInventory);
+    }
 
     public function getRealKit(): Kit {
         return $this->kit;
@@ -57,14 +66,5 @@ final class Inventory {
             $data[(string) $slot] = $item->jsonSerialize();
         }
         return $data;
-    }
-
-    static public function deserializeData(array $data, Kit $kit): self {
-        $newInventory = [];
-
-        foreach ($data as $slot => $itemSerialize) {
-            $newInventory[(int) $slot] = Item::jsonDeserialize($itemSerialize);
-        }
-        return new self($kit, $newInventory);
     }
 }

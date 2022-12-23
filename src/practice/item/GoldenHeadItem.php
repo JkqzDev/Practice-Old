@@ -4,11 +4,11 @@ declare(strict_types=1);
 
 namespace practice\item;
 
-use pocketmine\item\ItemIds;
+use pocketmine\entity\effect\EffectInstance;
+use pocketmine\entity\effect\VanillaEffects;
 use pocketmine\item\GoldenApple;
 use pocketmine\item\ItemIdentifier;
-use pocketmine\entity\effect\VanillaEffects;
-use pocketmine\entity\effect\EffectInstance;
+use pocketmine\item\ItemIds;
 
 class GoldenHeadItem extends GoldenApple {
 

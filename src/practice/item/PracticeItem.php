@@ -5,8 +5,8 @@ declare(strict_types=1);
 namespace practice\item;
 
 use pocketmine\item\Item;
-use pocketmine\utils\TextFormat;
 use pocketmine\item\ItemIdentifier;
+use pocketmine\utils\TextFormat;
 
 class PracticeItem extends Item {
 

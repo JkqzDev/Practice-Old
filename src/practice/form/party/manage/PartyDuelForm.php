@@ -29,19 +29,19 @@ final class PartyDuelForm extends SimpleForm {
 
         foreach ($this->types as $type => $typeId) {
             $this->addButton(new Button(TextFormat::colorize('&7' . $type)),
-            static function(Player $player, int $button_index) use ($typeId): void {
-                $session = SessionFactory::get($player);
+                static function (Player $player, int $button_index) use ($typeId): void {
+                    $session = SessionFactory::get($player);
 
-                if ($session === null) {
-                    return;
-                }
-                $party = $session->getParty();
+                    if ($session === null) {
+                        return;
+                    }
+                    $party = $session->getParty();
 
-                if ($party === null) {
-                    return;
-                }
-                QueueFactory::create($party, $typeId);
-            });
+                    if ($party === null) {
+                        return;
+                    }
+                    QueueFactory::create($party, $typeId);
+                });
         }
     }
 }

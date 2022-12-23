@@ -6,8 +6,8 @@ namespace practice\world;
 
 use Closure;
 use JetBrains\PhpStorm\ArrayShape;
-use practice\Practice;
 use pocketmine\world\Position;
+use practice\Practice;
 use practice\world\async\WorldCopyAsync;
 
 final class World {
@@ -35,15 +35,15 @@ final class World {
         $storage = [
             'modes' => $data['modes'],
             'firstPosition' => new Position(
-                (float)$data['firstPosition']['x'],
-                (float)$data['firstPosition']['y'],
-                (float)$data['firstPosition']['z'],
+                (float) $data['firstPosition']['x'],
+                (float) $data['firstPosition']['y'],
+                (float) $data['firstPosition']['z'],
                 null
             ),
             'secondPosition' => new Position(
-                (float)$data['secondPosition']['x'],
-                (float)$data['secondPosition']['y'],
-                (float)$data['secondPosition']['z'],
+                (float) $data['secondPosition']['x'],
+                (float) $data['secondPosition']['y'],
+                (float) $data['secondPosition']['z'],
                 null
             ),
             'firstPortal' => null,
@@ -52,15 +52,15 @@ final class World {
 
         if ($data['firstPortal'] !== null && $data['secondPortal'] !== null) {
             $storage['firstPortal'] = new Position(
-                (float)$data['firstPortal']['x'],
-                (float)$data['firstPortal']['y'],
-                (float)$data['firstPortal']['z'],
+                (float) $data['firstPortal']['x'],
+                (float) $data['firstPortal']['y'],
+                (float) $data['firstPortal']['z'],
                 null
             );
             $storage['secondPortal'] = new Position(
-                (float)$data['secondPortal']['x'],
-                (float)$data['secondPortal']['y'],
-                (float)$data['secondPortal']['z'],
+                (float) $data['secondPortal']['x'],
+                (float) $data['secondPortal']['y'],
+                (float) $data['secondPortal']['z'],
                 null
             );
         }

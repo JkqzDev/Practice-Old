@@ -5,19 +5,19 @@ namespace practice\entity;
 
 use pocketmine\block\Block;
 use pocketmine\color\Color;
+use pocketmine\entity\effect\InstantEffect;
 use pocketmine\entity\Entity;
-use pocketmine\player\Player;
 use pocketmine\entity\Location;
+use pocketmine\entity\projectile\SplashPotion as ProjectileSplashPotion;
+use pocketmine\event\entity\EntityRegainHealthEvent;
+use pocketmine\event\entity\ProjectileHitEntityEvent;
+use pocketmine\event\entity\ProjectileHitEvent;
 use pocketmine\item\PotionType;
 use pocketmine\math\RayTraceResult;
 use pocketmine\nbt\tag\CompoundTag;
-use pocketmine\entity\effect\InstantEffect;
-use pocketmine\world\sound\PotionSplashSound;
-use pocketmine\event\entity\ProjectileHitEvent;
+use pocketmine\player\Player;
 use pocketmine\world\particle\PotionSplashParticle;
-use pocketmine\event\entity\EntityRegainHealthEvent;
-use pocketmine\event\entity\ProjectileHitEntityEvent;
-use pocketmine\entity\projectile\SplashPotion as ProjectileSplashPotion;
+use pocketmine\world\sound\PotionSplashSound;
 
 class SplashPotion extends ProjectileSplashPotion {
 
@@ -34,7 +34,7 @@ class SplashPotion extends ProjectileSplashPotion {
     public function entityBaseTick(int $tickDiff = 1): bool {
         $hasUpdate = parent::entityBaseTick($tickDiff);
         $owning = $this->getOwningEntity();
-        
+
         if (!$owning instanceof Player || !$owning->isOnline() || !$owning->isAlive() || $owning->getWorld()->getFolderName() !== $this->getWorld()->getFolderName()) {
             $this->flagForDespawn();
             return true;
@@ -76,7 +76,7 @@ class SplashPotion extends ProjectileSplashPotion {
                 if ($entity instanceof Player && $entity->isAlive()) {
                     foreach ($effects as $effect) {
                         if (!$effect->getType() instanceof InstantEffect) {
-                            $newDuration = (int)round($effect->getDuration() * 0.75 * self::MAX_HIT);
+                            $newDuration = (int) round($effect->getDuration() * 0.75 * self::MAX_HIT);
 
                             if ($newDuration < 20) {
                                 continue;
@@ -91,17 +91,17 @@ class SplashPotion extends ProjectileSplashPotion {
             }
         }
     }
-    
+
     protected function onHitBlock(Block $blockHit, RayTraceResult $hitResult): void {
         parent::onHitBlock($blockHit, $hitResult);
-        
+
         $owner = $this->getOwningEntity();
-		
-		if (!$owner instanceof Player) {
-			return;
-		}
-		
-		if ($blockHit->getId() === 95) {
+
+        if (!$owner instanceof Player) {
+            return;
+        }
+
+        if ($blockHit->getId() === 95) {
             $effects = $this->getPotionEffects();
             $hasEffects = true;
 
@@ -127,7 +127,7 @@ class SplashPotion extends ProjectileSplashPotion {
                     if ($entity instanceof Player && $entity->isAlive()) {
                         foreach ($effects as $effect) {
                             if (!$effect->getType() instanceof InstantEffect) {
-                                $newDuration = (int)round($effect->getDuration() * 0.75 * self::MAX_HIT);
+                                $newDuration = (int) round($effect->getDuration() * 0.75 * self::MAX_HIT);
 
                                 if ($newDuration < 20) {
                                     continue;

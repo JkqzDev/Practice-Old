@@ -4,14 +4,13 @@ declare(strict_types=1);
 
 namespace practice\arena\command;
 
-use practice\arena\Arena;
-use pocketmine\player\Player;
 use pocketmine\command\Command;
-use pocketmine\utils\TextFormat;
-use practice\session\SessionFactory;
 use pocketmine\command\CommandSender;
-use practice\form\arena\manage\SetupArenaForm;
+use pocketmine\player\Player;
+use pocketmine\utils\TextFormat;
 use practice\form\arena\manage\DeleteArenaForm;
+use practice\form\arena\manage\SetupArenaForm;
+use practice\session\SessionFactory;
 
 final class ArenaCommand extends Command {
 

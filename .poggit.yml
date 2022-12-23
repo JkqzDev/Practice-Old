@@ -1,8 +1,8 @@
 --- # Poggit-CI Manifest. Open the CI at https://poggit.pmmp.io/ci/JkqzDev/Practice
 build-by-default: true
 branches:
-- main
-- developer
+  - main
+  - developer
 projects:
   Practice:
     path: ""

@@ -24,11 +24,11 @@ final class PartyDuelInviteForm extends SimpleForm {
         $inviteParty = new Button(TextFormat::colorize('&7Invite Party'));
         $partyRequests = new Button(TextFormat::colorize('&7Party Requests'));
 
-        $this->addButton($inviteParty, function(Player $player, int $button_index) use ($party): void {
+        $this->addButton($inviteParty, function (Player $player, int $button_index) use ($party): void {
             $player->sendForm($this->createPartyInviteForm($party));
         });
 
-        $this->addButton($partyRequests, function(Player $player, int $button_index) use ($party): void {
+        $this->addButton($partyRequests, function (Player $player, int $button_index) use ($party): void {
             $player->sendForm($this->createPartyRequestsForm($party));
         });
     }
@@ -47,7 +47,7 @@ final class PartyDuelInviteForm extends SimpleForm {
             ];
 
             public function __construct(
-                Party $party,
+                Party          $party,
                 private ?Party $target = null
             ) {
                 parent::__construct(TextFormat::colorize('&7Party Duel Invite'));
@@ -59,7 +59,7 @@ final class PartyDuelInviteForm extends SimpleForm {
                 $partiesDropdown = new DropdownEntry('Choose Party', $parties);
                 $duelsDropdown = new DropdownEntry('Choose Duel', $duels);
 
-                $this->addEntry($partiesDropdown, function(Player $player, DropdownEntry $entry, int $value) use ($parties): void {
+                $this->addEntry($partiesDropdown, function (Player $player, DropdownEntry $entry, int $value) use ($parties): void {
                     $targetName = $parties[$value];
                     $target = PartyFactory::get($targetName);
 
@@ -75,7 +75,7 @@ final class PartyDuelInviteForm extends SimpleForm {
                     $this->target = $target;
                 });
 
-                $this->addEntry($duelsDropdown, function(Player $player, DropdownEntry $entry, int $value) use ($party): void {
+                $this->addEntry($duelsDropdown, function (Player $player, DropdownEntry $entry, int $value) use ($party): void {
                     if ($this->target === null) {
                         return;
                     }
@@ -95,7 +95,7 @@ final class PartyDuelInviteForm extends SimpleForm {
 
             public function __construct(Party $party) {
                 parent::__construct(TextFormat::colorize('&7Party Duel Requests'));
-                
+
                 foreach (InviteFactory::get($party) ?? [] as $invite) {
                     assert($invite instanceof Invite);
 
@@ -104,7 +104,7 @@ final class PartyDuelInviteForm extends SimpleForm {
                     }
                     $button = new Button($invite->getParty()->getName());
 
-                    $this->addButton($button, function(Player $player, int $button_index) use ($party, $invite): void {
+                    $this->addButton($button, function (Player $player, int $button_index) use ($party, $invite): void {
                         $player->sendForm($this->createRequestResponseForm($party, $invite));
                     });
                 }
@@ -112,51 +112,51 @@ final class PartyDuelInviteForm extends SimpleForm {
 
             private function createRequestResponseForm(Party $party, Invite $invite): SimpleForm {
                 return new class($party, $invite) extends SimpleForm {
-                    
+
                     public function __construct(Party $party, Invite $invite) {
-                        parent::__construct(TextFormat::colorize('&7' . $invite->getParty()->getName(). '\'s invite'));
+                        parent::__construct(TextFormat::colorize('&7' . $invite->getParty()->getName() . '\'s invite'));
                         $accept = new Button(TextFormat::colorize('&aAccept'));
                         $decline = new Button(TextFormat::colorize('&cDecline'));
-        
-                        $this->addButton($accept, function(Player $player, int $button_index) use ($party, $invite): void {
+
+                        $this->addButton($accept, function (Player $player, int $button_index) use ($party, $invite): void {
                             $target = $invite->getParty();
-        
+
                             if (!$invite->exists()) {
                                 InviteFactory::removeFromParty($party, $target);
                                 return;
                             }
-        
+
                             if ($invite->isExpired()) {
                                 InviteFactory::removeFromParty($party, $target);
                                 $player->sendMessage(TextFormat::colorize('&cInvite already expired'));
                                 return;
                             }
-        
+
                             if ($target->inDuel()) {
                                 InviteFactory::removeFromParty($party, $target);
                                 $player->sendMessage(TextFormat::colorize('&cThe party has already in duel'));
                                 return;
                             }
-        
+
                             if ($party->inDuel()) {
                                 InviteFactory::removeFromParty($party, $target);
                                 return;
                             }
                             $party->setQueue(null);
                             $target->setQueue(null);
-        
+
                             DuelFactory::create($party, $target, $invite->getDuelType());
-        
+
                             $target->getOwner()->sendMessage(TextFormat::colorize('&a' . $party->getName() . ' accepted your party duel request'));
                             $player->sendMessage(TextFormat::colorize('&aYou have accepted ' . $target->getName() . '\'s request'));
-        
+
                             InviteFactory::remove($party);
                             InviteFactory::remove($target);
                         });
-        
-                        $this->addButton($decline, function(Player $player, int $button_index) use ($party, $invite): void {
+
+                        $this->addButton($decline, function (Player $player, int $button_index) use ($party, $invite): void {
                             $target = $invite->getParty();
-        
+
                             if ($invite->exists() && !$target->inDuel()) {
                                 $target->getOwner()->sendMessage(TextFormat::colorize('&c' . $party->getName() . ' declines your party duel request'));
                             }

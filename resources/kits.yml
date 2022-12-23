@@ -107,7 +107,7 @@ no debuff:
   canRevert: false
   maxHeight: 2.8
 boxing:
-  armorContents: []
+  armorContents: [ ]
   inventoryContents:
     - id: 276
       meta: 0
@@ -125,7 +125,7 @@ boxing:
   canRevert: false
   maxHeight: 2.8
 sumo:
-  armorContents: []
+  armorContents: [ ]
   inventoryContents:
     - id: 280
       meta: 0
@@ -169,18 +169,18 @@ gapple:
     - id: 322
       meta: 0
       count: 16
-  effects: []
+  effects: [ ]
   attackCooldown: 9
   horizontalKnockback: 0.394
   verticalKnockback: 0.394
   canRevert: false
   maxHeight: 0
 fist:
-  armorContents: []
+  armorContents: [ ]
   inventoryContents:
     - id: 280
       meta: 0
-  effects: []
+  effects: [ ]
   attackCooldown: 9
   horizontalKnockback: 0.39
   verticalKnockback: 0.39
@@ -248,7 +248,7 @@ combo:
   canRevert: false
   maxHeight: 2.2
 battle rush:
-  armorContents: []
+  armorContents: [ ]
   inventoryContents:
     4:
       id: 359
@@ -262,7 +262,7 @@ battle rush:
       id: 35
       meta: 0
       count: 64
-  effects: []
+  effects: [ ]
   attackCooldown: 10
   horizontalKnockback: 0.4
   verticalKnockback: 0.4
@@ -309,7 +309,7 @@ bridge:
       id: 262
       meta: 0
       count: 16
-  effects: []
+  effects: [ ]
   attackCooldown: 10
   horizontalKnockback: 0.4
   verticalKnockback: 0.4
@@ -384,7 +384,7 @@ build uhc:
     12:
       id: 325
       meta: 10
-  effects: []
+  effects: [ ]
   attackCooldown: 10
   horizontalKnockback: 0.4
   verticalKnockback: 0.4
@@ -482,7 +482,7 @@ final uhc:
   armorContents:
     0:
       id: 310
-      meta: 163
+      meta: 154
       enchantments:
         0: 3
     1:
@@ -492,12 +492,12 @@ final uhc:
         0: 3
     2:
       id: 312
-      meta: 307
+      meta: 330
       enchantments:
         0: 3
     3:
       id: 313
-      meta: 241
+      meta: 254
       enchantments:
         0: 3
   inventoryContents:
@@ -520,12 +520,12 @@ final uhc:
       count: 5
     4:
       id: 310
-      meta: 148
+      meta: 140
       enchantments:
         0: 2
     5:
       id: 313
-      meta: 241
+      meta: 246
       enchantments:
         0: 2
     6:
@@ -539,12 +539,12 @@ final uhc:
       meta: 10
     9:
       id: 311
-      meta: 132
+      meta: 140
       enchantments:
         0: 2
     10:
       id: 312
-      meta: 144
+      meta: 120
       enchantments:
         0: 2
     11:
@@ -557,7 +557,7 @@ final uhc:
       id: 4
       meta: 0
       count: 64
-  effects: []
+  effects: [ ]
   attackCooldown: 10
   horizontalKnockback: 0.4
   verticalKnockback: 0.4
@@ -603,7 +603,16 @@ sg:
       id: 262
       meta: 0
       count: 8
-  effects: []
+  effects: [ ]
+  attackCooldown: 10
+  horizontalKnockback: 0.4
+  verticalKnockback: 0.4
+  canRevert: false
+  maxHeight: 0
+hg:
+  armorContents: [ ]
+  inventoryContents: [ ]
+  effects: [ ]
   attackCooldown: 10
   horizontalKnockback: 0.4
   verticalKnockback: 0.4

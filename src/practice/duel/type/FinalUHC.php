@@ -4,9 +4,9 @@ declare(strict_types=1);
 
 namespace practice\duel\type;
 
-use practice\duel\Duel;
-use pocketmine\player\Player;
 use pocketmine\event\player\PlayerMoveEvent;
+use pocketmine\player\Player;
+use practice\duel\Duel;
 
 class FinalUHC extends Duel {
 

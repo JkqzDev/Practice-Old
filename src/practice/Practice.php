@@ -4,19 +4,19 @@ declare(strict_types=1);
 
 namespace practice;
 
-use pocketmine\world\generator\GeneratorManager;
-use pocketmine\world\World;
-use pocketmine\item\PotionType;
-use pocketmine\item\ItemFactory;
-use pocketmine\plugin\PluginBase;
-use pocketmine\nbt\tag\CompoundTag;
-use pocketmine\entity\EntityFactory;
-use pocketmine\entity\EntityDataHelper;
-use pocketmine\data\bedrock\PotionTypeIds;
 use pocketmine\data\bedrock\EntityLegacyIds;
 use pocketmine\data\bedrock\PotionTypeIdMap;
+use pocketmine\data\bedrock\PotionTypeIds;
 use pocketmine\data\SavedDataLoadingException;
+use pocketmine\entity\EntityDataHelper;
+use pocketmine\entity\EntityFactory;
+use pocketmine\item\ItemFactory;
+use pocketmine\item\PotionType;
+use pocketmine\nbt\tag\CompoundTag;
+use pocketmine\plugin\PluginBase;
 use pocketmine\utils\TextFormat;
+use pocketmine\world\generator\GeneratorManager;
+use pocketmine\world\World;
 use practice\arena\ArenaFactory;
 use practice\arena\command\ArenaCommand;
 use practice\command\PingCommand;
@@ -44,10 +44,6 @@ final class Practice extends PluginBase {
 
     static private ?self $instance = null;
 
-    public static function getInstance(): self {
-        return self::$instance;
-    }
-
     protected function onLoad(): void {
         self::$instance = $this;
 
@@ -60,7 +56,7 @@ final class Practice extends PluginBase {
     protected function onEnable(): void {
         $this->setup();
         $this->createTables();
-        
+
         $this->registerEntities();
         $this->registerItems();
         $this->registerGenerators();
@@ -78,19 +74,9 @@ final class Practice extends PluginBase {
         SessionFactory::task();
     }
 
-    protected function onDisable(): void {
-        ArenaFactory::saveAll();
-        KitFactory::saveAll();
-        SessionFactory::saveAll();
-        WorldFactory::saveAll();
-
-        DuelFactory::disable();
-        PartyDuelFactory::disable();
-    }
-    
     protected function setup(): void {
         $config = $this->getConfig();
-        
+
         $this->getServer()->getNetwork()->setName(TextFormat::colorize($config->get('server-motd', '')));
         $this->getServer()->getQueryInformation()->setMaxPlayerCount($config->get('server-max-players', 200));
     }
@@ -102,11 +88,11 @@ final class Practice extends PluginBase {
     }
 
     protected function registerEntities(): void {
-        EntityFactory::getInstance()->register(EnderPearl::class, static function(World $world, CompoundTag $nbt): EnderPearl {
+        EntityFactory::getInstance()->register(EnderPearl::class, static function (World $world, CompoundTag $nbt): EnderPearl {
             return new EnderPearl(EntityDataHelper::parseLocation($nbt, $world), null, $nbt);
         }, ['ThrownEnderpearl', 'minecraft:ender_pearl'], EntityLegacyIds::ENDER_PEARL);
 
-        EntityFactory::getInstance()->register(SplashPotion::class, static function(World $world, CompoundTag $nbt): SplashPotion {
+        EntityFactory::getInstance()->register(SplashPotion::class, static function (World $world, CompoundTag $nbt): SplashPotion {
             $potionType = PotionTypeIdMap::getInstance()->fromId($nbt->getShort('PotionId', PotionTypeIds::WATER));
 
             if ($potionType === null) {
@@ -115,6 +101,10 @@ final class Practice extends PluginBase {
             return new SplashPotion(EntityDataHelper::parseLocation($nbt, $world), null, $potionType, $nbt);
 
         }, ['ThrownPotion', 'minecraft:potion', 'thrownpotion'], EntityLegacyIds::SPLASH_POTION);
+    }
+
+    public static function getInstance(): self {
+        return self::$instance;
     }
 
     protected function registerItems(): void {
@@ -159,7 +149,7 @@ final class Practice extends PluginBase {
             'suicide',
             'clear',
         ];
-        
+
         foreach ($commands as $commandName) {
             $command = $this->getServer()->getCommandMap()->getCommand($commandName);
 
@@ -167,5 +157,15 @@ final class Practice extends PluginBase {
                 $this->getServer()->getCommandMap()->unregister($command);
             }
         }
+    }
+
+    protected function onDisable(): void {
+        ArenaFactory::saveAll();
+        KitFactory::saveAll();
+        SessionFactory::saveAll();
+        WorldFactory::saveAll();
+
+        DuelFactory::disable();
+        PartyDuelFactory::disable();
     }
 }

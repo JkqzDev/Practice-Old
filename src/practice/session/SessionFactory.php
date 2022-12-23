@@ -4,9 +4,9 @@ declare(strict_types=1);
 
 namespace practice\session;
 
-use practice\Practice;
 use pocketmine\player\Player;
 use pocketmine\scheduler\ClosureTask;
+use practice\Practice;
 
 final class SessionFactory {
 
@@ -34,7 +34,7 @@ final class SessionFactory {
     }
 
     public static function task(): void {
-        Practice::getInstance()->getScheduler()->scheduleRepeatingTask(new ClosureTask(static function(): void {
+        Practice::getInstance()->getScheduler()->scheduleRepeatingTask(new ClosureTask(static function (): void {
             foreach (self::getAll() as $session) {
                 $session->update();
             }

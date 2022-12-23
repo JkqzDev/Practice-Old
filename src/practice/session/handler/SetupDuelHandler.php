@@ -4,19 +4,19 @@ declare(strict_types=1);
 
 namespace practice\session\handler;
 
-use pocketmine\Server;
-use pocketmine\item\ItemIds;
-use pocketmine\player\Player;
-use practice\session\Session;
-use pocketmine\world\Position;
-use pocketmine\player\GameMode;
-use pocketmine\item\ItemFactory;
-use pocketmine\utils\TextFormat;
-use practice\world\WorldFactory;
 use pocketmine\block\BlockFactory;
 use pocketmine\block\BlockLegacyIds;
-use practice\session\SessionFactory;
 use pocketmine\event\player\PlayerInteractEvent;
+use pocketmine\item\ItemFactory;
+use pocketmine\item\ItemIds;
+use pocketmine\player\GameMode;
+use pocketmine\player\Player;
+use pocketmine\Server;
+use pocketmine\utils\TextFormat;
+use pocketmine\world\Position;
+use practice\session\Session;
+use practice\session\SessionFactory;
+use practice\world\WorldFactory;
 
 final class SetupDuelHandler {
 

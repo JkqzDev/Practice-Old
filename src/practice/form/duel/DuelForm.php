@@ -4,16 +4,16 @@ declare(strict_types=1);
 
 namespace practice\form\duel;
 
+use cosmicpe\form\CustomForm;
+use cosmicpe\form\entries\custom\DropdownEntry;
 use cosmicpe\form\entries\simple\Button;
 use cosmicpe\form\SimpleForm;
-use practice\duel\Duel;
-use practice\duel\DuelFactory;
-use practice\session\Session;
-use cosmicpe\form\CustomForm;
 use pocketmine\player\Player;
 use pocketmine\utils\TextFormat;
+use practice\duel\Duel;
+use practice\duel\DuelFactory;
 use practice\duel\invite\InviteFactory;
-use cosmicpe\form\entries\custom\DropdownEntry;
+use practice\session\Session;
 use practice\world\WorldFactory;
 
 final class DuelForm extends CustomForm {
@@ -31,7 +31,8 @@ final class DuelForm extends CustomForm {
         'Cave UHC' => Duel::TYPE_CAVEUHC,
         'Build UHC' => Duel::TYPE_BUILDUHC,
         'Combo' => Duel::TYPE_COMBO,
-        'SG' => Duel::TYPE_SG
+        'SG' => Duel::TYPE_SG,
+        'HG' => Duel::TYPE_HG
     ];
 
     public function __construct(Session $session, Session $target) {
@@ -40,7 +41,7 @@ final class DuelForm extends CustomForm {
         $duels = array_keys($this->types);
         $duelsDropdown = new DropdownEntry('Choose Duel', $duels);
 
-        $this->addEntry($duelsDropdown, function(Player $player, DropdownEntry $entry, int $value) use ($duels, $session, $target): void {
+        $this->addEntry($duelsDropdown, function (Player $player, DropdownEntry $entry, int $value) use ($duels, $session, $target): void {
             $duelName = DuelFactory::getName($value);
             $newName = explode(' ', $duelName);
             $worlds = WorldFactory::getAllByMode(strtolower(implode('', $newName)));

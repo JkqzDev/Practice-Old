@@ -5,37 +5,13 @@ declare(strict_types=1);
 namespace practice\world;
 
 use pocketmine\Server;
-use practice\Practice;
 use pocketmine\utils\Config;
 use pocketmine\world\Position;
+use practice\Practice;
 
 final class WorldFactory {
 
     static private array $worlds = [];
-
-    public static function getAll(): array {
-        return self::$worlds;
-    }
-
-    public static function getAllByMode(string $mode): array {
-        $worlds = array_filter(self::getAll(),
-            static function(World $world) use ($mode): bool {
-                return $world->isMode($mode);
-            }
-        );
-
-        if (count($worlds) === 0) {
-            return [];
-        }
-
-        return array_map(static function(World $world) {
-            return $world->getName();
-        }, $worlds);
-    }
-
-    public static function get(string $world): ?World {
-        return self::$worlds[$world] ?? null;
-    }
 
     public static function getRandom(string $mode): ?World {
         $worlds = self::getAllByMode($mode);
@@ -46,11 +22,35 @@ final class WorldFactory {
         return $worlds[array_rand($worlds)];
     }
 
+    public static function getAllByMode(string $mode): array {
+        $worlds = array_filter(self::getAll(),
+            static function (World $world) use ($mode): bool {
+                return $world->isMode($mode);
+            }
+        );
+
+        if (count($worlds) === 0) {
+            return [];
+        }
+
+        return array_map(static function (World $world) {
+            return $world->getName();
+        }, $worlds);
+    }
+
+    public static function getAll(): array {
+        return self::$worlds;
+    }
+
     public static function remove(string $name): void {
         if (self::get($name) === null) {
             return;
         }
         unset(self::$worlds[$name]);
+    }
+
+    public static function get(string $world): ?World {
+        return self::$worlds[$world] ?? null;
     }
 
     public static function loadAll(): void {

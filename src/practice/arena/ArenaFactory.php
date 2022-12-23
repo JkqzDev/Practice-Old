@@ -4,9 +4,9 @@ declare(strict_types=1);
 
 namespace practice\arena;
 
-use practice\Practice;
-use pocketmine\world\World;
 use pocketmine\utils\Config;
+use pocketmine\world\World;
+use practice\Practice;
 
 final class ArenaFactory {
 
@@ -31,7 +31,7 @@ final class ArenaFactory {
         }
         $plugin = Practice::getInstance();
         $path = $plugin->getDataFolder() . 'storage';
-        
+
         if (!is_dir($path)) {
             mkdir($path);
         }
@@ -58,7 +58,7 @@ final class ArenaFactory {
     public static function saveAll(): void {
         $plugin = Practice::getInstance();
         $path = $plugin->getDataFolder() . 'storage';
-        
+
         if (!is_dir($path)) {
             mkdir($path);
         }

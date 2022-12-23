@@ -4,23 +4,23 @@ declare(strict_types=1);
 
 namespace practice\duel\type;
 
-use pocketmine\event\player\PlayerItemUseEvent;
-use practice\duel\Duel;
 use pocketmine\color\Color;
-use pocketmine\world\World;
-use pocketmine\item\ItemIds;
-use pocketmine\player\Player;
-use pocketmine\world\Position;
-use practice\duel\DuelFactory;
-use pocketmine\player\GameMode;
+use pocketmine\event\block\BlockPlaceEvent;
+use pocketmine\event\entity\EntityDamageEvent;
+use pocketmine\event\player\PlayerItemUseEvent;
+use pocketmine\event\player\PlayerMoveEvent;
 use pocketmine\item\ItemFactory;
+use pocketmine\item\ItemIds;
+use pocketmine\math\AxisAlignedBB;
+use pocketmine\player\GameMode;
+use pocketmine\player\Player;
 use pocketmine\utils\TextFormat;
+use pocketmine\world\Position;
+use pocketmine\world\World;
+use practice\duel\Duel;
+use practice\duel\DuelFactory;
 use practice\session\Session;
 use practice\world\WorldFactory;
-use pocketmine\math\AxisAlignedBB;
-use pocketmine\event\block\BlockPlaceEvent;
-use pocketmine\event\player\PlayerMoveEvent;
-use pocketmine\event\entity\EntityDamageEvent;
 
 class Bridge extends Duel {
 
@@ -67,25 +67,6 @@ class Bridge extends Duel {
             $this->giveKit($isFirst ? $this->firstSession : $this->secondSession, $isFirst);
             $this->teleportPlayer($player, $isFirst);
         }
-    }
-
-    public function handleItemUse(PlayerItemUseEvent $event): void {
-        $item = $event->getItem();
-        $player = $event->getPlayer();
-
-        if ($item->getId() !== ItemIds::BOW) {
-            return;
-        }
-
-        if (isset($this->bow[$player->getXuid()])) {
-            $time = $this->bow[$player->getXuid()];
-
-            if ($time > time()) {
-                $event->cancel();
-                return;
-            }
-        }
-        $this->bow[$player->getXuid()] = time() + 7;
     }
 
     private function giveKit(Session $session, bool $firstPlayer = true): void {
@@ -144,6 +125,26 @@ class Bridge extends Duel {
         } else {
             $player->teleport(Position::fromObject($secondPosition->add(0.5, 0, 0.5), $this->world));
         }
+    }
+
+    public function handleItemUse(PlayerItemUseEvent $event): void {
+        $item = $event->getItem();
+        $player = $event->getPlayer();
+
+        if ($item->getId() !== ItemIds::BOW) {
+            return;
+        }
+
+        if (isset($this->bow[$player->getXuid()])) {
+            $time = $this->bow[$player->getXuid()];
+
+            if ($time > time()) {
+                $player->sendPopup(TextFormat::colorize('&cBow cooldown: ' . ($time - time()) . 's'));
+                $event->cancel();
+                return;
+            }
+        }
+        $this->bow[$player->getXuid()] = time() + 7;
     }
 
     public function handleMove(PlayerMoveEvent $event): void {
@@ -209,38 +210,6 @@ class Bridge extends Duel {
         $secondPlayer->sendTitle(TextFormat::colorize($title), TextFormat::colorize($subTitle));
     }
 
-    protected function prepare(): void {
-        $world = $this->world;
-
-        $firstSession = $this->firstSession;
-        $secondSession = $this->secondSession;
-
-        $world->setTime(World::TIME_DAY);
-        $world->stopTime();
-
-        $firstPlayer = $firstSession->getPlayer();
-        $secondPlayer = $secondSession->getPlayer();
-
-        if ($firstPlayer !== null && $secondPlayer !== null) {
-            $firstPlayer->setGamemode(GameMode::SURVIVAL());
-            $secondPlayer->setGamemode(GameMode::SURVIVAL());
-
-            $firstPlayer->getArmorInventory()->clearAll();
-            $firstPlayer->getInventory()->clearAll();
-            $secondPlayer->getArmorInventory()->clearAll();
-            $secondPlayer->getInventory()->clearAll();
-
-            $this->giveKit($firstSession);
-            $this->giveKit($secondSession, false);
-
-            $this->teleportPlayer($firstPlayer);
-            $this->teleportPlayer($secondPlayer, false);
-
-            $firstPlayer->setImmobile();
-            $secondPlayer->setImmobile();
-        }
-    }
-
     public function scoreboard(Player $player): array {
         if ($this->status === self::RUNNING) {
             $firstPoints = $this->firstPoints;
@@ -301,6 +270,38 @@ class Bridge extends Duel {
                 $this->teleportPlayer($secondPlayer, false);
                 $this->giveKit($this->secondSession, false);
             }
+        }
+    }
+
+    protected function prepare(): void {
+        $world = $this->world;
+
+        $firstSession = $this->firstSession;
+        $secondSession = $this->secondSession;
+
+        $world->setTime(World::TIME_DAY);
+        $world->stopTime();
+
+        $firstPlayer = $firstSession->getPlayer();
+        $secondPlayer = $secondSession->getPlayer();
+
+        if ($firstPlayer !== null && $secondPlayer !== null) {
+            $firstPlayer->setGamemode(GameMode::SURVIVAL());
+            $secondPlayer->setGamemode(GameMode::SURVIVAL());
+
+            $firstPlayer->getArmorInventory()->clearAll();
+            $firstPlayer->getInventory()->clearAll();
+            $secondPlayer->getArmorInventory()->clearAll();
+            $secondPlayer->getInventory()->clearAll();
+
+            $this->giveKit($firstSession);
+            $this->giveKit($secondSession, false);
+
+            $this->teleportPlayer($firstPlayer);
+            $this->teleportPlayer($secondPlayer, false);
+
+            $firstPlayer->setImmobile();
+            $secondPlayer->setImmobile();
         }
     }
 

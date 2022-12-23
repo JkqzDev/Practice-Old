@@ -11,10 +11,6 @@ final class InviteFactory {
 
     static private array $invites = [];
 
-    static public function get(Party $party): ?array {
-        return self::$invites[$party->getName()] ?? null;
-    }
-
     static public function create(Party $to, Party $from, int $duelType = Duel::TYPE_NODEBUFF): void {
         self::$invites[$to->getName()][$from->getName()] = new Invite($from, $duelType);
     }
@@ -29,6 +25,10 @@ final class InviteFactory {
             return;
         }
         unset(self::$invites[$party->getName()][$target->getName()]);
+    }
+
+    static public function get(Party $party): ?array {
+        return self::$invites[$party->getName()] ?? null;
     }
 
     static public function remove(Party $party): void {

@@ -4,18 +4,16 @@ declare(strict_types=1);
 namespace practice\entity;
 
 use pocketmine\block\Block;
-use pocketmine\math\Vector3;
 use pocketmine\entity\Entity;
-use pocketmine\player\Player;
 use pocketmine\entity\Location;
+use pocketmine\entity\projectile\EnderPearl as ProjectileEnderPearl;
+use pocketmine\event\entity\ProjectileHitEvent;
 use pocketmine\math\RayTraceResult;
 use pocketmine\nbt\tag\CompoundTag;
-use pocketmine\block\BlockLegacyIds;
-use pocketmine\event\entity\ProjectileHitEvent;
-use pocketmine\world\sound\EndermanTeleportSound;
-use pocketmine\world\particle\EndermanTeleportParticle;
 use pocketmine\network\mcpe\protocol\MoveActorAbsolutePacket;
-use pocketmine\entity\projectile\EnderPearl as ProjectileEnderPearl;
+use pocketmine\player\Player;
+use pocketmine\world\particle\EndermanTeleportParticle;
+use pocketmine\world\sound\EndermanTeleportSound;
 
 class EnderPearl extends ProjectileEnderPearl {
 
@@ -30,7 +28,7 @@ class EnderPearl extends ProjectileEnderPearl {
     public function entityBaseTick(int $tickDiff = 1): bool {
         $hasUpdate = parent::entityBaseTick($tickDiff);
         $owning = $this->getOwningEntity();
-        
+
         if (!$owning instanceof Player || !$owning->isOnline() || !$owning->isAlive() || $owning->getWorld()->getFolderName() !== $this->getWorld()->getFolderName()) {
             $this->flagForDespawn();
             return true;
@@ -66,17 +64,17 @@ class EnderPearl extends ProjectileEnderPearl {
         $this->getWorld()->addParticle($owner->getPosition(), new EndermanTeleportParticle);
         $this->getWorld()->addSound($owner->getPosition(), new EndermanTeleportSound);
     }
-    
+
     protected function onHitBlock(Block $blockHit, RayTraceResult $hitResult): void {
         parent::onHitBlock($blockHit, $hitResult);
         $owner = $this->getOwningEntity();
-		
-		if (!$owner instanceof Player) {
-			return;
-		}
-		
-		if ($blockHit->getId() === 95) {
-			$this->getWorld()->addParticle($owner->getPosition(), new EndermanTeleportParticle);
+
+        if (!$owner instanceof Player) {
+            return;
+        }
+
+        if ($blockHit->getId() === 95) {
+            $this->getWorld()->addParticle($owner->getPosition(), new EndermanTeleportParticle);
             $this->getWorld()->addSound($owner->getPosition(), new EndermanTeleportSound);
 
             $vector = $hitResult->getHitVector();
@@ -84,7 +82,7 @@ class EnderPearl extends ProjectileEnderPearl {
             $owner->getServer()->broadcastPackets(
                 $owner->getViewers(),
                 [
-                MoveActorAbsolutePacket::create($owner->getId(),
+                    MoveActorAbsolutePacket::create($owner->getId(),
                         $owner->getOffsetPosition($location = $owner->getLocation()),
                         $location->pitch,
                         $location->yaw,
@@ -95,7 +93,7 @@ class EnderPearl extends ProjectileEnderPearl {
 
             $this->getWorld()->addParticle($owner->getPosition(), new EndermanTeleportParticle);
             $this->getWorld()->addSound($owner->getPosition(), new EndermanTeleportSound);
-			return;
+            return;
         }
-	}
+    }
 }

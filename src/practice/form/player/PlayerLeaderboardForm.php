@@ -9,7 +9,6 @@ use cosmicpe\form\SimpleForm;
 use pocketmine\player\Player;
 use pocketmine\utils\TextFormat;
 use practice\database\mysql\MySQL;
-use practice\database\mysql\queries\QueryAsync;
 use practice\database\mysql\queries\SelectAsync;
 
 final class PlayerLeaderboardForm extends SimpleForm {
@@ -20,8 +19,8 @@ final class PlayerLeaderboardForm extends SimpleForm {
         $killsLeaderboard = new Button(TextFormat::colorize('&7Kills Leaderboard'));
         $deathsLeaderboard = new Button(TextFormat::colorize('&7Deaths Leaderboard'));
 
-        $this->addButton($eloLeaderboard, function(Player $player, int $button_index): void {
-            MySQL::runAsync(new SelectAsync('duel_stats', [], 'ORDER BY elo DESC LIMIT 10', function(array $rows) use ($player): void {
+        $this->addButton($eloLeaderboard, function (Player $player, int $button_index): void {
+            MySQL::runAsync(new SelectAsync('duel_stats', [], 'ORDER BY elo DESC LIMIT 10', function (array $rows) use ($player): void {
                 $content = TextFormat::colorize('&e&lTOP 10 ELO PLAYERS&r' . PHP_EOL);
 
                 foreach ($rows as $pos => $data) {
@@ -33,8 +32,8 @@ final class PlayerLeaderboardForm extends SimpleForm {
                 $player->sendForm($this->createEloLeaderboard($content));
             }, 'player, elo'));
         });
-        $this->addButton($killsLeaderboard, function(Player $player, int $button_index): void {
-            MySQL::runAsync(new SelectAsync('duel_stats', [], 'ORDER BY kills DESC LIMIT 10', function(array $rows) use ($player): void {
+        $this->addButton($killsLeaderboard, function (Player $player, int $button_index): void {
+            MySQL::runAsync(new SelectAsync('duel_stats', [], 'ORDER BY kills DESC LIMIT 10', function (array $rows) use ($player): void {
                 $content = TextFormat::colorize('&e&lTOP 10 KILLS PLAYERS&r' . PHP_EOL);
 
                 foreach ($rows as $pos => $data) {
@@ -46,8 +45,8 @@ final class PlayerLeaderboardForm extends SimpleForm {
                 $player->sendForm($this->createKillsLeaderboard($content));
             }, 'player, kills'));
         });
-        $this->addButton($deathsLeaderboard, function(Player $player, int $button_index): void {
-            MySQL::runAsync(new SelectAsync('duel_stats', [], 'ORDER BY deaths DESC LIMIT 10', function(array $rows) use ($player): void {
+        $this->addButton($deathsLeaderboard, function (Player $player, int $button_index): void {
+            MySQL::runAsync(new SelectAsync('duel_stats', [], 'ORDER BY deaths DESC LIMIT 10', function (array $rows) use ($player): void {
                 $content = TextFormat::colorize('&e&lTOP 10 DEATHS PLAYERS&r' . PHP_EOL);
 
                 foreach ($rows as $pos => $data) {

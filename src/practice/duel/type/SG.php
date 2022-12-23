@@ -6,4 +6,4 @@ namespace practice\duel\type;
 
 use practice\duel\Duel;
 
-final class SG extends Duel {}
+final class SG extends Duel { }

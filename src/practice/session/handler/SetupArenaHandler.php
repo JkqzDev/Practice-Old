@@ -4,19 +4,19 @@ declare(strict_types=1);
 
 namespace practice\session\handler;
 
-use pocketmine\Server;
-use pocketmine\item\ItemIds;
-use pocketmine\player\Player;
-use practice\session\Session;
-use pocketmine\world\Position;
-use pocketmine\player\GameMode;
-use pocketmine\item\ItemFactory;
-use pocketmine\utils\TextFormat;
-use practice\arena\ArenaFactory;
 use pocketmine\block\BlockFactory;
 use pocketmine\block\BlockLegacyIds;
-use practice\session\SessionFactory;
 use pocketmine\event\player\PlayerInteractEvent;
+use pocketmine\item\ItemFactory;
+use pocketmine\item\ItemIds;
+use pocketmine\player\GameMode;
+use pocketmine\player\Player;
+use pocketmine\Server;
+use pocketmine\utils\TextFormat;
+use pocketmine\world\Position;
+use practice\arena\ArenaFactory;
+use practice\session\Session;
+use practice\session\SessionFactory;
 
 final class SetupArenaHandler {
 
@@ -131,7 +131,7 @@ final class SetupArenaHandler {
     }
 
     private function existSpawn(Position $position): bool {
-        return isset($this->spawns[(string)$position]);
+        return isset($this->spawns[(string) $position]);
     }
 
     public function getWorld(): ?string {
@@ -139,7 +139,7 @@ final class SetupArenaHandler {
     }
 
     private function addSpawn(Position $position): void {
-        $this->spawns[(string)$position] = $position;
+        $this->spawns[(string) $position] = $position;
     }
 
     private function deleteSpawns(): void {

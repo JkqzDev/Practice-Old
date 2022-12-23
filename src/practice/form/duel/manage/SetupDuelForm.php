@@ -4,14 +4,14 @@ declare(strict_types=1);
 
 namespace practice\form\duel\manage;
 
-use pocketmine\Server;
-use pocketmine\player\Player;
 use cosmicpe\form\CustomForm;
-use pocketmine\utils\TextFormat;
-use practice\world\WorldFactory;
-use practice\session\SessionFactory;
 use cosmicpe\form\entries\custom\InputEntry;
+use pocketmine\player\Player;
+use pocketmine\Server;
+use pocketmine\utils\TextFormat;
 use practice\session\handler\SetupDuelHandler;
+use practice\session\SessionFactory;
+use practice\world\WorldFactory;
 
 final class SetupDuelForm extends CustomForm {
 
@@ -35,7 +35,7 @@ final class SetupDuelForm extends CustomForm {
         $nameEntry = new InputEntry('World name', 'world');
         $modesEntry = new InputEntry('Duel modes', 'Nodebuff, Bridge');
 
-        $this->addEntry($nameEntry, function(Player $player, InputEntry $entry, string $value): void {
+        $this->addEntry($nameEntry, function (Player $player, InputEntry $entry, string $value): void {
             if (WorldFactory::get($value) !== null) {
                 $player->sendMessage(TextFormat::colorize('&cWorld duel already exists'));
                 return;
@@ -52,7 +52,7 @@ final class SetupDuelForm extends CustomForm {
             $this->name = $value;
         });
 
-        $this->addEntry($modesEntry, function(Player $player, InputEntry $entry, string $value): void {
+        $this->addEntry($modesEntry, function (Player $player, InputEntry $entry, string $value): void {
             if ($this->name === null) {
                 return;
             }

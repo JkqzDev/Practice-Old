@@ -4,12 +4,12 @@ declare(strict_types=1);
 
 namespace practice\kit\command;
 
-use practice\kit\KitFactory;
-use pocketmine\player\Player;
-use practice\form\kit\KitForm;
 use pocketmine\command\Command;
-use pocketmine\utils\TextFormat;
 use pocketmine\command\CommandSender;
+use pocketmine\player\Player;
+use pocketmine\utils\TextFormat;
+use practice\form\kit\KitForm;
+use practice\kit\KitFactory;
 use practice\session\SessionFactory;
 
 final class KitCommand extends Command {
@@ -42,7 +42,7 @@ final class KitCommand extends Command {
             return;
         }
         $subCommand = strtolower($args[0]);
-        
+
         if ($sender->hasPermission('kit.command')) {
             if ($subCommand === 'edit') {
                 if (!isset($args[1])) {

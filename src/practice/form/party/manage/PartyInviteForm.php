@@ -18,7 +18,7 @@ final class PartyInviteForm extends CustomForm {
         parent::__construct(TextFormat::colorize('&dInvite Player'));
         $playerName = new InputEntry(TextFormat::colorize('&7Player Name'));
 
-        $this->addEntry($playerName, function(Player $player, InputEntry $entry, string $value) use ($party): void {
+        $this->addEntry($playerName, function (Player $player, InputEntry $entry, string $value) use ($party): void {
             $target = $player->getServer()->getPlayerByPrefix($value);
 
             if ($target === null) {

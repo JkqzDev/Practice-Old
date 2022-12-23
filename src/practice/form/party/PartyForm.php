@@ -43,7 +43,7 @@ final class PartyForm extends SimpleForm {
             public function __construct(Session $session) {
                 parent::__construct(TextFormat::colorize('&7Create Party'));
                 $defaultName = $session->getName() . '\'s party';
-                
+
                 $nameParty = new InputEntry('Party Name', null, $defaultName);
                 $isOpen = new ToggleEntry('Party Open', true);
 
@@ -83,7 +83,7 @@ final class PartyForm extends SimpleForm {
                             $player->sendMessage(TextFormat::colorize('&cParty has been deleted'));
                             return;
                         }
-                        
+
                         if (!$party->isOpen()) {
                             $player->sendMessage(TextFormat::colorize('&cParty has been closed'));
                             return;
@@ -110,12 +110,12 @@ final class PartyForm extends SimpleForm {
 
             public function __construct(Player $player) {
                 parent::__construct(TextFormat::colorize('&7Player Invitations'));
-                
+
                 foreach (InviteFactory::get($player) ?? [] as $invite) {
                     assert($invite instanceof Invite);
                     $button = new Button($invite->getParty()->getName());
 
-                    $this->addButton($button, function(Player $player, int $button_index) use ($invite): void {
+                    $this->addButton($button, function (Player $player, int $button_index) use ($invite): void {
                         $session = SessionFactory::get($player);
                         $party = $invite->getParty();
                         if ($session === null) {

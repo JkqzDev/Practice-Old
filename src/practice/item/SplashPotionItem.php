@@ -4,16 +4,14 @@ declare(strict_types=1);
 
 namespace practice\item;
 
-use pocketmine\item\ItemIds;
-use pocketmine\math\Vector3;
-use pocketmine\player\Player;
+use pocketmine\data\bedrock\PotionTypeIdMap;
 use pocketmine\entity\Location;
+use pocketmine\entity\projectile\Throwable;
+use pocketmine\item\ItemIdentifier;
+use pocketmine\item\ItemIds;
 use pocketmine\item\PotionType;
 use pocketmine\item\SplashPotion;
-use pocketmine\item\ItemUseResult;
-use pocketmine\item\ItemIdentifier;
-use pocketmine\entity\projectile\Throwable;
-use pocketmine\data\bedrock\PotionTypeIdMap;
+use pocketmine\player\Player;
 use practice\entity\SplashPotion as EntitySplashPotion;
 
 class SplashPotionItem extends SplashPotion {

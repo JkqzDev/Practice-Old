@@ -5,11 +5,11 @@ declare(strict_types=1);
 namespace practice\item\arena;
 
 use pocketmine\item\ItemIds;
+use pocketmine\item\ItemUseResult;
 use pocketmine\math\Vector3;
 use pocketmine\player\Player;
-use practice\item\PracticeItem;
 use practice\form\arena\ArenaForm;
-use pocketmine\item\ItemUseResult;
+use practice\item\PracticeItem;
 use practice\session\SessionFactory;
 
 class JoinArenaItem extends PracticeItem {

@@ -6,4 +6,4 @@ namespace practice\duel\type;
 
 use practice\duel\Duel;
 
-class CaveUHC extends Duel {}
+class CaveUHC extends Duel { }

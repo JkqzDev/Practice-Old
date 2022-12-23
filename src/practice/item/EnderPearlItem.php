@@ -4,17 +4,17 @@ declare(strict_types=1);
 
 namespace practice\item;
 
+use pocketmine\entity\Location;
+use pocketmine\entity\projectile\Throwable;
+use pocketmine\item\EnderPearl;
+use pocketmine\item\ItemIdentifier;
 use pocketmine\item\ItemIds;
+use pocketmine\item\ItemUseResult;
 use pocketmine\math\Vector3;
 use pocketmine\player\Player;
-use pocketmine\entity\Location;
-use pocketmine\item\EnderPearl;
 use pocketmine\utils\TextFormat;
-use pocketmine\item\ItemUseResult;
-use pocketmine\item\ItemIdentifier;
-use practice\session\SessionFactory;
-use pocketmine\entity\projectile\Throwable;
 use practice\entity\EnderPearl as EntityEnderPearl;
+use practice\session\SessionFactory;
 
 class EnderPearlItem extends EnderPearl {
 

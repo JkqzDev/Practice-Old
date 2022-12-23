@@ -5,12 +5,12 @@ declare(strict_types=1);
 namespace practice\item\duel\queue;
 
 use pocketmine\item\ItemIds;
+use pocketmine\item\ItemUseResult;
 use pocketmine\math\Vector3;
 use pocketmine\player\Player;
-use practice\item\PracticeItem;
-use pocketmine\item\ItemUseResult;
-use practice\session\SessionFactory;
 use practice\form\duel\DuelQueueForm;
+use practice\item\PracticeItem;
+use practice\session\SessionFactory;
 
 class RankedQueueItem extends PracticeItem {
 

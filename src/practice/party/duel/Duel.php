@@ -57,8 +57,6 @@ class Duel {
         $this->init();
     }
 
-    protected function init(): void {}
-
     protected function prepare(): void {
         $worldName = $this->worldName;
         $world = $this->world;
@@ -100,37 +98,14 @@ class Duel {
         }
     }
 
+    protected function init(): void {}
+
     public function getId(): int {
         return $this->id;
     }
 
     public function getTypeId(): int {
         return $this->typeId;
-    }
-
-    public function isRunning(): bool {
-        return $this->status === self::RUNNING;
-    }
-
-    public function getOpponent(Player $player): Party {
-        $firstParty = $this->firstParty;
-        $secondParty = $this->secondParty;
-
-        if ($firstParty->isMember($player)) {
-            return $secondParty;
-        }
-        return $firstParty;
-    }
-
-    public function isPlayer(Player $player): bool {
-        if ($this->isSpectator($player)) {
-            return false;
-        }
-        return $this->firstParty->isMember($player) || $this->secondParty->isMember($player);
-    }
-
-    public function isSpectator(Player $player): bool {
-        return isset($this->spectators[spl_object_hash($player)]);
     }
 
     public function scoreboard(Player $player): array {
@@ -168,15 +143,18 @@ class Duel {
         }
     }
 
-    public function addSpectator(Player $player): void {
-        $this->spectators[spl_object_hash($player)] = $player;
+    public function isSpectator(Player $player): bool {
+        return isset($this->spectators[spl_object_hash($player)]);
+    }
 
-        $player->getArmorInventory()->clearAll();
-        $player->getInventory()->clearAll();
-        $player->getCursorInventory()->clearAll();
-        $player->getOffHandInventory()->clearAll();
+    public function getOpponent(Player $player): Party {
+        $firstParty = $this->firstParty;
+        $secondParty = $this->secondParty;
 
-        $player->setGamemode(GameMode::SPECTATOR());
+        if ($firstParty->isMember($player)) {
+            return $secondParty;
+        }
+        return $firstParty;
     }
 
     public function removeSpectator(Player $player): void {
@@ -249,8 +227,26 @@ class Duel {
         }
     }
 
-    public function handleMove(PlayerMoveEvent $event): void {
-        // Nothing
+    public function isRunning(): bool {
+        return $this->status === self::RUNNING;
+    }
+
+    public function isPlayer(Player $player): bool {
+        if ($this->isSpectator($player)) {
+            return false;
+        }
+        return $this->firstParty->isMember($player) || $this->secondParty->isMember($player);
+    }
+
+    public function addSpectator(Player $player): void {
+        $this->spectators[spl_object_hash($player)] = $player;
+
+        $player->getArmorInventory()->clearAll();
+        $player->getInventory()->clearAll();
+        $player->getCursorInventory()->clearAll();
+        $player->getOffHandInventory()->clearAll();
+
+        $player->setGamemode(GameMode::SPECTATOR());
     }
 
     public function checkWinner(): void {
@@ -295,6 +291,10 @@ class Duel {
             }
         }
         $this->status = self::RESTARTING;
+    }
+
+    public function handleMove(PlayerMoveEvent $event): void {
+        // Nothing
     }
 
     public function update(): void {
@@ -364,7 +364,7 @@ class Duel {
         }
     }
 
-    protected function delete(): void {
+    public function delete(): void {
         Practice::getInstance()->getServer()->getWorldManager()->unloadWorld($this->world);
         Practice::getInstance()->getServer()->getAsyncPool()->submitTask(new WorldDeleteAsync(
             'party-duel-' . $this->id,

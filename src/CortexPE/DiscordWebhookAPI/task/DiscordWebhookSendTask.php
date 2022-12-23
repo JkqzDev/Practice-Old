@@ -24,7 +24,7 @@
  * Intended for use on SynicadeNetwork <https://synicade.com>
  */
 
-declare(strict_types = 1);
+declare(strict_types=1);
 
 namespace CortexPE\DiscordWebhookAPI\task;
 

@@ -10,15 +10,11 @@ final class Invite {
 
     public function __construct(
         private Session $session,
-        private int $duelType,
+        private int     $duelType,
         private ?string $worldName = null,
-        private int $time = 0,
+        private int     $time = 0,
     ) {
         $this->time = time() + 60;
-    }
-
-    public function getSession(): Session {
-        return $this->session;
     }
 
     public function getDuelType(): int {
@@ -37,5 +33,9 @@ final class Invite {
         $session = $this->getSession();
 
         return $session->getPlayer() !== null;
+    }
+
+    public function getSession(): Session {
+        return $this->session;
     }
 }

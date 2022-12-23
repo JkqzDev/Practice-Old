@@ -10,8 +10,8 @@ final class PartyQueue {
 
     public function __construct(
         private Party $party,
-        private int $duelType,
-        private int $time = 0,
+        private int   $duelType,
+        private int   $time = 0,
     ) {
         $this->time = time();
     }
@@ -23,7 +23,7 @@ final class PartyQueue {
     public function getDuelType(): int {
         return $this->duelType;
     }
-    
+
     public function getTime(): int {
         return time() - $this->time;
     }

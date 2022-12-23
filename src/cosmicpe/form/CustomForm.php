@@ -5,12 +5,12 @@ declare(strict_types=1);
 namespace cosmicpe\form;
 
 use Closure;
-use Exception;
-use cosmicpe\form\types\Icon;
-use pocketmine\player\Player;
-use cosmicpe\form\entries\ModifiableEntry;
-use pocketmine\form\FormValidationException;
 use cosmicpe\form\entries\custom\CustomFormEntry;
+use cosmicpe\form\entries\ModifiableEntry;
+use cosmicpe\form\types\Icon;
+use Exception;
+use pocketmine\form\FormValidationException;
+use pocketmine\player\Player;
 
 abstract class CustomForm implements Form {
 

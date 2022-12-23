@@ -4,13 +4,13 @@ declare(strict_types=1);
 
 namespace practice\form\duel;
 
-use practice\duel\Duel;
-use pocketmine\player\Player;
+use cosmicpe\form\entries\simple\Button;
 use cosmicpe\form\SimpleForm;
+use pocketmine\player\Player;
 use pocketmine\utils\TextFormat;
+use practice\duel\Duel;
 use practice\duel\queue\PlayerQueue;
 use practice\duel\queue\QueueFactory;
-use cosmicpe\form\entries\simple\Button;
 
 final class DuelQueueForm extends SimpleForm {
 
@@ -23,6 +23,7 @@ final class DuelQueueForm extends SimpleForm {
         'Sumo' => Duel::TYPE_SUMO,
         'Fist' => Duel::TYPE_FIST,
         'SG' => Duel::TYPE_SG,
+        'HG' => Duel::TYPE_HG,
         'Gapple' => Duel::TYPE_GAPPLE,
         'Build UHC' => Duel::TYPE_BUILDUHC,
         'Final UHC' => Duel::TYPE_FINALUHC,

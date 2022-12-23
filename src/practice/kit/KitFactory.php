@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace practice\kit;
 
-use practice\Practice;
 use pocketmine\utils\Config;
+use practice\Practice;
 
 final class KitFactory {
 

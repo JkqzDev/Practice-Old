@@ -11,10 +11,6 @@ final class InviteFactory {
 
     static private array $invites = [];
 
-    static public function get(Session $session): ?array {
-        return self::$invites[$session->getXuid()] ?? null;
-    }
-
     static public function create(Session $to, Session $from, int $duelType = Duel::TYPE_NODEBUFF, ?string $worldName = null): void {
         self::$invites[$to->getXuid()][$from->getName()] = new Invite($from, $duelType, $worldName);
     }
@@ -29,6 +25,10 @@ final class InviteFactory {
             return;
         }
         unset(self::$invites[$session->getXuid()][$target->getName()]);
+    }
+
+    static public function get(Session $session): ?array {
+        return self::$invites[$session->getXuid()] ?? null;
     }
 
     static public function remove(Session $session): void {

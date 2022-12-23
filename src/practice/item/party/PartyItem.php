@@ -5,9 +5,9 @@ declare(strict_types=1);
 namespace practice\item\party;
 
 use pocketmine\item\ItemIds;
-use pocketmine\player\Player;
-use pocketmine\math\Vector3;
 use pocketmine\item\ItemUseResult;
+use pocketmine\math\Vector3;
+use pocketmine\player\Player;
 use practice\form\party\PartyForm;
 use practice\item\PracticeItem;
 use practice\session\SessionFactory;
@@ -20,7 +20,7 @@ final class PartyItem extends PracticeItem {
 
     public function onClickAir(Player $player, Vector3 $directionVector): ItemUseResult {
         $session = SessionFactory::get($player);
-        
+
         if ($session === null) {
             return ItemUseResult::FAIL();
         }

@@ -6,8 +6,8 @@ namespace practice\duel\queue;
 
 use pocketmine\player\Player;
 use practice\duel\DuelFactory;
-use practice\session\SessionFactory;
 use practice\item\duel\queue\LeaveQueueItem;
+use practice\session\SessionFactory;
 
 final class QueueFactory {
 
@@ -32,7 +32,7 @@ final class QueueFactory {
 
         if ($foundQueue !== null) {
             $opponent = $foundQueue->getSession();
-            
+
             if ($opponent === null) {
                 return;
             }

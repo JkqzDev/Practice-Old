@@ -4,35 +4,35 @@ declare(strict_types=1);
 
 namespace practice\session;
 
-use practice\kit\Kit;
-use pocketmine\Server;
-use practice\Practice;
-use practice\duel\Duel;
-use practice\arena\Arena;
-use practice\party\Party;
-use pocketmine\player\Player;
-use practice\duel\DuelFactory;
-use pocketmine\player\GameMode;
 use pocketmine\entity\Attribute;
+use pocketmine\player\GameMode;
+use pocketmine\player\Player;
+use pocketmine\Server;
 use pocketmine\utils\TextFormat;
-use practice\item\party\PartyItem;
+use practice\arena\Arena;
+use practice\duel\Duel;
+use practice\duel\DuelFactory;
 use practice\duel\queue\PlayerQueue;
 use practice\duel\queue\QueueFactory;
-use practice\session\data\PlayerData;
-use practice\session\inventory\InventoryTrait;
-use practice\session\setting\Setting;
 use practice\item\arena\JoinArenaItem;
 use practice\item\duel\DuelSpectateItem;
-use practice\session\handler\HandlerTrait;
-use practice\session\setting\SettingTrait;
-use practice\item\player\PlayerProfileItem;
 use practice\item\duel\queue\RankedQueueItem;
 use practice\item\duel\queue\UnrankedQueueItem;
+use practice\item\party\PartyItem;
 use practice\item\player\PlayerLeaderboardItem;
-use practice\session\scoreboard\ScoreboardTrait;
-use practice\session\scoreboard\ScoreboardBuilder;
-use practice\session\setting\display\DisplaySetting;
+use practice\item\player\PlayerProfileItem;
+use practice\kit\Kit;
 use practice\party\duel\DuelFactory as DuelDuelFactory;
+use practice\party\Party;
+use practice\Practice;
+use practice\session\data\PlayerData;
+use practice\session\handler\HandlerTrait;
+use practice\session\inventory\InventoryTrait;
+use practice\session\scoreboard\ScoreboardBuilder;
+use practice\session\scoreboard\ScoreboardTrait;
+use practice\session\setting\display\DisplaySetting;
+use practice\session\setting\Setting;
+use practice\session\setting\SettingTrait;
 
 final class Session {
     use PlayerData;
@@ -301,7 +301,7 @@ final class Session {
     public function updatePlayer(): void {
         $this->updateData();
         $this->updateSettings();
-	    $this->updateInventories();
+        $this->updateInventories();
     }
 
     public function knockback(Player $damager, Kit $kit): void {

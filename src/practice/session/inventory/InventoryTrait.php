@@ -16,6 +16,18 @@ trait InventoryTrait {
     private array $inventories = [];
     private ?Inventory $currentKitEdit = null;
 
+    public function getInventory(string $name): ?Inventory {
+        return $this->inventories[$name] ?? null;
+    }
+
+    public function getCurrentKitEdit(): ?Inventory {
+        return $this->currentKitEdit;
+    }
+
+    public function setCurrentKitEdit(?Inventory $currentKitEdit): void {
+        $this->currentKitEdit = $currentKitEdit;
+    }
+
     private function initInventories(): void {
         MySQL::runAsync(new SelectAsync('player_inventories', ['xuid' => $this->xuid], '',
                 function (array $rows): void {
@@ -57,17 +69,5 @@ trait InventoryTrait {
             $data[strtolower(str_replace(' ', '_', $name))] = base64_encode(json_encode($inventory->serializeData()));
         }
         MySQL::runAsync(new UpdateAsync('player_inventories', $data, ['xuid' => $this->xuid]));
-    }
-
-    public function getInventory(string $name): ?Inventory {
-        return $this->inventories[$name] ?? null;
-    }
-
-    public function getCurrentKitEdit(): ?Inventory {
-        return $this->currentKitEdit;
-    }
-
-    public function setCurrentKitEdit(?Inventory $currentKitEdit): void {
-        $this->currentKitEdit = $currentKitEdit;
     }
 }

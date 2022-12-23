@@ -15,6 +15,14 @@ trait SettingTrait {
 
     private array $settings = [];
 
+    public function getSettings(): array {
+        return $this->settings;
+    }
+
+    public function setSettings(array $settings): void {
+        $this->settings = $settings;
+    }
+
     private function initSettings(): void {
         MySQL::runAsync(new SelectAsync('player_settings', ['xuid' => $this->xuid], '',
                 function (array $rows): void {
@@ -30,6 +38,10 @@ trait SettingTrait {
         );
     }
 
+    public function getSetting(string $name): Setting|GameplaySetting|DisplaySetting|null {
+        return $this->settings[$name] ?? null;
+    }
+
     private function updateSettings(): void {
         $scoreboardValue = (int) $this->getSetting(Setting::SCOREBOARD)->isEnabled();
         $autoRespawnValue = (int) $this->getSetting(Setting::AUTO_RESPAWN)->isEnabled();
@@ -41,17 +53,5 @@ trait SettingTrait {
             'auto_respawn' => $autoRespawnValue,
             'cps_counter' => $cpsCounterValue
         ], ['xuid' => $this->xuid]));
-    }
-
-    public function getSettings(): array {
-        return $this->settings;
-    }
-
-    public function setSettings(array $settings): void {
-        $this->settings = $settings;
-    }
-
-    public function getSetting(string $name): Setting|GameplaySetting|DisplaySetting|null {
-        return $this->settings[$name] ?? null;
     }
 }

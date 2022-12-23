@@ -5,9 +5,9 @@ declare(strict_types=1);
 namespace practice\item\party;
 
 use pocketmine\item\ItemIds;
-use pocketmine\player\Player;
-use pocketmine\math\Vector3;
 use pocketmine\item\ItemUseResult;
+use pocketmine\math\Vector3;
+use pocketmine\player\Player;
 use practice\item\PracticeItem;
 use practice\party\duel\queue\QueueFactory;
 use practice\session\SessionFactory;
@@ -29,7 +29,7 @@ final class PartyDuelLeaveItem extends PracticeItem {
         if ($party === null) {
             return ItemUseResult::FAIL();
         }
-        
+
         if ($party->getQueue() === null) {
             return ItemUseResult::FAIL();
         }

@@ -18,34 +18,6 @@ trait PlayerData {
 
     private bool $update = false;
 
-    private function initData(): void {
-        MySQL::runAsync(new SelectAsync('duel_stats', ['xuid' => $this->xuid], '',
-                function (array $rows): void {
-                    if (count($rows) === 0) {
-                        MySQL::runAsync(new InsertAsync('duel_stats', ['xuid' => $this->xuid, 'player' => $this->name]));
-                    } else {
-                        $row = $rows[0];
-                        $this->kills = (int) $row['kills'];
-                        $this->deaths = (int) $row['deaths'];
-                        $this->killstreak = (int) $row['streak'];
-                        $this->elo = (int) $row['elo'];
-                    }
-                })
-        );
-    }
-
-    private function updateData(): void {
-        if ($this->update) {
-            MySQL::runAsync(new UpdateAsync('duel_stats', [
-                'player' => $this->name,
-                'kills' => $this->kills,
-                'deaths' => $this->deaths,
-                'streak' => $this->killstreak,
-                'elo' => $this->elo
-            ], ['xuid' => $this->xuid]));
-        }
-    }
-
     public function getKills(): int {
         return $this->kills;
     }
@@ -90,5 +62,33 @@ trait PlayerData {
     public function removeElo(int $value): void {
         $this->elo -= $value;
         $this->update = true;
+    }
+
+    private function initData(): void {
+        MySQL::runAsync(new SelectAsync('duel_stats', ['xuid' => $this->xuid], '',
+                function (array $rows): void {
+                    if (count($rows) === 0) {
+                        MySQL::runAsync(new InsertAsync('duel_stats', ['xuid' => $this->xuid, 'player' => $this->name]));
+                    } else {
+                        $row = $rows[0];
+                        $this->kills = (int) $row['kills'];
+                        $this->deaths = (int) $row['deaths'];
+                        $this->killstreak = (int) $row['streak'];
+                        $this->elo = (int) $row['elo'];
+                    }
+                })
+        );
+    }
+
+    private function updateData(): void {
+        if ($this->update) {
+            MySQL::runAsync(new UpdateAsync('duel_stats', [
+                'player' => $this->name,
+                'kills' => $this->kills,
+                'deaths' => $this->deaths,
+                'streak' => $this->killstreak,
+                'elo' => $this->elo
+            ], ['xuid' => $this->xuid]));
+        }
     }
 }

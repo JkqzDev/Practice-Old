@@ -4,18 +4,18 @@ declare(strict_types=1);
 
 namespace practice\duel\command;
 
-use pocketmine\player\Player;
-use practice\duel\DuelFactory;
 use pocketmine\command\Command;
-use pocketmine\player\GameMode;
-use pocketmine\utils\TextFormat;
-use practice\form\duel\DuelForm;
-use practice\duel\invite\Invite;
-use practice\session\SessionFactory;
 use pocketmine\command\CommandSender;
+use pocketmine\player\GameMode;
+use pocketmine\player\Player;
+use pocketmine\utils\TextFormat;
+use practice\duel\DuelFactory;
+use practice\duel\invite\Invite;
 use practice\duel\invite\InviteFactory;
-use practice\form\duel\manage\SetupDuelForm;
+use practice\form\duel\DuelForm;
 use practice\form\duel\manage\DeleteDuelForm;
+use practice\form\duel\manage\SetupDuelForm;
+use practice\session\SessionFactory;
 
 final class DuelCommand extends Command {
 

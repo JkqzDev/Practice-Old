@@ -11,14 +11,6 @@ final class QueueFactory {
 
     static private array $queues = [];
 
-    static public function getAll(): array {
-        return self::$queues;
-    }
-
-    static public function get(Party $party): ?PartyQueue {
-        return self::$queues[spl_object_hash($party)] ?? null;
-    }
-
     static public function create(Party $party, int $duelType = 0): void {
         $queue = new PartyQueue($party, $duelType);
 
@@ -41,15 +33,6 @@ final class QueueFactory {
         }
     }
 
-    static public function remove(Party $party): void {
-        if (self::get($party) === null) {
-            return;
-        }
-        $party->setQueue(null);
-        $party->giveItems($party->getOwner());
-        unset(self::$queues[spl_object_hash($party)]);
-    }
-
     static private function found(PartyQueue $queue): ?PartyQueue {
         foreach (self::getAll() as $q) {
             if ($q->getParty()->getName() === $queue->getParty()->getName()) {
@@ -62,5 +45,22 @@ final class QueueFactory {
             return $q;
         }
         return null;
+    }
+
+    static public function getAll(): array {
+        return self::$queues;
+    }
+
+    static public function remove(Party $party): void {
+        if (self::get($party) === null) {
+            return;
+        }
+        $party->setQueue(null);
+        $party->giveItems($party->getOwner());
+        unset(self::$queues[spl_object_hash($party)]);
+    }
+
+    static public function get(Party $party): ?PartyQueue {
+        return self::$queues[spl_object_hash($party)] ?? null;
     }
 }

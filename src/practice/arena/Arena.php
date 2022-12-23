@@ -4,23 +4,23 @@ declare(strict_types=1);
 
 namespace practice\arena;
 
-use pocketmine\item\Item;
-use pocketmine\Server;
-use pocketmine\world\World;
-use practice\kit\KitFactory;
-use pocketmine\player\Player;
-use practice\session\Session;
-use pocketmine\world\Position;
-use pocketmine\player\GameMode;
-use pocketmine\utils\TextFormat;
 use JetBrains\PhpStorm\ArrayShape;
-use practice\session\SessionFactory;
-use practice\session\setting\Setting;
 use pocketmine\event\block\BlockBreakEvent;
 use pocketmine\event\block\BlockPlaceEvent;
-use pocketmine\event\entity\EntityDamageEvent;
-use practice\session\setting\gameplay\AutoRespawn;
 use pocketmine\event\entity\EntityDamageByEntityEvent;
+use pocketmine\event\entity\EntityDamageEvent;
+use pocketmine\item\Item;
+use pocketmine\player\GameMode;
+use pocketmine\player\Player;
+use pocketmine\Server;
+use pocketmine\utils\TextFormat;
+use pocketmine\world\Position;
+use pocketmine\world\World;
+use practice\kit\KitFactory;
+use practice\session\Session;
+use practice\session\SessionFactory;
+use practice\session\setting\gameplay\AutoRespawn;
+use practice\session\setting\Setting;
 
 final class Arena {
 
@@ -53,7 +53,7 @@ final class Arena {
         $storage['world'] = Server::getInstance()->getWorldManager()->getWorldByName($data['world']);
 
         foreach ($data['spawns'] as $spawn) {
-            $storage['spawns'][] = new Position((float)$spawn['x'], (float)$spawn['y'], (float)$spawn['z'], $storage['world']);
+            $storage['spawns'][] = new Position((float) $spawn['x'], (float) $spawn['y'], (float) $spawn['z'], $storage['world']);
         }
         return $storage;
     }
@@ -82,17 +82,17 @@ final class Arena {
     public function handleBreak(BlockBreakEvent $event): void {
         $block = $event->getBlock();
 
-        if (!isset($this->blocks[(string)$block->getPosition()])) {
+        if (!isset($this->blocks[(string) $block->getPosition()])) {
             $event->cancel();
             return;
         }
-        unset($this->blocks[(string)$block->getPosition()]);
+        unset($this->blocks[(string) $block->getPosition()]);
     }
 
     public function handlePlace(BlockPlaceEvent $event): void {
         $block = $event->getBlock();
 
-        $this->blocks[(string)$block->getPosition()] = $block;
+        $this->blocks[(string) $block->getPosition()] = $block;
     }
 
     public function handleDamage(EntityDamageEvent $event): void {
@@ -107,10 +107,10 @@ final class Arena {
         if ($session === null) {
             return;
         }
-        
+
         if ($cause === EntityDamageEvent::CAUSE_VOID) {
             $event->cancel();
-            
+
             if (isset($this->combats[$player->getName()])) {
                 $combat = $this->combats[$player->getName()];
                 /** @var Player $killer */
@@ -119,7 +119,7 @@ final class Arena {
                 if ($combat['time'] >= time() && $killer->isOnline()) {
                     $session->addDeath();
                     $session->resetKillstreak();
-                    
+
                     /** @var Session $damager */
                     $damager = SessionFactory::get($killer);
                     $damager->addKill();
@@ -191,6 +191,9 @@ final class Arena {
 
                     unset($this->combats[$damager->getName()]);
 
+                    $kit = KitFactory::get(strtolower($this->kit));
+                    $kit?->giveTo($killer);
+
                     if ($this->kit !== 'no debuff') {
                         Server::getInstance()->broadcastMessage(TextFormat::colorize('&a' . $damager->getName() . ' &2[' . $damager->getKills() . '] &7killed &c' . $player->getName() . ' &4[' . $session->getKills() . ']'));
                     } else {
@@ -254,7 +257,7 @@ final class Arena {
 
         $player->getXpManager()->setXpAndProgress(0, 0.0);
         $player->getEffects()->clear();
-        
+
         $player->teleport($player->getServer()->getWorldManager()->getDefaultWorld()->getSpawnLocation());
 
         $session->giveLobbyItems();
@@ -272,6 +275,9 @@ final class Arena {
                 $damager->addKillstreak();
                 $damager->getPlayer()?->setHealth($damager->getPlayer()->getHealth());
                 unset($this->combats[$damager->getName()]);
+
+                $kit = KitFactory::get(strtolower($this->kit));
+                $kit?->giveTo($killer);
 
                 if ($this->kit !== 'no debuff') {
                     Server::getInstance()->broadcastMessage(TextFormat::colorize('&a' . $damager->getName() . ' &2[' . $damager->getKills() . '] &7killed &c' . $player->getName() . ' &4[' . $session->getKills() . ']'));

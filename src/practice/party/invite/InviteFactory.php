@@ -11,10 +11,6 @@ final class InviteFactory {
 
     static private array $invites = [];
 
-    static public function get(Player $player): ?array {
-        return self::$invites[$player->getXuid()] ?? null;
-    }
-
     static public function create(Player $player, Party $party): void {
         self::$invites[$player->getXuid()][$party->getName()] = new Invite($party);
     }
@@ -30,6 +26,10 @@ final class InviteFactory {
             return;
         }
         unset(self::$invites[$player->getXuid()][$partyName]);
+    }
+
+    static public function get(Player $player): ?array {
+        return self::$invites[$player->getXuid()] ?? null;
     }
 
     static public function remove(Player $player): void {

@@ -5,34 +5,38 @@ declare(strict_types=1);
 namespace practice;
 
 use pocketmine\block\tile\Sign;
-use pocketmine\event\player\PlayerItemUseEvent;
-use pocketmine\item\ItemIds;
-use pocketmine\world\World;
-use practice\kit\KitFactory;
-use pocketmine\player\Player;
-use pocketmine\event\Listener;
-use pocketmine\utils\TextFormat;
-use practice\session\SessionFactory;
 use pocketmine\event\block\BlockBreakEvent;
 use pocketmine\event\block\BlockPlaceEvent;
+use pocketmine\event\block\BlockSpreadEvent;
 use pocketmine\event\block\LeavesDecayEvent;
-use pocketmine\event\player\PlayerJoinEvent;
-use pocketmine\event\player\PlayerMoveEvent;
-use pocketmine\event\player\PlayerQuitEvent;
-use pocketmine\event\player\PlayerLoginEvent;
+use pocketmine\event\entity\EntityDamageByEntityEvent;
 use pocketmine\event\entity\EntityDamageEvent;
 use pocketmine\event\entity\EntityMotionEvent;
+use pocketmine\event\entity\EntityRegainHealthEvent;
+use pocketmine\event\inventory\CraftItemEvent;
+use pocketmine\event\inventory\InventoryTransactionEvent;
+use pocketmine\event\Listener;
 use pocketmine\event\player\PlayerDropItemEvent;
 use pocketmine\event\player\PlayerExhaustEvent;
 use pocketmine\event\player\PlayerInteractEvent;
-use pocketmine\event\server\DataPacketSendEvent;
-use pocketmine\event\entity\EntityRegainHealthEvent;
-use pocketmine\event\entity\EntityDamageByEntityEvent;
-use pocketmine\event\inventory\InventoryTransactionEvent;
+use pocketmine\event\player\PlayerItemUseEvent;
+use pocketmine\event\player\PlayerJoinEvent;
+use pocketmine\event\player\PlayerLoginEvent;
+use pocketmine\event\player\PlayerMoveEvent;
+use pocketmine\event\player\PlayerQuitEvent;
 use pocketmine\event\server\DataPacketReceiveEvent;
+use pocketmine\event\server\DataPacketSendEvent;
+use pocketmine\inventory\PlayerOffHandInventory;
 use pocketmine\network\mcpe\protocol\AnimatePacket;
 use pocketmine\network\mcpe\protocol\LevelSoundEventPacket;
 use pocketmine\network\mcpe\protocol\types\LevelSoundEvent;
+use pocketmine\player\GameMode;
+use pocketmine\player\Player;
+use pocketmine\utils\TextFormat;
+use pocketmine\world\World;
+use practice\item\duel\DuelLeaveItem;
+use practice\kit\KitFactory;
+use practice\session\SessionFactory;
 use practice\session\setting\display\CPSCounter;
 use practice\session\setting\Setting;
 
@@ -59,7 +63,7 @@ final class EventHandler implements Listener {
             $arena->handleBreak($event);
         } elseif ($session->inParty()) {
             $party = $session->getParty();
-            
+
             if ($party->inDuel()) {
                 $duel = $party->getDuel();
                 $duel->handleBreak($event);
@@ -88,12 +92,16 @@ final class EventHandler implements Listener {
             $arena->handlePlace($event);
         } elseif ($session->inParty()) {
             $party = $session->getParty();
-            
+
             if ($party->inDuel()) {
                 $duel = $party->getDuel();
                 $duel->handlePlace($event);
             }
         }
+    }
+
+    public function handleSpread(BlockSpreadEvent $event): void {
+        $event->uncancel();
     }
 
     public function handleDecay(LeavesDecayEvent $event): void {
@@ -134,15 +142,19 @@ final class EventHandler implements Listener {
             $arena->handleDamage($event);
         } elseif ($session->inParty()) {
             $party = $session->getParty();
-            
+
             if ($party->inDuel()) {
                 $duel = $party->getDuel();
                 $duel->handleDamage($event);
             }
         }
-        
+
 
         if (!$event->isCancelled() && $event instanceof EntityDamageByEntityEvent) {
+            if ($event->getModifier(EntityDamageEvent::MODIFIER_PREVIOUS_DAMAGE_COOLDOWN) < 0.0) {
+                $event->cancel();
+                return;
+            }
             $damager = $event->getDamager();
             $kit = KitFactory::get($session->getCurrentKit());
 
@@ -189,6 +201,20 @@ final class EventHandler implements Listener {
         }
     }
 
+    public function handleCraft(CraftItemEvent $event): void {
+        $player = $event->getPlayer();
+        $session = SessionFactory::get($player);
+
+        if ($session === null) {
+            return;
+        }
+
+        if ($session->getCurrentKitEdit() !== null) {
+            $event->cancel();
+            return;
+        }
+    }
+
     public function handleTransaction(InventoryTransactionEvent $event): void {
         $transaction = $event->getTransaction();
         $player = $transaction->getSource();
@@ -201,6 +227,14 @@ final class EventHandler implements Listener {
         }
 
         if ($session->getCurrentKitEdit() !== null) {
+            $inventories = $transaction->getInventories();
+
+            foreach ($inventories as $inventory) {
+                if ($inventory instanceof PlayerOffHandInventory) {
+                    $event->cancel();
+                    return;
+                }
+            }
             return;
         }
 
@@ -212,11 +246,11 @@ final class EventHandler implements Listener {
             }
         }
     }
-    
+
     public function handleDropItem(PlayerDropItemEvent $event): void {
         $player = $event->getPlayer();
         $session = SessionFactory::get($player);
-        
+
         if ($session === null) {
             return;
         }
@@ -232,6 +266,7 @@ final class EventHandler implements Listener {
 
     public function handleInteract(PlayerInteractEvent $event): void {
         $action = $event->getAction();
+        $item = $event->getItem();
         $player = $event->getPlayer();
         $session = SessionFactory::get($player);
 
@@ -287,6 +322,16 @@ final class EventHandler implements Listener {
                         break;
                 }
             }
+        } elseif ($session->inDuel()) {
+            $duel = $session->getDuel();
+
+            if ($duel->isSpectator($player) && $item instanceof DuelLeaveItem) {
+                $session->setDuel(null);
+                $session->giveLobbyItems();
+
+                $player->setGamemode(GameMode::SURVIVAL());
+                $player->teleport($player->getServer()->getWorldManager()->getDefaultWorld()->getSpawnLocation());
+            }
         }
     }
 
@@ -332,7 +377,7 @@ final class EventHandler implements Listener {
 
         if ($session === null) {
             SessionFactory::create($player);
-        } else {  
+        } else {
             if ($session->getName() !== $player->getName()) {
                 $session->setName($player->getName());
             }
@@ -352,7 +397,7 @@ final class EventHandler implements Listener {
             $duel->handleMove($event);
         } elseif ($session->inParty()) {
             $party = $session->getParty();
-            
+
             if ($party->inDuel()) {
                 $duel = $party->getDuel();
                 $duel->handleMove($event);

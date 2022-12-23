@@ -29,37 +29,6 @@ final class PartySettingForm extends SimpleForm {
         });
     }
 
-    private function formManageParty(Party $party): CustomForm {
-        return new class($party) extends CustomForm {
-
-            public function __construct(Party $party) {
-                parent::__construct(TextFormat::colorize('&7Manage Party'));
-                $players = [(string) Party::DEFAULT_PLAYERS, (string) Party::EIGHT_PLAYERS, (string) Party::TEN_PLAYERS];
-
-                $maxPlayers = new StepSliderEntry('Max Players', $players);
-                $maxPlayers->setDefault((string) $party->getMaxPlayers());
-                $isOpen = new ToggleEntry('Open Party', $party->isOpen());
-
-                $this->addEntry($isOpen, function (Player $player, ToggleEntry $entry, bool $value) use ($party): void {
-                    if ($party->isOpen() === $value) {
-                        return;
-                    }
-                    $party->setOpen($value);
-                });
-
-                $this->addEntry($maxPlayers, function (Player $player, StepSliderEntry $entry, int $value) use ($party, $players): void {
-                    if ($value === 0) {
-                        $party->setMaxPlayers(Party::DEFAULT_PLAYERS);
-                    } else {
-                        $maxPlayers = (int) $players[$value];
-                        $party->setMaxPlayers($maxPlayers);
-                    }
-                    $player->sendMessage(TextFormat::colorize('&aYou have successfully edited the party settings'));
-                });
-            }
-        };
-    }
-
     private function formManageMembers(Party $party): SimpleForm {
         return new class($party, $this) extends SimpleForm {
 
@@ -90,7 +59,7 @@ final class PartySettingForm extends SimpleForm {
 
     public function formManageMember(Party $party, Player $member): SimpleForm {
         return new class($party, $member) extends SimpleForm {
-            
+
             public function __construct(Party $party, Player $member) {
                 parent::__construct(TextFormat::colorize('&7' . $member->getName() . ' Manage'));
                 $promote = new Button(TextFormat::colorize('&aPromote to Owner'));
@@ -136,7 +105,7 @@ final class PartySettingForm extends SimpleForm {
                         return;
                     }
                     $party->removeMember($member);
-                    $party->broadcastMessage('&c' . $member->getName(). ' has been kicked!');
+                    $party->broadcastMessage('&c' . $member->getName() . ' has been kicked!');
 
                     $member->getArmorInventory()->clearAll();
                     $member->getInventory()->clearAll();
@@ -148,6 +117,37 @@ final class PartySettingForm extends SimpleForm {
                     $session->giveLobbyItems();
 
                     $player->sendMessage(TextFormat::colorize('&cYou have kicked ' . $member->getName()));
+                });
+            }
+        };
+    }
+
+    private function formManageParty(Party $party): CustomForm {
+        return new class($party) extends CustomForm {
+
+            public function __construct(Party $party) {
+                parent::__construct(TextFormat::colorize('&7Manage Party'));
+                $players = [(string) Party::DEFAULT_PLAYERS, (string) Party::EIGHT_PLAYERS, (string) Party::TEN_PLAYERS];
+
+                $maxPlayers = new StepSliderEntry('Max Players', $players);
+                $maxPlayers->setDefault((string) $party->getMaxPlayers());
+                $isOpen = new ToggleEntry('Open Party', $party->isOpen());
+
+                $this->addEntry($isOpen, function (Player $player, ToggleEntry $entry, bool $value) use ($party): void {
+                    if ($party->isOpen() === $value) {
+                        return;
+                    }
+                    $party->setOpen($value);
+                });
+
+                $this->addEntry($maxPlayers, function (Player $player, StepSliderEntry $entry, int $value) use ($party, $players): void {
+                    if ($value === 0) {
+                        $party->setMaxPlayers(Party::DEFAULT_PLAYERS);
+                    } else {
+                        $maxPlayers = (int) $players[$value];
+                        $party->setMaxPlayers($maxPlayers);
+                    }
+                    $player->sendMessage(TextFormat::colorize('&aYou have successfully edited the party settings'));
                 });
             }
         };

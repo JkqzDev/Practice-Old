@@ -4,23 +4,23 @@ declare(strict_types=1);
 
 namespace practice\duel\type;
 
+use pocketmine\block\VanillaBlocks;
+use pocketmine\color\Color;
+use pocketmine\event\block\BlockPlaceEvent;
+use pocketmine\event\entity\EntityDamageEvent;
+use pocketmine\event\player\PlayerMoveEvent;
+use pocketmine\item\ItemFactory;
+use pocketmine\item\ItemIds;
+use pocketmine\math\AxisAlignedBB;
+use pocketmine\player\GameMode;
+use pocketmine\player\Player;
+use pocketmine\utils\TextFormat;
+use pocketmine\world\Position;
 use practice\duel\Duel;
+use practice\duel\DuelFactory;
 use practice\session\Session;
 use practice\world\World;
-use pocketmine\color\Color;
-use pocketmine\item\ItemIds;
-use pocketmine\player\Player;
-use pocketmine\world\Position;
-use practice\duel\DuelFactory;
-use pocketmine\player\GameMode;
-use pocketmine\item\ItemFactory;
-use pocketmine\utils\TextFormat;
 use practice\world\WorldFactory;
-use pocketmine\math\AxisAlignedBB;
-use pocketmine\block\VanillaBlocks;
-use pocketmine\event\block\BlockPlaceEvent;
-use pocketmine\event\player\PlayerMoveEvent;
-use pocketmine\event\entity\EntityDamageEvent;
 
 class BattleRush extends Duel {
 
@@ -208,38 +208,6 @@ class BattleRush extends Duel {
         }
     }
 
-    protected function prepare(): void {
-        $world = $this->world;
-
-        $firstSession = $this->firstSession;
-        $secondSession = $this->secondSession;
-
-        $world->setTime($this->world::TIME_DAY);
-        $world->stopTime();
-
-        $firstPlayer = $firstSession->getPlayer();
-        $secondPlayer = $secondSession->getPlayer();
-
-        if ($firstPlayer !== null && $secondPlayer !== null) {
-            $firstPlayer->setGamemode(GameMode::SURVIVAL());
-            $secondPlayer->setGamemode(GameMode::SURVIVAL());
-
-            $firstPlayer->getArmorInventory()->clearAll();
-            $firstPlayer->getInventory()->clearAll();
-            $secondPlayer->getArmorInventory()->clearAll();
-            $secondPlayer->getInventory()->clearAll();
-
-            $this->giveKit($firstSession);
-            $this->giveKit($secondSession, false);
-
-            $this->teleportPlayer($firstPlayer);
-            $this->teleportPlayer($secondPlayer, false);
-
-            $firstPlayer->setImmobile();
-            $secondPlayer->setImmobile();
-        }
-    }
-
     public function scoreboard(Player $player): array {
         if ($this->status === self::RUNNING) {
             $firstPoints = $this->firstPoints;
@@ -300,6 +268,38 @@ class BattleRush extends Duel {
                 $this->teleportPlayer($secondPlayer, false);
                 $this->giveKit($this->secondSession, false);
             }
+        }
+    }
+
+    protected function prepare(): void {
+        $world = $this->world;
+
+        $firstSession = $this->firstSession;
+        $secondSession = $this->secondSession;
+
+        $world->setTime($this->world::TIME_DAY);
+        $world->stopTime();
+
+        $firstPlayer = $firstSession->getPlayer();
+        $secondPlayer = $secondSession->getPlayer();
+
+        if ($firstPlayer !== null && $secondPlayer !== null) {
+            $firstPlayer->setGamemode(GameMode::SURVIVAL());
+            $secondPlayer->setGamemode(GameMode::SURVIVAL());
+
+            $firstPlayer->getArmorInventory()->clearAll();
+            $firstPlayer->getInventory()->clearAll();
+            $secondPlayer->getArmorInventory()->clearAll();
+            $secondPlayer->getInventory()->clearAll();
+
+            $this->giveKit($firstSession);
+            $this->giveKit($secondSession, false);
+
+            $this->teleportPlayer($firstPlayer);
+            $this->teleportPlayer($secondPlayer, false);
+
+            $firstPlayer->setImmobile();
+            $secondPlayer->setImmobile();
         }
     }
 

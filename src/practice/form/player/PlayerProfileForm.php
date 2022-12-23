@@ -5,14 +5,14 @@ declare(strict_types=1);
 namespace practice\form\player;
 
 use cosmicpe\form\CustomForm;
+use cosmicpe\form\entries\custom\ToggleEntry;
+use cosmicpe\form\entries\simple\Button;
 use cosmicpe\form\SimpleForm;
 use pocketmine\player\Player;
+use pocketmine\utils\TextFormat;
 use pocketmine\world\Position;
 use practice\session\Session;
-use pocketmine\utils\TextFormat;
 use practice\session\SessionFactory;
-use cosmicpe\form\entries\simple\Button;
-use cosmicpe\form\entries\custom\ToggleEntry;
 use practice\session\setting\display\DisplaySetting;
 use practice\session\setting\gameplay\GameplaySetting;
 
@@ -25,10 +25,10 @@ class PlayerProfileForm extends SimpleForm {
         $settingsButton = new Button(TextFormat::colorize('&7Player settings'));
         $kitEditorButton = new Button(TextFormat::colorize('&7Kit Editor'));
 
-        $this->addButton($statsButton, function(Player $player, int $button_index): void {
+        $this->addButton($statsButton, function (Player $player, int $button_index): void {
             $this->createStatsForm($player);
         });
-        $this->addButton($settingsButton, function(Player $player, int $button_index): void {
+        $this->addButton($settingsButton, function (Player $player, int $button_index): void {
             $this->createSettingsForm($player);
         });
         $this->addButton($kitEditorButton, function (Player $player, int $button_index): void {
@@ -43,7 +43,7 @@ class PlayerProfileForm extends SimpleForm {
             return;
         }
         $simpleForm = new class($session) extends SimpleForm {
-            
+
             public function __construct(Session $session) {
                 $description = [
                     '&gKills: &f' . $session->getKills(),
@@ -54,7 +54,7 @@ class PlayerProfileForm extends SimpleForm {
                 ];
                 parent::__construct(TextFormat::colorize('&gPlayer Stats'), TextFormat::colorize(implode(PHP_EOL, $description)));
                 $exit = new Button(TextFormat::colorize('&cExit'));
-                
+
                 $this->addButton($exit);
             }
         };
@@ -77,14 +77,14 @@ class PlayerProfileForm extends SimpleForm {
                     if ($setting instanceof DisplaySetting) {
                         $toggle = new ToggleEntry($setting->getName(), $setting->isEnabled());
 
-                        $this->addEntry($toggle, static function(Player $player, ToggleEntry $entry, bool $value) use ($setting, $session): void {
+                        $this->addEntry($toggle, static function (Player $player, ToggleEntry $entry, bool $value) use ($setting, $session): void {
                             $setting->setEnabled($value);
                             $setting->execute($session);
                         });
                     } elseif ($setting instanceof GameplaySetting) {
                         $toggle = new ToggleEntry($setting->getName(), $setting->isEnabled());
 
-                        $this->addEntry($toggle, static function(Player $player, ToggleEntry $entry, bool $value) use ($setting): void {
+                        $this->addEntry($toggle, static function (Player $player, ToggleEntry $entry, bool $value) use ($setting): void {
                             $setting->setEnabled($value);
                         });
                     }

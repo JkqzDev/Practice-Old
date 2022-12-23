@@ -6,4 +6,4 @@ namespace practice\duel\type;
 
 use practice\duel\Duel;
 
-class Fist extends Duel {}
+class Fist extends Duel { }

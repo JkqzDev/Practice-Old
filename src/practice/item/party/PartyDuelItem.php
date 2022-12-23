@@ -5,10 +5,9 @@ declare(strict_types=1);
 namespace practice\item\party;
 
 use pocketmine\item\ItemIds;
-use pocketmine\player\Player;
-use pocketmine\math\Vector3;
 use pocketmine\item\ItemUseResult;
-use pocketmine\utils\TextFormat;
+use pocketmine\math\Vector3;
+use pocketmine\player\Player;
 use practice\form\party\manage\PartyDuelForm;
 use practice\item\PracticeItem;
 use practice\session\SessionFactory;
@@ -30,7 +29,7 @@ final class PartyDuelItem extends PracticeItem {
         if ($party === null) {
             return ItemUseResult::FAIL();
         }
-        
+
         /*if (count($party->getMembers()) < 2) {
             $player->sendMessage(TextFormat::colorize('&cYou cannot duel with less than two players.'));
             return ItemUseResult::FAIL();

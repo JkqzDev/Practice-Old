@@ -4,9 +4,9 @@ declare(strict_types=1);
 
 namespace cosmicpe\form;
 
+use cosmicpe\form\entries\simple\Button;
 use pocketmine\player\Player;
 use pocketmine\utils\TextFormat;
-use cosmicpe\form\entries\simple\Button;
 
 abstract class PaginatedForm extends SimpleForm {
 
@@ -20,12 +20,18 @@ abstract class PaginatedForm extends SimpleForm {
         $pages = $this->getPages();
         if ($this->current_page === 1) {
             if ($pages > 1) {
-                $this->addButton($this->getNextButton(), function(Player $player, int $data): void { $this->sendNextPage($player); });
+                $this->addButton($this->getNextButton(), function (Player $player, int $data): void {
+                    $this->sendNextPage($player);
+                });
             }
         } else {
-            $this->addButton($this->getPreviousButton(), function(Player $player, int $data): void { $this->sendPreviousPage($player); });
+            $this->addButton($this->getPreviousButton(), function (Player $player, int $data): void {
+                $this->sendPreviousPage($player);
+            });
             if ($this->current_page < $pages) {
-                $this->addButton($this->getNextButton(), function(Player $player, int $data): void { $this->sendNextPage($player); });
+                $this->addButton($this->getNextButton(), function (Player $player, int $data): void {
+                    $this->sendNextPage($player);
+                });
             }
         }
     }

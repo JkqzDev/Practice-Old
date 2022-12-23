@@ -4,16 +4,16 @@ declare(strict_types=1);
 
 namespace practice\session\scoreboard;
 
+use pocketmine\network\mcpe\protocol\RemoveObjectivePacket;
+use pocketmine\network\mcpe\protocol\SetDisplayObjectivePacket;
+use pocketmine\network\mcpe\protocol\SetScorePacket;
+use pocketmine\network\mcpe\protocol\types\ScorePacketEntry;
+use pocketmine\utils\TextFormat;
+use practice\duel\DuelFactory;
+use practice\duel\queue\QueueFactory;
 use practice\Practice;
 use practice\session\Session;
-use practice\duel\DuelFactory;
-use pocketmine\utils\TextFormat;
 use practice\session\SessionFactory;
-use pocketmine\network\mcpe\protocol\SetScorePacket;
-use pocketmine\network\mcpe\protocol\RemoveObjectivePacket;
-use pocketmine\network\mcpe\protocol\types\ScorePacketEntry;
-use pocketmine\network\mcpe\protocol\SetDisplayObjectivePacket;
-use practice\duel\queue\QueueFactory;
 
 class ScoreboardBuilder {
 
@@ -54,7 +54,7 @@ class ScoreboardBuilder {
         ];
 
         if ($session->inLobby()) {
-            $playing = array_filter(SessionFactory::getAll(), static function(Session $target): bool {
+            $playing = array_filter(SessionFactory::getAll(), static function (Session $target): bool {
                 return !$target->inLobby() && $target->getPlayer() !== null;
             });
             $lines[] = ' &fOnline: &e' . count($plugin->getServer()->getOnlinePlayers());
@@ -70,12 +70,12 @@ class ScoreboardBuilder {
                 $lines[] = ' &fTime: &e' . gmdate('i:s', $queue->getTime());
             } elseif ($session->inParty()) {
                 $party = $session->getParty();
-                
+
                 $lines[] = '&7&r&r&r';
                 $lines[] = ' &aParty Information';
                 $lines[] = ' &fLeader: &e' . $party->getOwner()->getName();
                 $lines[] = ' &fMembers: &e' . count($party->getMembers()) . '/' . $party->getMaxPlayers();
-                
+
                 if ($party->inQueue()) {
                     $lines[] = ' &eIn queue';
                 }

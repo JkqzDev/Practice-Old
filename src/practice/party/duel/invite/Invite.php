@@ -11,8 +11,8 @@ final class Invite {
 
     public function __construct(
         private Party $party,
-        private int $duelType,
-        private int $time = 0
+        private int   $duelType,
+        private int   $time = 0
     ) {
         $this->time = time() + 2 * 60;
     }

@@ -7,22 +7,22 @@ namespace practice\duel;
 use CortexPE\DiscordWebhookAPI\Embed;
 use CortexPE\DiscordWebhookAPI\Message;
 use CortexPE\DiscordWebhookAPI\Webhook;
-use pocketmine\event\player\PlayerItemUseEvent;
-use pocketmine\Server;
-use practice\Practice;
-use pocketmine\world\World;
-use pocketmine\player\Player;
-use practice\session\Session;
-use pocketmine\world\Position;
-use pocketmine\player\GameMode;
-use pocketmine\utils\TextFormat;
-use practice\world\WorldFactory;
-use practice\session\SessionFactory;
-use practice\world\async\WorldDeleteAsync;
 use pocketmine\event\block\BlockBreakEvent;
 use pocketmine\event\block\BlockPlaceEvent;
-use pocketmine\event\player\PlayerMoveEvent;
 use pocketmine\event\entity\EntityDamageEvent;
+use pocketmine\event\player\PlayerItemUseEvent;
+use pocketmine\event\player\PlayerMoveEvent;
+use pocketmine\player\GameMode;
+use pocketmine\player\Player;
+use pocketmine\Server;
+use pocketmine\utils\TextFormat;
+use pocketmine\world\Position;
+use pocketmine\world\World;
+use practice\Practice;
+use practice\session\Session;
+use practice\session\SessionFactory;
+use practice\world\async\WorldDeleteAsync;
+use practice\world\WorldFactory;
 
 class Duel {
 
@@ -38,23 +38,11 @@ class Duel {
     public const TYPE_BUILDUHC = 9;
     public const TYPE_COMBO = 10;
     public const TYPE_SG = 11;
+    public const TYPE_HG = 12;
 
     public const STARTING = 0;
     public const RUNNING = 1;
     public const RESTARTING = 2;
-
-    static public function calculateElo(int $loser, int $winner): array {
-        $expectedScoreA = 1 / (1 + (pow(10, ($loser - $winner) / 400)));
-        $expectedScoreB = abs(1 / (1 + (pow(10, ($winner - $loser) / 400))));
-
-        $winnerElo = $winner + intval(32 * (1 - $expectedScoreA));
-        $loserElo = $loser + intval(32 * (0 - $expectedScoreB));
-
-        return [
-            $winnerElo - $winner,
-            abs($loser - $loserElo)
-        ];
-    }
 
     public function __construct(
         protected int     $id,
@@ -141,20 +129,12 @@ class Duel {
         return $this->ranked;
     }
 
-    public function isRunning(): bool {
-        return $this->status === self::RUNNING;
-    }
-
     public function isEnded(): bool {
         return $this->status === self::RESTARTING;
     }
 
     public function isPlayer(Player $player): bool {
         return $this->firstSession->getXuid() === $player->getXuid() || $this->secondSession->getXuid() === $player->getXuid();
-    }
-
-    public function isSpectator(Player $player): bool {
-        return isset($this->spectators[spl_object_hash($player)]);
     }
 
     public function scoreboard(Player $player): array {
@@ -192,6 +172,10 @@ class Duel {
         }
     }
 
+    public function isSpectator(Player $player): bool {
+        return isset($this->spectators[spl_object_hash($player)]);
+    }
+
     public function getOpponent(Player|Session $player): ?Player {
         $firstSession = $this->firstSession;
         $secondSession = $this->secondSession;
@@ -218,17 +202,17 @@ class Duel {
     public function handleBreak(BlockBreakEvent $event): void {
         $block = $event->getBlock();
 
-        if (!isset($this->blocks[(string)$block->getPosition()])) {
+        if (!isset($this->blocks[(string) $block->getPosition()])) {
             $event->cancel();
             return;
         }
-        unset($this->blocks[(string)$block->getPosition()]);
+        unset($this->blocks[(string) $block->getPosition()]);
     }
 
     public function handlePlace(BlockPlaceEvent $event): void {
         $block = $event->getBlock();
 
-        $this->blocks[(string)$block->getPosition()] = $block;
+        $this->blocks[(string) $block->getPosition()] = $block;
     }
 
     public function handleDamage(EntityDamageEvent $event): void {
@@ -250,9 +234,9 @@ class Duel {
         }
     }
 
-    public function handleItemUse(PlayerItemUseEvent $event): void {}
-
-    public function handleMove(PlayerMoveEvent $event): void {}
+    public function isRunning(): bool {
+        return $this->status === self::RUNNING;
+    }
 
     public function finish(Player $loser): void {
         $firstSession = $this->firstSession;
@@ -311,6 +295,56 @@ class Duel {
 
         $this->status = self::RESTARTING;
     }
+
+    static public function calculateElo(int $loser, int $winner): array {
+        $expectedScoreA = 1 / (1 + (pow(10, ($loser - $winner) / 400)));
+        $expectedScoreB = abs(1 / (1 + (pow(10, ($winner - $loser) / 400))));
+
+        $winnerElo = $winner + intval(32 * (1 - $expectedScoreA));
+        $loserElo = $loser + intval(32 * (0 - $expectedScoreB));
+
+        return [
+            $winnerElo - $winner,
+            abs($loser - $loserElo)
+        ];
+    }
+
+    protected function log(): void {
+        $webhook = new Webhook($this->ranked ? Practice::getInstance()->getConfig()->get('webhook-ranked-duels', '') : Practice::getInstance()->getConfig()->get('webhook-unranked-duels', ''));
+        $message = new Message();
+        $embed = new Embed();
+
+        if ($this->winner === $this->firstSession->getName()) {
+            $winner = $this->firstSession;
+            $loser = $this->secondSession;
+        } else {
+            $winner = $this->secondSession;
+            $loser = $this->firstSession;
+        }
+        $embed->setColor(hexdec('00a6ff'));
+
+        if (!$this->ranked) {
+            $embed->setTitle('UNRANKED - ' . DuelFactory::getName($this->typeId));
+            $embed->setDescription(
+                '**Winner:** ' . $winner->getName() . PHP_EOL .
+                '**Loser:** ' . $loser->getName() . PHP_EOL .
+                '**Time:** ' . gmdate('i:s', $this->running)
+            );
+        } else {
+            $embed->setTitle('RANKED - ' . DuelFactory::getName($this->typeId));
+            $embed->setDescription(
+                '**Winner:** ' . $winner->getName() . ' [' . $winner->getElo() . ']' . PHP_EOL .
+                '**Loser:** ' . $loser->getName() . ' [' . $loser->getElo() . ']' . PHP_EOL .
+                '**Time:** ' . gmdate('i:s', $this->running)
+            );
+        }
+        $message->addEmbed($embed);
+        $webhook->send($message);
+    }
+
+    public function handleItemUse(PlayerItemUseEvent $event): void {}
+
+    public function handleMove(PlayerMoveEvent $event): void {}
 
     public function update(): void {
         $firstPlayer = $this->firstSession->getPlayer();
@@ -377,45 +411,12 @@ class Duel {
         }
     }
 
-    protected function delete(): void {
+    public function delete(): void {
         Practice::getInstance()->getServer()->getWorldManager()->unloadWorld($this->world);
         Practice::getInstance()->getServer()->getAsyncPool()->submitTask(new WorldDeleteAsync(
             'duel-' . $this->id,
             Practice::getInstance()->getServer()->getDataPath() . 'worlds'
         ));
         DuelFactory::remove($this->id);
-    }
-
-    protected function log(): void {
-        $webhook = new Webhook($this->ranked ? Practice::getInstance()->getConfig()->get('webhook-ranked-duels', '') : Practice::getInstance()->getConfig()->get('webhook-unranked-duels', ''));
-        $message = new Message();
-        $embed = new Embed();
-
-        if ($this->winner === $this->firstSession->getName()) {
-            $winner = $this->firstSession;
-            $loser = $this->secondSession;
-        } else {
-            $winner = $this->secondSession;
-            $loser = $this->firstSession;
-        }
-        $embed->setColor(hexdec('00a6ff'));
-
-        if (!$this->ranked) {
-            $embed->setTitle('UNRANKED - ' . DuelFactory::getName($this->typeId));
-            $embed->setDescription(
-                '**Winner:** ' . $winner->getName() . PHP_EOL .
-                '**Loser:** ' . $loser->getName() . PHP_EOL .
-                '**Time:** ' . gmdate('i:s', $this->running)
-            );
-        } else {
-            $embed->setTitle('RANKED - ' . DuelFactory::getName($this->typeId));
-            $embed->setDescription(
-                '**Winner:** ' . $winner->getName() . ' [' . $winner->getElo() . ']' . PHP_EOL .
-                '**Loser:** ' . $loser->getName() . ' [' . $loser->getElo() . ']' . PHP_EOL .
-                '**Time:** ' . gmdate('i:s', $this->running)
-            );
-        }
-        $message->addEmbed($embed);
-        $webhook->send($message);
     }
 }
