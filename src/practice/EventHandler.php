@@ -255,8 +255,14 @@ final class EventHandler implements Listener {
             return;
         }
 
-        if ($session->inDuel() || $session->inArena()) {
+        if ($session->inArena()) {
             $event->cancel();
+        } elseif ($session->inDuel()) {
+            $duel = $session->getDuel();
+
+            if (!$duel->canDrop()) {
+                $event->cancel();
+            }
         }
     }
 

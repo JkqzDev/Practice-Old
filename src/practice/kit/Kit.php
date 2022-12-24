@@ -13,7 +13,6 @@ use pocketmine\item\enchantment\EnchantmentInstance;
 use pocketmine\item\Item;
 use pocketmine\item\ItemFactory;
 use pocketmine\player\Player;
-use pocketmine\utils\TextFormat;
 
 final class Kit {
 
@@ -70,7 +69,6 @@ final class Kit {
                     }
                 }
             }
-            $item->setCustomName(TextFormat::colorize('&r&l&cKRESU&r'));
             $storage['armorContents'][$slot] = $item;
         }
 
@@ -89,10 +87,6 @@ final class Kit {
                         $item->addEnchantment(new EnchantmentInstance($enchant, (int) $enchantLevel));
                     }
                 }
-            }
-
-            if ($item instanceof Durable) {
-                $item->setCustomName(TextFormat::colorize('&r&l&cKRESU&r'));
             }
             $storage['inventoryContents'][$slot] = $item;
         }

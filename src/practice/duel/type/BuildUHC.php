@@ -6,4 +6,9 @@ namespace practice\duel\type;
 
 use practice\duel\Duel;
 
-class BuildUHC extends Duel { }
+class BuildUHC extends Duel {
+
+    protected function init(): void {
+        $this->canDrop = true;
+    }
+}

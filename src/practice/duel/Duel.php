@@ -58,6 +58,7 @@ class Duel {
         protected int     $restarting = 5,
         protected string  $winner = '',
         protected string  $loser = '',
+        protected bool    $canDrop = false,
         protected array   $spectators = [],
         protected array   $blocks = []
     ) {
@@ -127,6 +128,10 @@ class Duel {
 
     public function isRanked(): bool {
         return $this->ranked;
+    }
+
+    public function canDrop(): bool {
+        return $this->canDrop;
     }
 
     public function isEnded(): bool {

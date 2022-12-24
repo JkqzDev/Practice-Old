@@ -10,7 +10,7 @@ use practice\duel\Duel;
 
 class FinalUHC extends Duel {
 
-    private int $size = 49;
+    private int $size = 24;
     private int $x, $z;
 
     public function handleMove(PlayerMoveEvent $event): void {
@@ -54,6 +54,8 @@ class FinalUHC extends Duel {
     }
 
     protected function init(): void {
+        $this->canDrop = true;
+
         $this->x = $this->world->getSafeSpawn()->getFloorX();
         $this->z = $this->world->getSafeSpawn()->getFloorZ();
     }

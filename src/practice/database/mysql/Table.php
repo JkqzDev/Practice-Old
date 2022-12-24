@@ -68,7 +68,7 @@ create table if not exists player_inventories
     gapple       blob                   not null,
     sumo         blob                   not null,
     sg           blob                   not null,
-    hg           blob                   not null
+    hg           blob                   not null,
     constraint xuid
         unique (xuid)
 );";

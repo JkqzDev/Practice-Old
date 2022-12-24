@@ -19,7 +19,8 @@ final class WorldFactory {
         if (count($worlds) === 0) {
             return null;
         }
-        return $worlds[array_rand($worlds)];
+        return self::get($worlds[array_rand($worlds)]);
+        //return $worlds[array_rand($worlds)];
     }
 
     public static function getAllByMode(string $mode): array {
