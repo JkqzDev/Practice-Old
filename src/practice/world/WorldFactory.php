@@ -20,7 +20,6 @@ final class WorldFactory {
             return null;
         }
         return self::get($worlds[array_rand($worlds)]);
-        //return $worlds[array_rand($worlds)];
     }
 
     public static function getAllByMode(string $mode): array {

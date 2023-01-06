@@ -191,8 +191,8 @@ final class Arena {
 
                     unset($this->combats[$damager->getName()]);
 
-                    $kit = KitFactory::get(strtolower($this->kit));
-                    $kit?->giveTo($killer);
+                    $inventory = $damager->getInventory(strtolower($this->kit));
+                    $inventory?->giveKit();
 
                     if ($this->kit !== 'no debuff') {
                         Server::getInstance()->broadcastMessage(TextFormat::colorize('&a' . $damager->getName() . ' &2[' . $damager->getKills() . '] &7killed &c' . $player->getName() . ' &4[' . $session->getKills() . ']'));
@@ -215,6 +215,7 @@ final class Arena {
     }
 
     public function join(Player $player): void {
+        $session = SessionFactory::get($player);
         $this->addPlayer($player);
 
         $player->getArmorInventory()->clearAll();
@@ -229,8 +230,8 @@ final class Arena {
 
         $player->teleport($this->spawns[array_rand($this->spawns)]);
 
-        $kit = KitFactory::get(strtolower($this->kit));
-        $kit?->giveTo($player);
+        $inventory = $session?->getInventory(strtolower($this->kit));
+        $inventory?->giveKit();
     }
 
     public function addPlayer(Player $player): void {
@@ -276,8 +277,8 @@ final class Arena {
                 $damager->getPlayer()?->setHealth($damager->getPlayer()->getHealth());
                 unset($this->combats[$damager->getName()]);
 
-                $kit = KitFactory::get(strtolower($this->kit));
-                $kit?->giveTo($killer);
+                $inventory = $session->getInventory(strtolower($this->kit));
+                $inventory->giveKit();
 
                 if ($this->kit !== 'no debuff') {
                     Server::getInstance()->broadcastMessage(TextFormat::colorize('&a' . $damager->getName() . ' &2[' . $damager->getKills() . '] &7killed &c' . $player->getName() . ' &4[' . $session->getKills() . ']'));

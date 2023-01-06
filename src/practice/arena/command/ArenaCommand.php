@@ -37,24 +37,6 @@ final class ArenaCommand extends Command {
             $sender->sendMessage(TextFormat::colorize('&cUse /arena [setup|delete]'));
             return;
         }
-
-        /*if (!isset($args[0]) || !$sender->hasPermission('arena.command')) {
-            if ($session->inArena()) {
-                $arena = $session->getArena();
-
-                if ($arena->inCombat($sender)) {
-                    $sender->sendMessage(TextFormat::colorize('&cYou have combat tag'));
-                    return;
-                }
-
-                if ($session->getEnderpearl() !== null) {
-                    $sender->sendMessage(TextFormat::colorize('&cYou have enderpearl cooldown'));
-                    return;
-                }
-                $arena->quit($sender);
-            }
-            return;
-        }*/
         $subCommand = strtolower($args[0]);
 
         if ($subCommand === 'setup') {

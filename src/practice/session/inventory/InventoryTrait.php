@@ -33,7 +33,7 @@ trait InventoryTrait {
                 function (array $rows): void {
                     if (count($rows) === 0) {
                         foreach (KitFactory::getAll() as $name => $kit) {
-                            $this->inventories[$name] = new Inventory($kit, $kit->getInventoryContents(), true);
+                            $this->inventories[$name] = new Inventory($this, $kit, $kit->getInventoryContents(), true);
                         }
                         $serialize = base64_encode(json_encode([]));
                         MySQL::runAsync(new InsertAsync('player_inventories', ['xuid' => $this->xuid, 'player' => $this->name, 'no_debuff' => $serialize, 'battle_rush' => $serialize, 'boxing' => $serialize, 'bridge' => $serialize, 'build_uhc' => $serialize, 'cave_uhc' => $serialize, 'combo' => $serialize, 'final_uhc' => $serialize, 'fist' => $serialize, 'gapple' => $serialize, 'sumo' => $serialize]));
@@ -46,7 +46,7 @@ trait InventoryTrait {
                             if (KitFactory::get($realName) === null) {
                                 continue;
                             }
-                            $this->inventories[$realName] = Inventory::deserializeData(json_decode(base64_decode($data), true), KitFactory::get($realName));
+                            $this->inventories[$realName] = Inventory::deserializeData($this, json_decode(base64_decode($data), true), KitFactory::get($realName));
                         }
                     }
                 })

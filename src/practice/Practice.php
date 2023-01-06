@@ -21,6 +21,7 @@ use practice\arena\ArenaFactory;
 use practice\arena\command\ArenaCommand;
 use practice\command\PingCommand;
 use practice\command\SpawnCommand;
+use practice\command\WhoCommand;
 use practice\database\mysql\MySQL;
 use practice\database\mysql\queries\QueryAsync;
 use practice\database\mysql\Table;
@@ -129,6 +130,7 @@ final class Practice extends PluginBase {
             // Global
             new SpawnCommand,
             new PingCommand,
+            new WhoCommand,
             // Arena
             new ArenaCommand,
             // Duel

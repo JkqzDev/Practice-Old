@@ -5,8 +5,8 @@ declare(strict_types=1);
 namespace practice\session\inventory;
 
 use pocketmine\item\Item;
-use pocketmine\player\Player;
 use practice\kit\Kit;
+use practice\session\Session;
 
 final class Inventory {
 
@@ -14,18 +14,19 @@ final class Inventory {
      * @param Item[] $inventoryContents
      */
     public function __construct(
+        private Session $session,
         private Kit   $kit,
         private array $inventoryContents,
         private bool  $update = false
     ) {}
 
-    static public function deserializeData(array $data, Kit $kit): self {
+    static public function deserializeData(Session $session, array $data, Kit $kit): self {
         $newInventory = [];
 
         foreach ($data as $slot => $itemSerialize) {
             $newInventory[(int) $slot] = Item::jsonDeserialize($itemSerialize);
         }
-        return new self($kit, $newInventory);
+        return new self($session, $kit, $newInventory);
     }
 
     public function getRealKit(): Kit {
@@ -45,7 +46,12 @@ final class Inventory {
         $this->update = true;
     }
 
-    public function giveTo(Player $player): void {
+    public function giveKit(): void {
+        $player = $this->session->getPlayer();
+
+        if ($player === null) {
+            return;
+        }
         $player->getCursorInventory()->clearAll();
         $player->getOffHandInventory()->clearAll();
 

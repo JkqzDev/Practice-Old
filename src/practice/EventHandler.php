@@ -290,6 +290,8 @@ final class EventHandler implements Listener {
             } elseif ($handlerSetupDuel !== null) {
                 $handlerSetupDuel->handleInteract($event);
             } elseif ($currentKitEdit !== null) {
+                $event->cancel();
+
                 $block = $event->getBlock();
                 $tile = $player->getWorld()->getTile($block->getPosition());
 

@@ -20,6 +20,7 @@ use pocketmine\world\World;
 use practice\kit\KitFactory;
 use practice\party\Party;
 use practice\Practice;
+use practice\session\SessionFactory;
 use practice\world\async\WorldDeleteAsync;
 use practice\world\WorldFactory;
 
@@ -64,8 +65,6 @@ class Duel {
         $world->setTime(World::TIME_DAY);
         $world->stopTime();
 
-        $kit = KitFactory::get(strtolower(DuelFactory::getName($this->typeId)));
-
         /** @var \practice\world\World $worldData */
         $worldData = WorldFactory::get($worldName);
         $firstPosition = $worldData->getFirstPosition();
@@ -79,7 +78,9 @@ class Duel {
             $member->getCursorInventory()->clearAll();
             $member->getOffHandInventory()->clearAll();
 
-            $kit?->giveTo($member);
+            $session = SessionFactory::get($member);
+            $inventory = $session?->getInventory(strtolower(DuelFactory::getName($this->typeId)));
+            $inventory?->giveKit();
 
             $member->teleport(Position::fromObject($firstPosition->add(0.5, 0, 0.5), $this->world));
         }
@@ -92,7 +93,9 @@ class Duel {
             $member->getCursorInventory()->clearAll();
             $member->getOffHandInventory()->clearAll();
 
-            $kit?->giveTo($member);
+            $session = SessionFactory::get($member);
+            $inventory = $session?->getInventory(strtolower(DuelFactory::getName($this->typeId)));
+            $inventory?->giveKit();
 
             $member->teleport(Position::fromObject($secondPosition->add(0.5, 0, 0.5), $this->world));
         }

@@ -36,8 +36,8 @@ final class KitCommand extends Command {
                     $sender->sendMessage(TextFormat::colorize('&cYou have combat tag'));
                     return;
                 }
-                $kit = KitFactory::get($arena->getKit());
-                $kit?->giveTo($sender);
+                $inventory = $session->getInventory(strtolower($arena->getKit()));
+                $inventory?->giveKit();
             }
             return;
         }

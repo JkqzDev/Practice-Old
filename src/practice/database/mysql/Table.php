@@ -40,7 +40,6 @@ create table if not exists player_settings
         primary key,
     xuid         varchar(50)                 not null,
     player       varchar(36)                 not null,
-    language     varchar(16) default 'en_US' not null,
     scoreboard   tinyint(1)  default 1       not null,
     cps_counter  tinyint(1)  default 1       not null,
     auto_respawn tinyint(1)  default 1       not null,

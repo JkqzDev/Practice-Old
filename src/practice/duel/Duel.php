@@ -96,8 +96,8 @@ class Duel {
             $firstPlayer->setImmobile();
             $secondPlayer->setImmobile();
 
-            $firstSession->getInventory(strtolower(DuelFactory::getName($this->typeId)))?->giveTo($firstPlayer);
-            $secondSession->getInventory(strtolower(DuelFactory::getName($this->typeId)))?->giveTo($secondPlayer);
+            $firstSession->getInventory(strtolower(DuelFactory::getName($this->typeId)))?->giveKit();
+            $secondSession->getInventory(strtolower(DuelFactory::getName($this->typeId)))?->giveKit();
 
             $firstPlayer->teleport(Position::fromObject($firstPosition->add(0.5, 0, 0.5), $world));
             $secondPlayer->teleport(Position::fromObject($secondPosition->add(0.5, 0, 0.5), $world));
